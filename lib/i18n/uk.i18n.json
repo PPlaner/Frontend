@@ -2,6 +2,106 @@
     "appName": "PPlaner",
     "auth": {
         "login": "Увійти",
-        "logout": "Вийти"
+        "logout": "Вийти",
+        "createLocalStorage": "Створити локальне сховище",
+        "haveAccount": "У мене вже є акаунт",
+        "tagline": "Ваші плани під надійним захистом",
+        "chooseMethod": "Оберіть спосіб використання"
+    },
+    "home": {
+        "today": "Сьогодні",
+        "completed": "Завершені",
+        "newTask": "Нове завдання",
+        "whatToDo": "Що потрібно зробити?",
+        "addDetails": "Додати деталі...",
+        "deleteTask": "Видалити завдання?",
+        "deleteTaskMessage": "Це завдання буде видалено назавжди.",
+        "cancel": "Скасувати",
+        "delete": "Видалити"
+    },
+    "calendar": {
+        "title": "Календар",
+        "noTasks": "Немає завдань на цей день",
+        "viewMonth": "Місяць",
+        "viewTwoWeeks": "2 тижні",
+        "viewWeek": "Тиждень",
+        "viewDay": "День",
+        "calendarView": "Вигляд календаря",
+        "taskCategory": "Категорія завдань",
+        "save": "Зберегти",
+        "chooseTimezone": "Оберіть часовий пояс",
+        "filter": "Фільтр",
+        "months": [
+            "січня",
+            "лютого",
+            "березня",
+            "квітня",
+            "травня",
+            "червня",
+            "липня",
+            "серпня",
+            "вересня",
+            "жовтня",
+            "листопада",
+            "грудня"
+        ]    },
+    "profile": {
+        "title": "Профіль",
+        "name": "Ім'я",
+        "email": "email",
+        "createAccount": "Створити акаунт",
+        "createAccountSubtitle": "Створи акаунт, щоб не втратити дані",
+        "personalization": "Персоналізація",
+        "language": "Мова",
+        "appearance": "Вигляд",
+        "dateTime": "Дата та час",
+        "widgets": "Віджети",
+        "logout": "Вийти",
+        "deleteAccount": "Видалити акаунт",
+        "deleteAccountSubtitle": "Дані будуть втрачені",
+        "changeName": "Змінити ім'я",
+        "changePassword": "Змінити пароль",
+        "changeEncryption": "Змінити спосіб шифрування",
+        "deleteConfirmTitle": "Ваші дані будуть втрачені",
+        "appearanceLight": "Світлий",
+        "appearanceDark": "Темний",
+        "appearanceSystem": "Системний",
+        "chooseLanguage": "Оберіть мову",
+        "chooseAppearance": "Вигляд",
+        "addWidget": "Додайте віджет",
+        "widgetTasks": "Задачі на сьогодні",
+        "widgetCalendar": "Календар",
+        "widgetProgress": "Прогрес"
+    },
+    "category": {
+        "all": "Усі",
+        "work": "Робота",
+        "personal": "Особисте",
+        "health": "Здоров'я",
+        "other": "Інше"
+    },
+    "common": {
+        "save": "Зберегти",
+        "cancel": "Скасувати",
+        "delete": "Видалити",
+        "back": "Назад"
+    },
+    "timezones": {
+        "ukraine": "Україна",
+        "poland": "Польща",
+        "germany": "Німеччина",
+        "usaNy": "США (Нью-Йорк)",
+        "usaLa": "США (Лос-Анджелес)",
+        "greatBritain": "Велика Британія"
+    },
+    "bottomNav": {
+        "tasks": "Tasks",
+        "calendar": "Calendar",
+        "profile": "Profile"
+    },
+    "widgets": {
+        "tasks": "Задачі на сьогодні",
+        "calendar": "Календар",
+        "progress": "Прогрес"
     }
 }

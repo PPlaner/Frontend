@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/app/init.dart';
 import 'package:frontend/core/theme/app_theme.dart';
-import 'package:frontend/features/notes/presentation/screens/calendar_screen.dart';
-import 'package:frontend/features/notes/presentation/screens/home_screen.dart';
-import 'package:frontend/features/profile/presentation/screens/personalization_screen.dart';
-import 'package:frontend/features/profile/presentation/screens/profile_screen.dart';
-import 'package:frontend/features/vault/presentation/screens/auth_screen.dart';
-import 'package:frontend/i18n/strings.g.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/theme/theme_provider.dart';
+import 'package:frontend/features/profile/presentation/screens/profile_screen.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 void main() async {
   await initializeGlobalSettings();
@@ -30,9 +26,10 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final t = context.t;
 
     return MaterialApp(
-      title: 'PPlaner',
+      title: t.appName,
       debugShowCheckedModeBanner: false,
 
       locale: TranslationProvider.of(context).flutterLocale,
@@ -48,7 +45,7 @@ class MyApp extends ConsumerWidget {
       darkTheme: AppTheme.dark,
       themeMode: themeMode,
 
-      home: const CalendarScreen(),
+      home: const ProfileScreen(),
     );
   }
 }

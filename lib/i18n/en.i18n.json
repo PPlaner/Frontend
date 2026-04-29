@@ -2,6 +2,107 @@
     "appName": "PPlaner",
     "auth": {
         "login": "Log In",
-        "logout": "Log Out"
+        "logout": "Log Out",
+        "createLocalStorage": "Create local storage",
+        "haveAccount": "I already have an account",
+        "tagline": "Your plans under reliable protection",
+        "chooseMethod": "Choose how to use"
+    },
+    "home": {
+        "today": "Today",
+        "completed": "Completed",
+        "newTask": "New task",
+        "whatToDo": "What needs to be done?",
+        "addDetails": "Add details...",
+        "deleteTask": "Delete task?",
+        "deleteTaskMessage": "This task will be permanently deleted.",
+        "cancel": "Cancel",
+        "delete": "Delete"
+    },
+    "calendar": {
+        "title": "Calendar",
+        "noTasks": "No tasks for this day",
+        "viewMonth": "Month",
+        "viewTwoWeeks": "2 weeks",
+        "viewWeek": "Week",
+        "viewDay": "Day",
+        "calendarView": "Calendar view",
+        "taskCategory": "Task category",
+        "save": "Save",
+        "chooseTimezone": "Choose timezone",
+        "filter": "Filter",
+        "months": [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ]
+    },
+    "profile": {
+        "title": "Profile",
+        "name": "Name",
+        "email": "Email",
+        "createAccount": "Create account",
+        "createAccountSubtitle": "Create an account so you don't lose your data",
+        "personalization": "Personalization",
+        "language": "Language",
+        "appearance": "Appearance",
+        "dateTime": "Date and time",
+        "widgets": "Widgets",
+        "logout": "Log Out",
+        "deleteAccount": "Delete account",
+        "deleteAccountSubtitle": "Data will be lost",
+        "changeName": "Change name",
+        "changePassword": "Change password",
+        "changeEncryption": "Change encryption method",
+        "deleteConfirmTitle": "Your data will be lost",
+        "appearanceLight": "Light",
+        "appearanceDark": "Dark",
+        "appearanceSystem": "System",
+        "chooseLanguage": "Choose language",
+        "chooseAppearance": "Appearance",
+        "addWidget": "Add widget",
+        "widgetTasks": "Today's tasks",
+        "widgetCalendar": "Calendar",
+        "widgetProgress": "Progress"
+    },
+    "category": {
+        "all": "All",
+        "work": "Work",
+        "personal": "Personal",
+        "health": "Health",
+        "other": "Other"
+    },
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "back": "Back"
+    },
+    "timezones": {
+        "ukraine": "Ukraine",
+        "poland": "Poland",
+        "germany": "Germany",
+        "usaNy": "USA (New York)",
+        "usaLa": "USA (Los Angeles)",
+        "greatBritain": "Great Britain"
+    },
+    "bottomNav": {
+        "tasks": "Tasks",
+        "calendar": "Calendar",
+        "profile": "Profile"
+    },
+    "widgets": {
+        "tasks": "Today's tasks",
+        "calendar": "Calendar",
+        "progress": "Progress"
     }
 }

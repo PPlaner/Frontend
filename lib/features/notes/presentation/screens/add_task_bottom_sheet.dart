@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 /// Bottom Sheet для додавання нового завдання (Головна 6).
 ///
@@ -65,6 +66,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -102,7 +104,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
                 Expanded(
                   child: Text(
-                    'Нове завдання',
+                    t.home.newTask,
                     textAlign: TextAlign.center,
                     style: textTheme.headlineMedium,
                   ),
@@ -133,7 +135,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 focusNode: _titleFocus,
                 style: textTheme.bodyLarge,
                 decoration: InputDecoration(
-                  hintText: 'Що потрібно зробити?',
+                  hintText: t.home.whatToDo,
                   hintStyle: textTheme.bodyLarge?.copyWith(
                     color: colors.textSecondary,
                   ),
@@ -177,7 +179,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                         return QuillEditor.basic(
                           controller: _quillController,
                           config: QuillEditorConfig(
-                            placeholder: 'Додати деталі...',
+                            placeholder: t.home.addDetails,
                             padding: EdgeInsets.zero,
                             customStyles: DefaultStyles(
                               placeHolder: DefaultTextBlockStyle(

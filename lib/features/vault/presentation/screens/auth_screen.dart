@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
@@ -10,6 +11,7 @@ class AuthScreen extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -20,7 +22,7 @@ class AuthScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(flex: 3),
-              Text('PPlaner', style: textTheme.displayLarge),
+              Text(t.appName, style: textTheme.displayLarge),
               const SizedBox(height: 24),
               Image.asset(
                 AppAssets.logo,
@@ -30,13 +32,13 @@ class AuthScreen extends StatelessWidget {
               ),
               const Spacer(flex: 2),
               Text(
-                'Ваші плани під надійним захистом',
+                t.auth.tagline,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                'Оберіть спосіб використання',
+                t.auth.chooseMethod,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium,
               ),
@@ -52,7 +54,7 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Створити локальне сховище',
+                  t.auth.createLocalStorage,
                   style: textTheme.labelLarge?.copyWith(color: colors.surface),
                 ),
               ),
@@ -69,7 +71,7 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'У мене вже є акаунт',
+                  t.auth.haveAccount,
                   style: textTheme.labelLarge?.copyWith(
                     color: colorScheme.primary,
                   ),
