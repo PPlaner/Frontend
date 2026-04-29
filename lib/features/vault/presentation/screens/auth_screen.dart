@@ -43,8 +43,12 @@ class AuthScreen extends StatelessWidget {
                 style: textTheme.bodyMedium,
               ),
               const Spacer(flex: 3),
+
+              // ── Створити локальне сховище ──
               FilledButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO: навігація до вибору методу шифрування
+                },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),
                   backgroundColor: colorScheme.primary,
@@ -60,11 +64,13 @@ class AuthScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               OutlinedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // TODO: навігація до екрану логіну
+                },
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),
-                  foregroundColor: colorScheme.primary,
-                  side: BorderSide(color: colorScheme.primary, width: 1),
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary, width: 1),
                   backgroundColor: colors.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),

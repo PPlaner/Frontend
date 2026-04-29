@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 class SecurityMethodScreen extends StatefulWidget {
   const SecurityMethodScreen({super.key});
@@ -13,73 +15,81 @@ class _SecurityMethodScreenState extends State<SecurityMethodScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = AppColors.of(context);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colors.surface,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          color: AppColors.primary,
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
+        top: false,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 20),
               Text(
-                'Метод захисту',
+                t.security_methods.title,
                 style: textTheme.displayLarge?.copyWith(fontSize: 28),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                'Оберіть, як ви будете отримувати доступ до своїх зашифрованих планів',
+                t.security_methods.subtitle,
                 style: textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 48),
 
-
               _buildOption(
-                title: 'PIN-код',
-                subtitle: 'Швидкий доступ через 4-значний код',
+                title: t.security_methods.pin_title,
+                subtitle: t.security_methods.pin_sub,
                 id: 'pin',
+                colors: colors,
               ),
               _buildOption(
-                title: 'Графічний ключ',
-                subtitle: 'Захист за допомогою унікального жесту',
+                title: t.security_methods.pattern_title,
+                subtitle: t.security_methods.pattern_sub,
                 id: 'pattern',
+                colors: colors,
               ),
               _buildOption(
-                title: 'Слово-асоціація',
-                subtitle: 'Пароль із підказкою для відновлення',
+                title: t.security_methods.word_title,
+                subtitle: t.security_methods.word_sub,
                 id: 'word',
-              ),
-              _buildOption(
-                title: 'Seed-фраза',
-                subtitle: 'Максимальний захист. 12 випадкових слів. Тільки для вас.',
-                id: 'seed',
+                colors: colors,
               ),
 
               const Spacer(),
 
-
               FilledButton(
-                onPressed: selectedMethodId == null ? null : () async {
+                onPressed: selectedMethodId == null
+                    ? null
+                    : () {
                   if (selectedMethodId == 'pin') {
-                    await Navigator.pushNamed(context, '/pin');
+                    Navigator.pushNamed(context, '/pin-setup');
                   } else if (selectedMethodId == 'pattern') {
-                    await Navigator.pushNamed(context, '/pattern');
+                    Navigator.pushNamed(context, '/pattern-setup');
                   } else if (selectedMethodId == 'word') {
-                    await Navigator.pushNamed(context, '/association');
-                  } else if (selectedMethodId == 'seed') {
-                    await Navigator.pushNamed(context, '/secret');
+                    Navigator.pushNamed(context, '/association-setup');
                   }
                 },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),
-                  backgroundColor: colorScheme.primary,
-                  disabledBackgroundColor:
-                  colorScheme.primary.withValues(alpha:0.5),
+                  backgroundColor: AppColors.primary,
                 ),
-                child: const Text('Далі'),
+                child: Text(
+                  t.common.next,
+                  style: textTheme.labelLarge?.copyWith(color: Colors.white),
+                ),
               ),
               const SizedBox(height: 24),
             ],
@@ -93,9 +103,9 @@ class _SecurityMethodScreenState extends State<SecurityMethodScreen> {
     required String title,
     required String subtitle,
     required String id,
+    required AppColorScheme colors,
   }) {
     final isSelected = selectedMethodId == id;
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Padding(
@@ -108,15 +118,17 @@ class _SecurityMethodScreenState extends State<SecurityMethodScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colors.surface,                        // адаптивний
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? colorScheme.primary : Colors.transparent,
-              width: 2,
+              color: isSelected
+                  ? AppColors.primary                    // статичний
+                  : AppColors.primary.withOpacity(0.1),  // статичний
+              width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha:0.05),
+                color: Colors.black.withOpacity(0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -127,7 +139,7 @@ class _SecurityMethodScreenState extends State<SecurityMethodScreen> {
               Text(
                 title,
                 style: textTheme.titleLarge?.copyWith(
-                  color: colorScheme.primary,
+                  color: AppColors.primary,              // статичний
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -135,7 +147,9 @@ class _SecurityMethodScreenState extends State<SecurityMethodScreen> {
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: textTheme.bodySmall,
+                style: textTheme.bodySmall?.copyWith(
+                  color: colors.textSecondary,           // адаптивний
+                ),
               ),
             ],
           ),

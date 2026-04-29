@@ -1,5 +1,18 @@
 {
-    "appName": "PPlaner",
+    "common": {
+        "app_name": "PPlaner",
+        "back": "Back",
+        "next": "Next",
+        "continue": "Continue",
+        "confirm": "Confirm",
+        "login": "Login",
+        "register": "Register",
+        "error_title": "Error",
+        "loading": "Loading...",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete"
+    },
     "auth": {
         "login": "Log In",
         "logout": "Log Out",
@@ -81,12 +94,6 @@
         "health": "Health",
         "other": "Other"
     },
-    "common": {
-        "save": "Save",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "back": "Back"
-    },
     "timezones": {
         "ukraine": "Ukraine",
         "poland": "Poland",
@@ -103,6 +110,76 @@
     "widgets": {
         "tasks": "Today's tasks",
         "calendar": "Calendar",
-        "progress": "Progress"
+        "progress": "Progress",
+        "welcome_title": "Your plans under reliable protection",
+        "welcome_subtitle": "Choose how to use",
+        "create_local": "Create local vault",
+        "already_have_account": "I already have an account",
+        "login_title": "Authorization",
+        "register_title": "Create Account",
+        "email": "Email address",
+        "password": "Password",
+        "confirm_password": "Repeat password",
+        "no_account": "Don't have an account?",
+        "have_account": "Already have an account?",
+        "email_error": "Enter email",
+        "email_format_error": "Invalid email format",
+        "password_error": "Enter password",
+        "password_length_error": "Minimum 6 characters",
+        "passwords_not_match": "Passwords do not match"
+    },
+    "email_verify": {
+        "title": "Email\nVerification",
+        "sent_to": "We sent a code to",
+        "code_hint": "Verification code",
+        "code_error": "Enter verification code",
+        "resend": "Resend code",
+        "resend_success": "Code resent successfully"
+    },
+    "security_methods": {
+        "title": "Security Method",
+        "subtitle": "Choose a quick login method. A secret phrase will be mandatory in the next step.",
+        "pin_title": "PIN-code",
+        "pin_sub": "Quick access via 4-digit code",
+        "pattern_title": "Pattern Lock",
+        "pattern_sub": "Protection with a unique gesture",
+        "word_title": "Association Word",
+        "word_sub": "Password with a hint for recovery",
+        "selection_title": "Identity Verification",
+        "selection_subtitle": "Choose an unlock method to verify",
+        "method_pin": "Login via PIN-code",
+        "method_pattern": "Pattern Lock",
+        "method_word": "Association Word",
+        "method_seed": "Seed Phrase (Master Key)"
+    },
+    "setup": {
+        "pin_create": "Create PIN-code",
+        "pin_enter": "Enter PIN-code",
+        "pin_desc_setup": "For quick access to your plans",
+        "pin_desc_login": "Enter your PIN-code to login",
+        "pattern_create": "Create Pattern Lock",
+        "pattern_enter": "Enter Pattern Lock",
+        "pattern_short": "Pattern too short!",
+        "pattern_desc_setup": "Connect at least 4 dots",
+        "pattern_desc_login": "Draw your pattern to login",
+        "word_create": "Think of\nan association",
+        "word_enter": "Enter\nassociation",
+        "word_desc_setup": "Word must be at least 6 characters (no spaces, digits or signs)",
+        "word_desc_login": "Enter your association word to login",
+        "word_hint": "Enter association word"
+    },
+    "seed": {
+        "title": "Your Secret Phrase",
+        "warning": "Write these 12 words on paper and keep them in a safe place. If you lose them, access to your data cannot be restored.",
+        "copy": "Copy to clipboard",
+        "copy_done": "Phrase copied to clipboard",
+        "saved_button": "I have written these words",
+        "login_title": "Enter your\nsecret phrase",
+        "login_subtitle": "Enter all 12 words in the correct order",
+        "word_hint": "word",
+        "verify_title": "Record Verification",
+        "verify_error": "Words do not match. Try again!",
+        "verify_desc": "Please enter the specified words from your secret phrase",
+        "verify_input_hint": "Enter word..."
     }
 }

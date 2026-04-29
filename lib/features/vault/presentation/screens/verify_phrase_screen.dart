@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 class VerifyPhraseScreen extends StatefulWidget {
   const VerifyPhraseScreen({super.key});
@@ -28,7 +30,6 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-
     for (final controller in _controllers) {
       controller.addListener(_validateInputs);
     }
@@ -47,8 +48,7 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
   }
 
   void _generateRandomIndices() {
-    final list = List<int>.generate(12, (i) => i)
-    ..shuffle();
+    final list = List<int>.generate(12, (i) => i)..shuffle();
     setState(() {
       _randomIndices = list.take(3).toList()..sort();
     });
@@ -69,7 +69,6 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
       final userInput = _controllers[i].text.trim().toLowerCase();
       final correctWord =
       _originalPhrase![_randomIndices![i]].trim().toLowerCase();
-
       if (userInput != correctWord) {
         allCorrect = false;
         break;
@@ -96,22 +95,20 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
   @override
   Widget build(BuildContext context) {
     if (_randomIndices == null) {
-      return const Scaffold
-      (body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-    final _ = Theme.of(context).brightness == Brightness.light;
+    final colors = AppColors.of(context);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colors.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon:
-          Icon(Icons.arrow_back_ios_new, color: colorScheme.primary, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+          color: AppColors.primary,
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -122,17 +119,15 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
             children: [
               const SizedBox(height: 10),
               Text(
-                'Перевірка запису',
+                t.seed.verify_title,
                 style: textTheme.displayLarge?.copyWith(fontSize: 28),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
               Text(
-                _isError
-                    ? 'Слова не збігаються. Спробуйте ще раз!'
-                    : 'Будь ласка, введіть вказані слова з вашої секретної фрази',
+                _isError ? t.seed.verify_error : t.seed.verify_desc,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: _isError ? colorScheme.error : null,
+                  color: _isError ? AppColors.error : null, // статичний error
                   fontWeight: _isError ? FontWeight.bold : null,
                 ),
                 textAlign: TextAlign.center,
@@ -153,9 +148,10 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16),
                       child: _buildNumberedField(
-                          context,
-                          _randomIndices![index] + 1,
-                          _controllers[index]
+                        context,
+                        _randomIndices![index] + 1,
+                        _controllers[index],
+                        colors,
                       ),
                     );
                   }),
@@ -163,18 +159,17 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
               ),
 
               const SizedBox(height: 40),
-              Image.asset
-                (AppAssets.logo, height: 170, width: 170, fit: BoxFit.contain),
-
+              Image.asset(AppAssets.logo, height: 170, width: 170, fit: BoxFit.contain),
               const SizedBox(height: 60),
 
               FilledButton(
                 onPressed: _isButtonEnabled ? _verifyAndSubmit : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),
+                  backgroundColor: AppColors.primary,
                 ),
                 child: Text(
-                  'Зареєструватись',
+                  t.common.register,
                   style: textTheme.labelLarge?.copyWith(color: Colors.white),
                 ),
               ),
@@ -186,11 +181,13 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
     );
   }
 
-  Widget _buildNumberedField(BuildContext context, int number,
-      TextEditingController controller) {
-    final colorScheme = Theme.of(context).colorScheme;
+  Widget _buildNumberedField(
+      BuildContext context,
+      int number,
+      TextEditingController controller,
+      AppColorScheme colors,
+      ) {
     final textTheme = Theme.of(context).textTheme;
-    final isLight = Theme.of(context).brightness == Brightness.light;
 
     return Row(
       children: [
@@ -199,7 +196,7 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
           child: Text(
             '$number.',
             style: textTheme.titleMedium?.copyWith(
-              color: colorScheme.primary,
+              color: AppColors.primary,              // статичний
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -210,18 +207,17 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
           child: Container(
             height: 60,
             decoration: BoxDecoration(
-              color: isLight ? Colors.white :
-              colorScheme.surfaceContainerHighest.withValues(alpha:0.1),
+              color: colors.surface,                 // адаптивний — без isLight
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: _isError
-                    ? colorScheme.error.withValues(alpha:0.5)
-                    : colorScheme.primary.withValues(alpha:0.15),
+                    ? AppColors.error.withOpacity(0.5)    // статичний
+                    : AppColors.primary.withOpacity(0.15), // статичний
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha:0.04),
+                  color: Colors.black.withOpacity(0.04),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -232,12 +228,15 @@ class _VerifyPhraseScreenState extends State<VerifyPhraseScreen>
                 controller: controller,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyLarge,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   contentPadding: EdgeInsets.zero,
                   border: InputBorder.none,
-                  hintText: 'Введіть слово...',
-                  hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
                   filled: false,
+                  hintText: t.seed.verify_input_hint,
+                  hintStyle: TextStyle(
+                    color: colors.textSecondary,     // адаптивний
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ),

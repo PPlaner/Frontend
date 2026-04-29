@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 class CreatePinScreen extends StatefulWidget {
-  const CreatePinScreen({super.key});
+  final bool isSetup;
+
+  const CreatePinScreen({super.key, this.isSetup = false});
 
   @override
   State<CreatePinScreen> createState() => _CreatePinScreenState();
@@ -13,36 +17,36 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
 
   void _addDigit(String digit) {
     if (pinCode.length < 4) {
-      setState(() {
-        pinCode += digit;
-      });
+      setState(() => pinCode += digit);
     }
   }
 
   void _removeDigit() {
     if (pinCode.isNotEmpty) {
-      setState(() {
-        pinCode = pinCode.substring(0, pinCode.length - 1);
-      });
+      setState(() => pinCode = pinCode.substring(0, pinCode.length - 1));
+    }
+  }
+
+  void _onSubmit() {
+    if (widget.isSetup) {
+      Navigator.pushNamed(context, '/secret-setup');
+    } else {
+      // TODO: перевірити PIN і увійти
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
+    final colors = AppColors.of(context);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colors.surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: colorScheme.primary,
-            size: 20,
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: AppColors.primary, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -53,35 +57,31 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
             children: [
               const SizedBox(height: 10),
               Text(
-                'Створення PIN-коду',
+                widget.isSetup ? t.setup.pin_create : t.setup.pin_enter,
                 style: textTheme.displayLarge?.copyWith(fontSize: 26),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
               Text(
-                'Для швидкого доступу до ваших планів',
+                widget.isSetup ? t.setup.pin_desc_setup : t.setup.pin_desc_login,
                 style: textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
-              Image.asset(
-                AppAssets.logo,
-                height: 100,
-                width: 100,
-                fit: BoxFit.contain,
-              ),
+              Image.asset(AppAssets.logo, height: 100, width: 100, fit: BoxFit.contain),
               const Spacer(),
-              _buildPinDots(pinCode.length, context),
+              _buildPinDots(pinCode.length),
               const SizedBox(height: 30),
-              _buildKeypad(context),
+              _buildKeypad(colors),
               const Spacer(),
               FilledButton(
-                onPressed: pinCode.length == 4 ? () {} : null,
+                onPressed: pinCode.length == 4 ? _onSubmit : null,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),
+                  backgroundColor: AppColors.primary,
                 ),
                 child: Text(
-                  'Зареєструватись',
+                  widget.isSetup ? t.common.register : t.common.login,
                   style: textTheme.labelLarge?.copyWith(color: Colors.white),
                 ),
               ),
@@ -93,9 +93,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     );
   }
 
-  Widget _buildPinDots(int filledLength, BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
+  Widget _buildPinDots(int filledLength) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(4, (index) {
@@ -107,10 +105,10 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: isFilled ? colorScheme.primary : Colors.transparent,
+              color: isFilled ? AppColors.primary : Colors.transparent,
               shape: BoxShape.circle,
               border: Border.all(
-                color: colorScheme.primary.withValues(alpha: 0.5),
+                color: AppColors.primary.withValues(alpha: 0.5),
                 width: 2,
               ),
             ),
@@ -120,43 +118,42 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     );
   }
 
-  Widget _buildKeypad(BuildContext context) {
+  Widget _buildKeypad(AppColorScheme colors) {
     return Column(
       children: [
-        _buildKeypadRow(['1', '2', '3'], context),
+        _buildKeypadRow(['1', '2', '3'], colors),
         const SizedBox(height: 16),
-        _buildKeypadRow(['4', '5', '6'], context),
+        _buildKeypadRow(['4', '5', '6'], colors),
         const SizedBox(height: 16),
-        _buildKeypadRow(['7', '8', '9'], context),
+        _buildKeypadRow(['7', '8', '9'], colors),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(width: 70),
+            const SizedBox(width: 94),
+            _buildDigitKey('0', colors),
             const SizedBox(width: 24),
-            _buildDigitKey('0', context),
-            const SizedBox(width: 24),
-            _buildBackspaceKey(context),
+            _buildBackspaceKey(),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildKeypadRow(List<String> digits, BuildContext context) {
+  Widget _buildKeypadRow(List<String> digits, AppColorScheme colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildDigitKey(digits[0], context),
+        _buildDigitKey(digits[0], colors),
         const SizedBox(width: 24),
-        _buildDigitKey(digits[1], context),
+        _buildDigitKey(digits[1], colors),
         const SizedBox(width: 24),
-        _buildDigitKey(digits[2], context),
+        _buildDigitKey(digits[2], colors),
       ],
     );
   }
 
-  Widget _buildDigitKey(String digit, BuildContext context) {
+  Widget _buildDigitKey(String digit, AppColorScheme colors) {
     return InkWell(
       onTap: () => _addDigit(digit),
       borderRadius: BorderRadius.circular(40),
@@ -167,7 +164,7 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
           child: Text(
             digit,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+              color: colors.textPrimary,           // адаптивний
             ),
           ),
         ),
@@ -175,17 +172,17 @@ class _CreatePinScreenState extends State<CreatePinScreen> {
     );
   }
 
-  Widget _buildBackspaceKey(BuildContext context) {
+  Widget _buildBackspaceKey() {
     return InkWell(
       onTap: _removeDigit,
       borderRadius: BorderRadius.circular(40),
-      child: SizedBox(
+      child: const SizedBox(
         width: 70,
         height: 70,
         child: Center(
           child: Icon(
             Icons.backspace_outlined,
-            color: Theme.of(context).colorScheme.primary,
+            color: AppColors.primary,              // статичний
             size: 26,
           ),
         ),
