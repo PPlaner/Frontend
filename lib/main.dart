@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/app/init.dart';
 import 'package:frontend/core/theme/app_theme.dart';
-import 'package:frontend/features/notes/presentation/screens/home_screen.dart';
-import 'package:frontend/features/profile/presentation/screens/personalization_screen.dart';
+import 'package:frontend/core/theme/theme_provider.dart';
 import 'package:frontend/features/profile/presentation/screens/profile_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/association_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/auth_method_selection_screen.dart';
@@ -32,13 +32,16 @@ void main() async {
   runApp(app);
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeModeProvider);
+    final t = context.t;
+
     return MaterialApp(
-      title: 'PPlaner',
+      title: t.appName,
       debugShowCheckedModeBanner: false,
 
       locale: TranslationProvider.of(context).flutterLocale,
@@ -52,9 +55,9 @@ class MyApp extends StatelessWidget {
 
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.light,
+      themeMode: themeMode,
 
-      home: const SplashScreen(),
+      home: const ProfileScreen(),
     );
   }
 }

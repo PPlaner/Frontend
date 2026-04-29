@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 class PersonalizationScreen extends StatelessWidget {
   const PersonalizationScreen({super.key});
@@ -13,6 +14,7 @@ class PersonalizationScreen extends StatelessWidget {
       barrierColor: Colors.black.withValues(alpha: 0.25),
       builder: (ctx) {
         final dialogColors = AppColors.of(ctx);
+        final t = ctx.t;
 
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -25,7 +27,7 @@ class PersonalizationScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Ваші дані будуть втрачені',
+                  t.profile.deleteConfirmTitle,
                   textAlign: TextAlign.center,
                   style: textTheme.titleLarge,
                 ),
@@ -45,7 +47,7 @@ class PersonalizationScreen extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Скасувати',
+                          t.common.cancel,
                           style: textTheme.labelMedium?.copyWith(
                             color: dialogColors.surface,
                           ),
@@ -69,7 +71,7 @@ class PersonalizationScreen extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Видалити',
+                          t.common.delete,
                           style: textTheme.labelMedium?.copyWith(
                             color: AppColors.error,
                           ),
@@ -95,6 +97,7 @@ class PersonalizationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -123,7 +126,7 @@ class PersonalizationScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Персоналізація',
+                    t.profile.personalization,
                     style: textTheme.titleLarge,
                   ),
                 ],
@@ -140,8 +143,8 @@ class PersonalizationScreen extends StatelessWidget {
                     children: [
                       _SettingsTile(
                         icon: Icons.lock_outline,
-                        title: 'Видалити акаунт',
-                        subtitle: 'Дані будуть втрачені',
+                        title: t.profile.deleteAccount,
+                        subtitle: t.profile.deleteAccountSubtitle,
                         onTap: () => _showDeleteConfirmDialog(context),
                         showArrow: false,
                       ),
@@ -154,21 +157,21 @@ class PersonalizationScreen extends StatelessWidget {
                   _SettingsCard(
                     children: [
                       _SettingsTile(
-                        title: 'Змінити ім\'я',
+                        title: t.profile.changeName,
                         onTap: () {
                           // Зробити: екран зміни імені
                         },
                       ),
                       _TileDivider(),
                       _SettingsTile(
-                        title: 'Змінити пароль',
+                        title: t.profile.changePassword,
                         onTap: () {
                           // Зробити: екран зміни пароля
                         },
                       ),
                       _TileDivider(),
                       _SettingsTile(
-                        title: 'Змінити спосіб шифрування',
+                        title: t.profile.changeEncryption,
                         onTap: () {
                           // Зробити: екран зміни шифрування
                         },
@@ -304,6 +307,7 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -319,18 +323,18 @@ class _BottomNav extends StatelessWidget {
         showUnselectedLabels: false,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: colors.textPrimary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.check_box_outlined),
-            label: 'Tasks',
+            icon: const Icon(Icons.check_box_outlined),
+            label: t.bottomNav.tasks,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Calendar',
+            icon: const Icon(Icons.calendar_month_outlined),
+            label: t.bottomNav.calendar,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            label: t.bottomNav.profile,
           ),
         ],
       ),

@@ -41,6 +41,14 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 	// Translations
 	@override late final _TranslationsCommonUk common = _TranslationsCommonUk._(_root);
 	@override late final _TranslationsAuthUk auth = _TranslationsAuthUk._(_root);
+	@override late final _TranslationsHomeUk home = _TranslationsHomeUk._(_root);
+	@override late final _TranslationsCalendarUk calendar = _TranslationsCalendarUk._(_root);
+	@override late final _TranslationsProfileUk profile = _TranslationsProfileUk._(_root);
+	@override late final _TranslationsCategoryUk category = _TranslationsCategoryUk._(_root);
+	@override late final _TranslationsCommonUk common = _TranslationsCommonUk._(_root);
+	@override late final _TranslationsTimezonesUk timezones = _TranslationsTimezonesUk._(_root);
+	@override late final _TranslationsBottomNavUk bottomNav = _TranslationsBottomNavUk._(_root);
+	@override late final _TranslationsWidgetsUk widgets = _TranslationsWidgetsUk._(_root);
 	@override late final _TranslationsEmailVerifyUk email_verify = _TranslationsEmailVerifyUk._(_root);
 	@override late final _TranslationsSecurityMethodsUk security_methods = _TranslationsSecurityMethodsUk._(_root);
 	@override late final _TranslationsSetupUk setup = _TranslationsSetupUk._(_root);
@@ -72,6 +80,165 @@ class _TranslationsAuthUk extends TranslationsAuthEn {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
+	@override String get login => 'Увійти';
+	@override String get logout => 'Вийти';
+	@override String get createLocalStorage => 'Створити локальне сховище';
+	@override String get haveAccount => 'У мене вже є акаунт';
+	@override String get tagline => 'Ваші плани під надійним захистом';
+	@override String get chooseMethod => 'Оберіть спосіб використання';
+}
+
+// Path: home
+class _TranslationsHomeUk extends TranslationsHomeEn {
+	_TranslationsHomeUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get today => 'Сьогодні';
+	@override String get completed => 'Завершені';
+	@override String get newTask => 'Нове завдання';
+	@override String get whatToDo => 'Що потрібно зробити?';
+	@override String get addDetails => 'Додати деталі...';
+	@override String get deleteTask => 'Видалити завдання?';
+	@override String get deleteTaskMessage => 'Це завдання буде видалено назавжди.';
+	@override String get cancel => 'Скасувати';
+	@override String get delete => 'Видалити';
+}
+
+// Path: calendar
+class _TranslationsCalendarUk extends TranslationsCalendarEn {
+	_TranslationsCalendarUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Календар';
+	@override String get noTasks => 'Немає завдань на цей день';
+	@override String get viewMonth => 'Місяць';
+	@override String get viewTwoWeeks => '2 тижні';
+	@override String get viewWeek => 'Тиждень';
+	@override String get viewDay => 'День';
+	@override String get calendarView => 'Вигляд календаря';
+	@override String get taskCategory => 'Категорія завдань';
+	@override String get save => 'Зберегти';
+	@override String get chooseTimezone => 'Оберіть часовий пояс';
+	@override String get filter => 'Фільтр';
+	@override List<String> get months => [
+		'січня',
+		'лютого',
+		'березня',
+		'квітня',
+		'травня',
+		'червня',
+		'липня',
+		'серпня',
+		'вересня',
+		'жовтня',
+		'листопада',
+		'грудня',
+	];
+}
+
+// Path: profile
+class _TranslationsProfileUk extends TranslationsProfileEn {
+	_TranslationsProfileUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Профіль';
+	@override String get name => 'Ім\'я';
+	@override String get email => 'email';
+	@override String get createAccount => 'Створити акаунт';
+	@override String get createAccountSubtitle => 'Створи акаунт, щоб не втратити дані';
+	@override String get personalization => 'Персоналізація';
+	@override String get language => 'Мова';
+	@override String get appearance => 'Вигляд';
+	@override String get dateTime => 'Дата та час';
+	@override String get widgets => 'Віджети';
+	@override String get logout => 'Вийти';
+	@override String get deleteAccount => 'Видалити акаунт';
+	@override String get deleteAccountSubtitle => 'Дані будуть втрачені';
+	@override String get changeName => 'Змінити ім\'я';
+	@override String get changePassword => 'Змінити пароль';
+	@override String get changeEncryption => 'Змінити спосіб шифрування';
+	@override String get deleteConfirmTitle => 'Ваші дані будуть втрачені';
+	@override String get appearanceLight => 'Світлий';
+	@override String get appearanceDark => 'Темний';
+	@override String get appearanceSystem => 'Системний';
+	@override String get chooseLanguage => 'Оберіть мову';
+	@override String get chooseAppearance => 'Вигляд';
+	@override String get addWidget => 'Додайте віджет';
+	@override String get widgetTasks => 'Задачі на сьогодні';
+	@override String get widgetCalendar => 'Календар';
+	@override String get widgetProgress => 'Прогрес';
+}
+
+// Path: category
+class _TranslationsCategoryUk extends TranslationsCategoryEn {
+	_TranslationsCategoryUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get all => 'Усі';
+	@override String get work => 'Робота';
+	@override String get personal => 'Особисте';
+	@override String get health => 'Здоров\'я';
+	@override String get other => 'Інше';
+}
+
+// Path: common
+class _TranslationsCommonUk extends TranslationsCommonEn {
+	_TranslationsCommonUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get save => 'Зберегти';
+	@override String get cancel => 'Скасувати';
+	@override String get delete => 'Видалити';
+	@override String get back => 'Назад';
+}
+
+// Path: timezones
+class _TranslationsTimezonesUk extends TranslationsTimezonesEn {
+	_TranslationsTimezonesUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get ukraine => 'Україна';
+	@override String get poland => 'Польща';
+	@override String get germany => 'Німеччина';
+	@override String get usaNy => 'США (Нью-Йорк)';
+	@override String get usaLa => 'США (Лос-Анджелес)';
+	@override String get greatBritain => 'Велика Британія';
+}
+
+// Path: bottomNav
+class _TranslationsBottomNavUk extends TranslationsBottomNavEn {
+	_TranslationsBottomNavUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get tasks => 'Tasks';
+	@override String get calendar => 'Calendar';
+	@override String get profile => 'Profile';
+}
+
+// Path: widgets
+class _TranslationsWidgetsUk extends TranslationsWidgetsEn {
+	_TranslationsWidgetsUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get tasks => 'Задачі на сьогодні';
+	@override String get calendar => 'Календар';
+	@override String get progress => 'Прогрес';
 	@override String get welcome_title => 'Ваші плани під надійним захистом';
 	@override String get welcome_subtitle => 'Оберіть спосіб використання';
 	@override String get create_local => 'Створити локальне сховище';
@@ -251,6 +418,92 @@ extension on TranslationsUk {
 			'seed.verify_error' => 'Слова не збігаються. Спробуйте ще раз!',
 			'seed.verify_desc' => 'Будь ласка, введіть вказані слова з вашої секретної фрази',
 			'seed.verify_input_hint' => 'Введіть слово...',
+			'appName' => 'PPlaner',
+			'auth.login' => 'Увійти',
+			'auth.logout' => 'Вийти',
+			'auth.createLocalStorage' => 'Створити локальне сховище',
+			'auth.haveAccount' => 'У мене вже є акаунт',
+			'auth.tagline' => 'Ваші плани під надійним захистом',
+			'auth.chooseMethod' => 'Оберіть спосіб використання',
+			'home.today' => 'Сьогодні',
+			'home.completed' => 'Завершені',
+			'home.newTask' => 'Нове завдання',
+			'home.whatToDo' => 'Що потрібно зробити?',
+			'home.addDetails' => 'Додати деталі...',
+			'home.deleteTask' => 'Видалити завдання?',
+			'home.deleteTaskMessage' => 'Це завдання буде видалено назавжди.',
+			'home.cancel' => 'Скасувати',
+			'home.delete' => 'Видалити',
+			'calendar.title' => 'Календар',
+			'calendar.noTasks' => 'Немає завдань на цей день',
+			'calendar.viewMonth' => 'Місяць',
+			'calendar.viewTwoWeeks' => '2 тижні',
+			'calendar.viewWeek' => 'Тиждень',
+			'calendar.viewDay' => 'День',
+			'calendar.calendarView' => 'Вигляд календаря',
+			'calendar.taskCategory' => 'Категорія завдань',
+			'calendar.save' => 'Зберегти',
+			'calendar.chooseTimezone' => 'Оберіть часовий пояс',
+			'calendar.filter' => 'Фільтр',
+			'calendar.months.0' => 'січня',
+			'calendar.months.1' => 'лютого',
+			'calendar.months.2' => 'березня',
+			'calendar.months.3' => 'квітня',
+			'calendar.months.4' => 'травня',
+			'calendar.months.5' => 'червня',
+			'calendar.months.6' => 'липня',
+			'calendar.months.7' => 'серпня',
+			'calendar.months.8' => 'вересня',
+			'calendar.months.9' => 'жовтня',
+			'calendar.months.10' => 'листопада',
+			'calendar.months.11' => 'грудня',
+			'profile.title' => 'Профіль',
+			'profile.name' => 'Ім\'я',
+			'profile.email' => 'email',
+			'profile.createAccount' => 'Створити акаунт',
+			'profile.createAccountSubtitle' => 'Створи акаунт, щоб не втратити дані',
+			'profile.personalization' => 'Персоналізація',
+			'profile.language' => 'Мова',
+			'profile.appearance' => 'Вигляд',
+			'profile.dateTime' => 'Дата та час',
+			'profile.widgets' => 'Віджети',
+			'profile.logout' => 'Вийти',
+			'profile.deleteAccount' => 'Видалити акаунт',
+			'profile.deleteAccountSubtitle' => 'Дані будуть втрачені',
+			'profile.changeName' => 'Змінити ім\'я',
+			'profile.changePassword' => 'Змінити пароль',
+			'profile.changeEncryption' => 'Змінити спосіб шифрування',
+			'profile.deleteConfirmTitle' => 'Ваші дані будуть втрачені',
+			'profile.appearanceLight' => 'Світлий',
+			'profile.appearanceDark' => 'Темний',
+			'profile.appearanceSystem' => 'Системний',
+			'profile.chooseLanguage' => 'Оберіть мову',
+			'profile.chooseAppearance' => 'Вигляд',
+			'profile.addWidget' => 'Додайте віджет',
+			'profile.widgetTasks' => 'Задачі на сьогодні',
+			'profile.widgetCalendar' => 'Календар',
+			'profile.widgetProgress' => 'Прогрес',
+			'category.all' => 'Усі',
+			'category.work' => 'Робота',
+			'category.personal' => 'Особисте',
+			'category.health' => 'Здоров\'я',
+			'category.other' => 'Інше',
+			'common.save' => 'Зберегти',
+			'common.cancel' => 'Скасувати',
+			'common.delete' => 'Видалити',
+			'common.back' => 'Назад',
+			'timezones.ukraine' => 'Україна',
+			'timezones.poland' => 'Польща',
+			'timezones.germany' => 'Німеччина',
+			'timezones.usaNy' => 'США (Нью-Йорк)',
+			'timezones.usaLa' => 'США (Лос-Анджелес)',
+			'timezones.greatBritain' => 'Велика Британія',
+			'bottomNav.tasks' => 'Tasks',
+			'bottomNav.calendar' => 'Calendar',
+			'bottomNav.profile' => 'Profile',
+			'widgets.tasks' => 'Задачі на сьогодні',
+			'widgets.calendar' => 'Календар',
+			'widgets.progress' => 'Прогрес',
 			_ => null,
 		};
 	}

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
+import 'package:frontend/i18n/strings.g.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 // Моделі
@@ -11,13 +12,13 @@ import 'package:table_calendar/table_calendar.dart';
 enum TaskCategory { all, work, personal, health, other }
 
 extension TaskCategoryLabel on TaskCategory {
-  String get label {
+  String label(Translations t) {
     switch (this) {
-      case TaskCategory.all:      return 'Усі';
-      case TaskCategory.work:     return 'Робота';
-      case TaskCategory.personal: return 'Особисте';
-      case TaskCategory.health:   return 'Здоров\'я';
-      case TaskCategory.other:    return 'Інше';
+      case TaskCategory.all:      return t.category.all;
+      case TaskCategory.work:     return t.category.work;
+      case TaskCategory.personal: return t.category.personal;
+      case TaskCategory.health:   return t.category.health;
+      case TaskCategory.other:    return t.category.other;
     }
   }
 }
@@ -25,12 +26,12 @@ extension TaskCategoryLabel on TaskCategory {
 enum CalendarViewMode { month, twoWeeks, week, day }
 
 extension CalendarViewModeExt on CalendarViewMode {
-  String get label {
+  String label(Translations t) {
     switch (this) {
-      case CalendarViewMode.month:    return 'Місяць';
-      case CalendarViewMode.twoWeeks: return '2 тижні';
-      case CalendarViewMode.week:     return 'Тиждень';
-      case CalendarViewMode.day:      return 'День';
+      case CalendarViewMode.month:    return t.calendar.viewMonth;
+      case CalendarViewMode.twoWeeks: return t.calendar.viewTwoWeeks;
+      case CalendarViewMode.week:     return t.calendar.viewWeek;
+      case CalendarViewMode.day:      return t.calendar.viewDay;
     }
   }
 
@@ -180,12 +181,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     );
   }
 
-  String _formatDayTitle(DateTime date) {
-    const months = [
-      'січня', 'лютого', 'березня', 'квітня', 'травня', 'червня',
-      'липня', 'серпня', 'вересня', 'жовтня', 'листопада', 'грудня',
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  String _formatDayTitle(DateTime date, Translations t) {
+    return '${date.day} ${t.calendar.months[date.month - 1]} ${date.year}';
   }
 
   // Build
@@ -193,6 +190,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -209,11 +207,23 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     imageFilter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                     child: Opacity(
                       opacity: 0.25,
-                      child: Image.asset(
-                        AppAssets.logo,
-                        height: 159,
-                        width: 168,
-                        fit: BoxFit.contain,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            AppAssets.logo,
+                            height: 159,
+                            width: 168,
+                            fit: BoxFit.contain,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            t.calendar.noTasks,
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: colors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -237,7 +247,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           color: colors.textPrimary,
                           size: 24,
                         ),
-                        tooltip: _viewMode.label,
+                        tooltip: _viewMode.label(t),
                         onPressed: _openViewModePicker,
                       ),
                       IconButton(
@@ -248,7 +258,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               : colors.textPrimary,
                           size: 24,
                         ),
-                        tooltip: 'Фільтр',
+                        tooltip: t.calendar.filter,
                         onPressed: _openFilterSheet,
                       ),
                     ],
@@ -261,7 +271,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   child: _viewMode == CalendarViewMode.day
                       ? _DayHeader(
                     date: _selectedDay,
-                    title: _formatDayTitle(_selectedDay),
+                    title: _formatDayTitle(_selectedDay, t),
                     onPrev: () => setState(() {
                       _selectedDay = _selectedDay
                           .subtract(const Duration(days: 1));
@@ -379,6 +389,7 @@ class _SwipableTaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Dismissible(
       key: ValueKey('cal-dismissible-${task.id}'),
@@ -431,7 +442,7 @@ class _SwipableTaskCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           )
               : null,
-          trailing: Text(task.category.label, style: textTheme.bodySmall),
+          trailing: Text(task.category.label(t), style: textTheme.bodySmall),
         ),
       ),
     );
@@ -456,6 +467,7 @@ class _SwipableCompletedTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Dismissible(
       key: ValueKey('cal-completed-${task.id}'),
@@ -502,7 +514,7 @@ class _SwipableCompletedTile extends StatelessWidget {
                 ),
               ),
             ),
-            Text(task.category.label, style: textTheme.bodySmall),
+            Text(task.category.label(t), style: textTheme.bodySmall),
           ],
         ),
       ),
@@ -529,6 +541,7 @@ class _CompletedSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -549,7 +562,7 @@ class _CompletedSection extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Завершені',
+                    t.home.completed,
                     style: textTheme.titleMedium?.copyWith(
                       color: colors.textSecondary,
                     ),
@@ -589,26 +602,35 @@ Future<bool> _confirmDelete(BuildContext context) async {
   final textTheme = Theme.of(context).textTheme;
   final result = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      actionsAlignment: MainAxisAlignment.center,
-      title: Text('Видалити завдання?',
-        textAlign: TextAlign.center,
-        style: textTheme.titleLarge,),
-      content: const Text('Це завдання буде видалено назавжди',
-        textAlign: TextAlign.center,  ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(false),
-          child: const Text('Скасувати'),
+    builder: (ctx) {
+      final t = ctx.t;
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(
+          t.home.deleteTask,
+          textAlign: TextAlign.center,
+          style: textTheme.titleLarge,
         ),
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(true),
-          style: TextButton.styleFrom(foregroundColor: AppColors.error),
-          child: const Text('Видалити'),
+        content: Text(
+          t.home.deleteTaskMessage,
+          textAlign: TextAlign.center,
         ),
-      ],
-    ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(t.common.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.error,
+            ),
+            child: Text(t.common.delete),
+          ),
+        ],
+      );
+    },
   );
   return result ?? false;
 }
@@ -795,6 +817,7 @@ class _ViewModeSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return SafeArea(
       child: Padding(
@@ -814,7 +837,7 @@ class _ViewModeSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Вигляд календаря', style: textTheme.titleLarge),
+            Text(t.calendar.calendarView, style: textTheme.titleLarge),
             const SizedBox(height: 16),
             ...CalendarViewMode.values.map(
                   (mode) => ListTile(
@@ -826,7 +849,7 @@ class _ViewModeSheet extends StatelessWidget {
                       : colors.textSecondary,
                 ),
                 title: Text(
-                  mode.label,
+                  mode.label(t),
                   style: textTheme.titleMedium?.copyWith(
                     color: current == mode
                         ? AppColors.primary
@@ -866,6 +889,7 @@ class _FilterSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return SafeArea(
       child: Padding(
@@ -885,13 +909,13 @@ class _FilterSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            Text('Категорія завдань', style: textTheme.titleLarge),
+            Text(t.calendar.taskCategory, style: textTheme.titleLarge),
             const SizedBox(height: 16),
             ...TaskCategory.values.map(
                   (cat) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(
-                  cat.label,
+                  cat.label(t),
                   style: textTheme.titleMedium?.copyWith(
                     color: current == cat
                         ? AppColors.primary
@@ -930,6 +954,7 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -945,18 +970,18 @@ class _BottomNav extends StatelessWidget {
         showUnselectedLabels: false,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: colors.textPrimary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.check_box_outlined),
-            label: 'Tasks',
+            icon: const Icon(Icons.check_box_outlined),
+            label: t.bottomNav.tasks,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month),
-            label: 'Calendar',
+            icon: const Icon(Icons.calendar_month),
+            label: t.bottomNav.calendar,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            label: t.bottomNav.profile,
           ),
         ],
       ),

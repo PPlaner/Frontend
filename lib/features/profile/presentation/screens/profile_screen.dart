@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/theme/theme_provider.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 // ProfileScreen
 
@@ -16,12 +17,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final bool _hasAccount = false;
 
   int _currentNavIndex = 2;
-  AppLanguage _language = AppLanguage.ukrainian;
-  String _timezone = 'Україна';
+  AppLocale _language = LocaleSettings.currentLocale;
+
+  // Використовуємо ключ з JSON замість прямого тексту
+  String _timezone = 'ukraine';
 
   Future<void> _openLanguage() async {
     final result = await showLanguageSheet(context, _language);
-    if (result != null) setState(() => _language = result);
+    if (result != null) {
+      await LocaleSettings.setLocale(result);
+      setState(() => _language = result);
+    }
   }
 
   Future<void> _openAppearance() async {
@@ -84,12 +90,14 @@ class _AccountView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
       children: [
         _ProfileHeader(
-          name: 'Ім\'я',
-          email: 'email',
+          name: t.profile.name,
+          email: t.profile.email,
           onTap: () {},
         ),
         const SizedBox(height: 12),
@@ -97,8 +105,8 @@ class _AccountView extends StatelessWidget {
           children: [
             _SettingsTile(
               icon: Icons.lock_outline,
-              title: 'Створити акаунт',
-              subtitle: 'Створи акаунт, щоб не втратити дані',
+              title: t.profile.createAccount,
+              subtitle: t.profile.createAccountSubtitle,
               onTap: () {},
             ),
           ],
@@ -108,25 +116,25 @@ class _AccountView extends StatelessWidget {
           children: [
             _SettingsTile(
               icon: Icons.language_outlined,
-              title: 'Мова',
+              title: t.profile.language,
               onTap: onLanguageTap,
             ),
             _TileDivider(),
             _SettingsTile(
               icon: Icons.dark_mode_outlined,
-              title: 'Вигляд',
+              title: t.profile.appearance,
               onTap: onAppearanceTap,
             ),
             _TileDivider(),
             _SettingsTile(
               icon: Icons.access_time_outlined,
-              title: 'Дата та час',
+              title: t.profile.dateTime,
               onTap: onTimezoneTap,
             ),
             _TileDivider(),
             _SettingsTile(
               icon: Icons.widgets_outlined,
-              title: 'Віджети',
+              title: t.profile.widgets,
               onTap: onWidgetsTap,
             ),
           ],
@@ -155,12 +163,14 @@ class _LocalView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = context.t;
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
       children: [
         _ProfileHeader(
-          name: 'Ім\'я',
-          email: 'email',
+          name: t.profile.name,
+          email: t.profile.email,
           onTap: () {},
         ),
         const SizedBox(height: 12),
@@ -168,7 +178,7 @@ class _LocalView extends StatelessWidget {
           children: [
             _SettingsTile(
               icon: Icons.lock_outline,
-              title: 'Персоналізація',
+              title: t.profile.personalization,
               onTap: () {},
             ),
           ],
@@ -178,25 +188,25 @@ class _LocalView extends StatelessWidget {
           children: [
             _SettingsTile(
               icon: Icons.language_outlined,
-              title: 'Мова',
+              title: t.profile.language,
               onTap: onLanguageTap,
             ),
             _TileDivider(),
             _SettingsTile(
               icon: Icons.dark_mode_outlined,
-              title: 'Вигляд',
+              title: t.profile.appearance,
               onTap: onAppearanceTap,
             ),
             _TileDivider(),
             _SettingsTile(
               icon: Icons.access_time_outlined,
-              title: 'Дата та час',
+              title: t.profile.dateTime,
               onTap: onTimezoneTap,
             ),
             _TileDivider(),
             _SettingsTile(
               icon: Icons.widgets_outlined,
-              title: 'Віджети',
+              title: t.profile.widgets,
               onTap: onWidgetsTap,
             ),
           ],
@@ -364,6 +374,7 @@ class _LogoutTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return InkWell(
       onTap: onTap,
@@ -372,7 +383,7 @@ class _LogoutTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child: Center(
           child: Text(
-            'Вийти',
+            t.profile.logout,
             style: textTheme.titleMedium?.copyWith(
               color: colors.textPrimary,
             ),
@@ -408,6 +419,7 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -423,18 +435,18 @@ class _BottomNav extends StatelessWidget {
         showUnselectedLabels: false,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: colors.textPrimary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.check_box_outlined),
-            label: 'Tasks',
+            icon: const Icon(Icons.check_box_outlined),
+            label: t.bottomNav.tasks,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Calendar',
+            icon: const Icon(Icons.calendar_month_outlined),
+            label: t.bottomNav.calendar,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            label: t.bottomNav.profile,
           ),
         ],
       ),
@@ -444,17 +456,15 @@ class _BottomNav extends StatelessWidget {
 
 /// BOTTOM SHEETS
 
-enum AppLanguage { ukrainian, english }
-
-extension AppLanguageLabel on AppLanguage {
+extension AppLocaleLabel on AppLocale {
   String get label => switch (this) {
-    AppLanguage.ukrainian => 'Українська',
-    AppLanguage.english => 'Англійська',
+    AppLocale.uk => 'Українська',
+    AppLocale.en => 'English',
   };
 }
 
-Future<AppLanguage?> showLanguageSheet(BuildContext context, AppLanguage current) {
-  return showModalBottomSheet<AppLanguage>(
+Future<AppLocale?> showLanguageSheet(BuildContext context, AppLocale current) {
+  return showModalBottomSheet<AppLocale>(
     context: context,
     backgroundColor: AppColors.of(context).surface,
     shape: const RoundedRectangleBorder(
@@ -466,11 +476,12 @@ Future<AppLanguage?> showLanguageSheet(BuildContext context, AppLanguage current
 
 class _LanguageSheet extends StatelessWidget {
   const _LanguageSheet({required this.current});
-  final AppLanguage current;
+  final AppLocale current;
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final t = context.t;
 
     return SafeArea(
       child: Padding(
@@ -481,9 +492,9 @@ class _LanguageSheet extends StatelessWidget {
           children: [
             _SheetHandle(),
             const SizedBox(height: 20),
-            Text('Оберіть мову', style: textTheme.titleLarge),
+            Text(t.profile.chooseLanguage, style: textTheme.titleLarge),
             const SizedBox(height: 8),
-            ...AppLanguage.values.map(
+            ...AppLocale.values.map(
                   (lang) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(lang.label, style: textTheme.titleMedium),
@@ -521,11 +532,12 @@ class _AppearanceSheet extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
     final currentMode = ref.watch(themeModeProvider);
+    final t = context.t;
 
     final options = [
-      (mode: ThemeMode.light, label: 'Світлий', icon: Icons.light_mode_outlined),
-      (mode: ThemeMode.dark, label: 'Темний', icon: Icons.dark_mode_outlined),
-      (mode: ThemeMode.system, label: 'Системний', icon: Icons.brightness_auto_outlined),
+      (mode: ThemeMode.light, label: t.profile.appearanceLight, icon: Icons.light_mode_outlined),
+      (mode: ThemeMode.dark, label: t.profile.appearanceDark, icon: Icons.dark_mode_outlined),
+      (mode: ThemeMode.system, label: t.profile.appearanceSystem, icon: Icons.brightness_auto_outlined),
     ];
 
     return SafeArea(
@@ -537,7 +549,7 @@ class _AppearanceSheet extends ConsumerWidget {
           children: [
             _SheetHandle(),
             const SizedBox(height: 20),
-            Text('Вигляд', style: textTheme.titleLarge),
+            Text(t.profile.chooseAppearance, style: textTheme.titleLarge),
             const SizedBox(height: 8),
             ...options.map(
                   (opt) => ListTile(
@@ -568,7 +580,7 @@ class _AppearanceSheet extends ConsumerWidget {
 }
 
 const List<String> _timezones = [
-  'Україна', 'Польща', 'Германія', 'США (Нью-Йорк)', 'США (Лос-Анджелес)', 'Велика Британія',
+  'ukraine', 'poland', 'germany', 'usaNy', 'usaLa', 'greatBritain',
 ];
 
 Future<String?> showTimezoneSheet(BuildContext context, String current) {
@@ -603,6 +615,7 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return SafeArea(
       child: Padding(
@@ -613,7 +626,7 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
           children: [
             _SheetHandle(),
             const SizedBox(height: 20),
-            Text('Оберіть часовий пояс', style: textTheme.titleLarge),
+            Text(t.calendar.chooseTimezone, style: textTheme.titleLarge),
             const SizedBox(height: 12),
             Container(
               decoration: BoxDecoration(
@@ -631,7 +644,10 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
                     color: colors.textSecondary,
                   ),
                   style: textTheme.titleMedium,
-                  items: _timezones.map((tz) => DropdownMenuItem(value: tz, child: Text(tz))).toList(),
+                  items: _timezones.map((tz) => DropdownMenuItem(
+                      value: tz,
+                      child: Text(t['timezones.$tz'].toString())
+                  )).toList(),
                   onChanged: (val) {
                     if (val != null) setState(() => _selected = val);
                   },
@@ -650,7 +666,7 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
                 ),
               ),
               child: Text(
-                'Зберегти',
+                t.common.save,
                 style: textTheme.labelLarge?.copyWith(color: colors.surface),
               ),
             ),
@@ -681,15 +697,16 @@ class _WidgetsSheet extends StatefulWidget {
 
 class _WidgetsSheetState extends State<_WidgetsSheet> {
   final List<({String title, bool enabled})> _widgets = [
-    (title: 'Задачі на сьогодні', enabled: true),
-    (title: 'Календар', enabled: false),
-    (title: 'Прогрес', enabled: false),
+    (title: 'tasks', enabled: true),
+    (title: 'calendar', enabled: false),
+    (title: 'progress', enabled: false),
   ];
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return SafeArea(
       child: Padding(
@@ -700,12 +717,12 @@ class _WidgetsSheetState extends State<_WidgetsSheet> {
           children: [
             _SheetHandle(),
             const SizedBox(height: 20),
-            Text('Додайте віджет', style: textTheme.titleLarge),
+            Text(t.profile.addWidget, style: textTheme.titleLarge),
             const SizedBox(height: 8),
             ..._widgets.asMap().entries.map(
                   (entry) => SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(entry.value.title, style: textTheme.titleMedium),
+                title: Text(t['widgets.${entry.value.title}'].toString(), style: textTheme.titleMedium),
                 value: entry.value.enabled,
 
                 activeThumbColor: AppColors.primary,
