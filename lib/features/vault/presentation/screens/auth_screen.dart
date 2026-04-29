@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -9,7 +9,9 @@ class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -20,7 +22,7 @@ class AuthScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(flex: 3),
-              Text(t.common.app_name, style: textTheme.displayLarge),
+              Text(t.appName, style: textTheme.displayLarge),
               const SizedBox(height: 24),
               Image.asset(
                 AppAssets.logo,
@@ -30,13 +32,13 @@ class AuthScreen extends StatelessWidget {
               ),
               const Spacer(flex: 2),
               Text(
-                t.auth.welcome_title,
+                t.auth.tagline,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
-                t.auth.welcome_subtitle,
+                t.auth.chooseMethod,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium,
               ),
@@ -49,15 +51,15 @@ class AuthScreen extends StatelessWidget {
                 },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colors.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: Text(
-                  t.auth.create_local,
-                  style: textTheme.labelLarge?.copyWith(color: Colors.white),
+                  t.auth.createLocalStorage,
+                  style: textTheme.labelLarge?.copyWith(color: colors.surface),
                 ),
               ),
               const SizedBox(height: 16),
@@ -77,7 +79,7 @@ class AuthScreen extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  t.auth.already_have_account,
+                  t.auth.haveAccount,
                   style: textTheme.labelLarge?.copyWith(
                     color: AppColors.primary,
                   ),

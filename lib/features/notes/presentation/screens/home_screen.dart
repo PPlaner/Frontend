@@ -1,8 +1,10 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/core/theme/app_colors.dart';
-import 'add_task_bottom_sheet.dart';
+import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 // Модель завдання
 // Перенести в domain/entities/ коли буде підключено Riverpod
@@ -57,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: title,
         // subtitle поки зберігаємо як dateLabel-заглушку
         // Зробити: окреме поле subtitle в моделі після підключення Riverpod
-        dateLabel: 'Сьогодні',
+        dateLabel: context.t.home.today,
       ));
     });
   }
@@ -199,11 +201,12 @@ class _TaskListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final t = context.t;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
       children: [
-        Text('Сьогодні', style: textTheme.displayLarge),
+        Text(t.home.today, style: textTheme.displayLarge),
         const SizedBox(height: 16),
 
         // Активні завдання — свайп вліво для видалення
@@ -400,26 +403,33 @@ Future<bool> _confirmDelete(BuildContext context) async {
   final textTheme = Theme.of(context).textTheme;
   final result = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      actionsAlignment: MainAxisAlignment.center,
-      title: Text('Видалити завдання?',
-        textAlign: TextAlign.center,
-        style: textTheme.titleLarge,),
-      content: const Text('Це завдання буде видалено назавжди',
-        textAlign: TextAlign.center,  ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(false),
-          child: const Text('Скасувати'),
+    builder: (ctx) {
+      final t = ctx.t;
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(
+          t.home.deleteTask,
+          textAlign: TextAlign.center,
+          style: textTheme.titleLarge,
         ),
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(true),
-          style: TextButton.styleFrom(foregroundColor: AppColors.error),
-          child: const Text('Видалити'),
+        content: Text(
+          t.home.deleteTaskMessage,
+          textAlign: TextAlign.center,
         ),
-      ],
-    ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(t.common.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: Text(t.common.delete),
+          ),
+        ],
+      );
+    },
   );
   return result ?? false;
 }
@@ -443,6 +453,7 @@ class _CompletedSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -460,7 +471,7 @@ class _CompletedSection extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    'Завершені',
+                    t.home.completed,
                     style: textTheme.titleMedium?.copyWith(
                       color: colors.textSecondary,
                     ),
@@ -508,6 +519,7 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
@@ -523,18 +535,18 @@ class _BottomNav extends StatelessWidget {
         showUnselectedLabels: false,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: colors.textPrimary,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.check_box_outlined),
-            label: 'Tasks',
+            icon: const Icon(Icons.check_box_outlined),
+            label: t.bottomNav.tasks,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Calendar',
+            icon: const Icon(Icons.calendar_month_outlined),
+            label: t.bottomNav.calendar,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
+            icon: const Icon(Icons.person_outline),
+            label: t.bottomNav.profile,
           ),
         ],
       ),
