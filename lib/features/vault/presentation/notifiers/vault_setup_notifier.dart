@@ -24,12 +24,18 @@ sealed class VaultSetupData with _$VaultSetupData {
 class VaultSetup extends _$VaultSetup {
   @override
   VaultSetupData build() => VaultSetupData(
-    generatedRecoveryPhrase: List<String>.filled(12, 'apple'),
+    generatedRecoveryPhrase: List<String>.filled(12, 'a'),
   );
 
   void setupPin(String secret) => state = state.copyWith(
     selectedType: KeyType.pin,
     temporarySecret: secret,
+    failure: null,
+  );
+
+  void setupPattern(List<int> secret) => state = state.copyWith(
+    selectedType: KeyType.graph,
+    temporarySecret: secret.join(),
     failure: null,
   );
 

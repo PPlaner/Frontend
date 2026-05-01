@@ -32,17 +32,29 @@ class VaultUnlock extends _$VaultUnlock {
     if (!ref.mounted) return;
 
     result.fold(
-      (success) {
-        state = state.copyWith(isUnlocking: false);
-      },
-      (failure) {
-        state = state.copyWith(isUnlocking: false, failure: failure);
-      },
+      (success) => state = state.copyWith(isUnlocking: false),
+      (failure) => state = state.copyWith(isUnlocking: false, failure: failure),
+    );
+  }
+
+  Future<void> unlockWithPattern(List<int> secret) async {
+    if (state.isUnlocking) return;
+
+    state = state.copyWith(isUnlocking: true, failure: null);
+
+    final result = await ref
+        .read(vaultServiceProvider)
+        .unlock(KeyType.graph, secret.join());
+
+    if (!ref.mounted) return;
+
+    result.fold(
+      (success) => state = state.copyWith(isUnlocking: false),
+      (failure) => state = state.copyWith(isUnlocking: false, failure: failure),
     );
   }
 
   Future<void> unlockWithPhrase(List<String> secret) async {
-    print('got');
     if (state.isUnlocking) return;
 
     state = state.copyWith(isUnlocking: true, failure: null);
@@ -54,12 +66,8 @@ class VaultUnlock extends _$VaultUnlock {
     if (!ref.mounted) return;
 
     result.fold(
-      (success) {
-        state = state.copyWith(isUnlocking: false);
-      },
-      (failure) {
-        state = state.copyWith(isUnlocking: false, failure: failure);
-      },
+      (success) => state = state.copyWith(isUnlocking: false),
+      (failure) => state = state.copyWith(isUnlocking: false, failure: failure),
     );
   }
 }
