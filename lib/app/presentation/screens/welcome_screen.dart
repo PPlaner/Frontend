@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -56,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
 
               // ── Створити локальне сховище ──
               FilledButton(
-                onPressed: () async {
+                onPressed: () {
                   if (context.mounted) {
                     unawaited(const SetupVaultRoute().push<void>(context));
                   }
@@ -80,7 +81,9 @@ class WelcomeScreen extends StatelessWidget {
               // ── Вже є акаунт ──
               OutlinedButton(
                 onPressed: () {
-                  // TO-DO: навігація до екрану логіну
+                  if (context.mounted) {
+                    unawaited(const LoginRoute().push<void>(context));
+                  }
                 },
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),

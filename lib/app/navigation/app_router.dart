@@ -1,4 +1,5 @@
 import 'package:frontend/app/presentation/app_routes.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:frontend/features/vault/domain/vault_state.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
@@ -16,6 +17,7 @@ GoRouter appRouter(Ref ref) {
     routes: [
       $splashRoute,
       $welcomeRoute,
+      $authRoute,
       $setupVaultRoute,
       $unlockVaultRoute,
       $notesRoute,
@@ -24,6 +26,8 @@ GoRouter appRouter(Ref ref) {
       final vaultState = ref.read(vaultProvider);
 
       final location = state.matchedLocation;
+
+      final isGoingToAuth = location.startsWith('/auth');
       final isGoingToSetup = location.startsWith('/setup');
       final isGoingToUnlock = location.startsWith('/unlock');
       final isGoingToWelcome = location.startsWith('/welcome');
@@ -32,7 +36,7 @@ GoRouter appRouter(Ref ref) {
         case VaultInitializing():
           return location == '/splash' ? null : '/splash';
         case VaultNotInitialized():
-          if (isGoingToSetup || isGoingToWelcome) return null;
+          if (isGoingToSetup || isGoingToWelcome || isGoingToAuth) return null;
           return const WelcomeRoute().location;
         case VaultLocked():
           if (isGoingToUnlock) return null;
