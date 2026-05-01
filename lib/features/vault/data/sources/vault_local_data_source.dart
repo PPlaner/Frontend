@@ -29,7 +29,7 @@ class VaultLocalDataSource {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 VaultLocalDataSource vaultLocalDataSource(Ref ref) => VaultLocalDataSource(
   keySlotsDao: ref.watch(appDatabaseProvider).keySlotsDao,
 );

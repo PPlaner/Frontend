@@ -58,6 +58,6 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 VaultRepository vaultRepository(Ref ref) =>
     UnifiedVaultRepository(local: ref.watch(vaultLocalDataSourceProvider));

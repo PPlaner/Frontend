@@ -22,7 +22,7 @@ final class VaultRepositoryProvider
         argument: null,
         retry: null,
         name: r'vaultRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -49,4 +49,4 @@ final class VaultRepositoryProvider
   }
 }
 
-String _$vaultRepositoryHash() => r'23c69bc8c0c9e60db308bcd24987bb9e8ed76710';
+String _$vaultRepositoryHash() => r'28f861a3214d1c1bea15e72d226ac782ec5e479c';

@@ -21,7 +21,7 @@ final class VaultServiceProvider
         argument: null,
         retry: null,
         name: r'vaultServiceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -48,4 +48,4 @@ final class VaultServiceProvider
   }
 }
 
-String _$vaultServiceHash() => r'46debedbdfa4595f539600b5ebde004426989734';
+String _$vaultServiceHash() => r'44054d0f4a6854f9e6d0a41220809368c8f56d67';

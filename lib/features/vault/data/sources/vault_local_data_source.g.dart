@@ -26,7 +26,7 @@ final class VaultLocalDataSourceProvider
         argument: null,
         retry: null,
         name: r'vaultLocalDataSourceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -55,4 +55,4 @@ final class VaultLocalDataSourceProvider
 }
 
 String _$vaultLocalDataSourceHash() =>
-    r'aa02d44c924109a303dd9a8d0fd2179643fcf183';
+    r'dbe9a186e45317544e352788274f2e1412466128';
