@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'vault_notifier.dart';
+part of 'vault_setup_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,51 +9,51 @@ part of 'vault_notifier.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(VaultNotifier)
-final vaultProvider = VaultNotifierProvider._();
+@ProviderFor(VaultSetup)
+final vaultSetupProvider = VaultSetupProvider._();
 
-final class VaultNotifierProvider
-    extends $NotifierProvider<VaultNotifier, VaultState> {
-  VaultNotifierProvider._()
+final class VaultSetupProvider
+    extends $NotifierProvider<VaultSetup, VaultSetupData> {
+  VaultSetupProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'vaultProvider',
-        isAutoDispose: true,
+        name: r'vaultSetupProvider',
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$vaultNotifierHash();
+  String debugGetCreateSourceHash() => _$vaultSetupHash();
 
   @$internal
   @override
-  VaultNotifier create() => VaultNotifier();
+  VaultSetup create() => VaultSetup();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(VaultState value) {
+  Override overrideWithValue(VaultSetupData value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<VaultState>(value),
+      providerOverride: $SyncValueProvider<VaultSetupData>(value),
     );
   }
 }
 
-String _$vaultNotifierHash() => r'44dc48ad06b7dcbee1014061c25802475db23267';
+String _$vaultSetupHash() => r'95eb290a4eff75153d6d38bcdc8688a705df0b80';
 
-abstract class _$VaultNotifier extends $Notifier<VaultState> {
-  VaultState build();
+abstract class _$VaultSetup extends $Notifier<VaultSetupData> {
+  VaultSetupData build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<VaultState, VaultState>;
+    final ref = this.ref as $Ref<VaultSetupData, VaultSetupData>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<VaultState, VaultState>,
-              VaultState,
+              AnyNotifier<VaultSetupData, VaultSetupData>,
+              VaultSetupData,
               Object?,
               Object?
             >;
