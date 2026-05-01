@@ -12,7 +12,9 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final colors = AppColors.of(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -23,7 +25,7 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 3),
 
-              Text(t.common.app_name, style: textTheme.displayLarge),
+              Text(t.appName, style: textTheme.displayLarge),
 
               const SizedBox(height: 24),
 
@@ -37,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
               const Spacer(flex: 2),
 
               Text(
-                t.auth.welcome_title,
+                t.auth.tagline,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium,
               ),
@@ -45,7 +47,7 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 8),
 
               Text(
-                t.auth.welcome_subtitle,
+                t.auth.chooseMethod,
                 textAlign: TextAlign.center,
                 style: textTheme.bodyMedium,
               ),
@@ -61,15 +63,15 @@ class WelcomeScreen extends StatelessWidget {
                 },
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colors.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: Text(
-                  t.auth.create_local,
-                  style: textTheme.labelLarge?.copyWith(color: Colors.white),
+                  t.auth.createLocalStorage,
+                  style: textTheme.labelLarge?.copyWith(color: colors.surface),
                 ),
               ),
 
@@ -82,17 +84,17 @@ class WelcomeScreen extends StatelessWidget {
                 },
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
+                  foregroundColor: colorScheme.primary,
+                  side: const BorderSide(color: colorScheme.primary),
                   backgroundColor: colors.surface,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 child: Text(
-                  t.auth.already_have_account,
+                  t.auth.haveAccount,
                   style: textTheme.labelLarge?.copyWith(
-                    color: AppColors.primary,
+                    color: colorScheme.primary,
                   ),
                 ),
               ),
