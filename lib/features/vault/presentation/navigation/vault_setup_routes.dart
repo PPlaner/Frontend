@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/features/vault/presentation/screens/setup_method_screen.dart';
+import 'package:frontend/features/vault/presentation/screens/setup_pattern_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/setup_pin_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/setup_recovery_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/setup_vefiry_screen.dart';
@@ -11,6 +12,7 @@ part 'vault_setup_routes.g.dart';
   path: '/setup',
   routes: [
     TypedGoRoute<SetupPinRoute>(path: 'pin'),
+    TypedGoRoute<SetupPatternRoute>(path: 'pattern'),
     TypedGoRoute<SetupRecoveryRoute>(path: 'recovery'),
     TypedGoRoute<SetupVerifyRoute>(path: 'vefiry'),
   ],
@@ -30,6 +32,15 @@ class SetupPinRoute extends GoRouteData with $SetupPinRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const SetupPinScreen();
+  }
+}
+
+class SetupPatternRoute extends GoRouteData with $SetupPatternRoute {
+  const SetupPatternRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const SetupPatternScreen();
   }
 }
 
