@@ -22,6 +22,7 @@ class _UnlockRecoveryScreenState extends ConsumerState<UnlockRecoveryScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final colors = AppColors.of(context);
 
     ref.listen(vaultUnlockProvider.select((state) => state.failure), (
       previous,
@@ -33,6 +34,7 @@ class _UnlockRecoveryScreenState extends ConsumerState<UnlockRecoveryScreen> {
     });
 
     return Scaffold(
+      backgroundColor: colors.surface,
       appBar: const BackAppBar(),
       body: SafePadding(
         child: Column(

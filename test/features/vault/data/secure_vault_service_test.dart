@@ -73,7 +73,7 @@ void main() {
           return const Success(null);
         });
 
-        const secrets = {KeyType.pin: '1234', KeyType.graph: '4321'};
+        const secrets = {KeyType.pin: '1234', KeyType.pattern: '4321'};
         await service.intializeNewVault(secrets);
 
         final captured = verify(
@@ -83,7 +83,7 @@ void main() {
 
         expect(savedSlots.length, 2);
         expect(savedSlots.any((slot) => slot.type == KeyType.pin), isTrue);
-        expect(savedSlots.any((slot) => slot.type == KeyType.graph), isTrue);
+        expect(savedSlots.any((slot) => slot.type == KeyType.pattern), isTrue);
 
         verify(() => mockSessionController.setMasterKey(masterKey)).called(1);
       },

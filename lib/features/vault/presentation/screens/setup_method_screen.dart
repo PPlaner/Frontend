@@ -57,14 +57,29 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
               ),
             ),
 
+            UnlockMethod(
+              title: t.security_methods.pattern_title,
+              subtitle: t.security_methods.pattern_sub,
+              isSelected: _selectedMethodId == 'pattern',
+              onTap: () => setState(
+                () => _selectedMethodId = 'pattern',
+              ),
+            ),
+
             const Spacer(),
 
             FilledButton(
               onPressed: _selectedMethodId == null
                   ? null
                   : () {
-                      if (_selectedMethodId == 'pin') {
-                        unawaited(const SetupPinRoute().push<void>(context));
+                      switch (_selectedMethodId) {
+                        case 'pin':
+                          unawaited(const SetupPinRoute().push<void>(context));
+                        case 'pattern':
+                          unawaited(
+                            const SetupPatternRoute().push<void>(context),
+                          );
+                        default:
                       }
                     },
               style: FilledButton.styleFrom(

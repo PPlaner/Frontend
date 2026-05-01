@@ -60,6 +60,15 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
             ),
 
             UnlockMethod(
+              title: t.security_methods.pattern_title,
+              subtitle: t.security_methods.pattern_sub,
+              isSelected: _selectedMethodId == 'pattern',
+              onTap: () => setState(
+                () => _selectedMethodId = 'pattern',
+              ),
+            ),
+
+            UnlockMethod(
               title: t.security_methods.word_title,
               subtitle: t.security_methods.word_sub,
               isSelected: _selectedMethodId == 'phrase',
@@ -86,6 +95,10 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
                       switch (_selectedMethodId) {
                         case 'pin':
                           unawaited(const UnlockPinRoute().push<void>(context));
+                        case 'pattern':
+                          unawaited(
+                            const UnlockPatternRoute().push<void>(context),
+                          );
                         case 'phrase':
                           unawaited(
                             const UnlockRecoveryRoute().push<void>(context),

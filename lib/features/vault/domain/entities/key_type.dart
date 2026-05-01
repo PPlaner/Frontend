@@ -1,1 +1,1 @@
-enum KeyType { pin, graph, recoveryPhrase }
+enum KeyType { pin, pattern, recoveryPhrase }

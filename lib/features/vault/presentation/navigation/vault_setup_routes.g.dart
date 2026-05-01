@@ -13,6 +13,7 @@ RouteBase get $setupVaultRoute => GoRouteData.$route(
   factory: $SetupVaultRoute._fromState,
   routes: [
     GoRouteData.$route(path: 'pin', factory: $SetupPinRoute._fromState),
+    GoRouteData.$route(path: 'pattern', factory: $SetupPatternRoute._fromState),
     GoRouteData.$route(
       path: 'recovery',
       factory: $SetupRecoveryRoute._fromState,
@@ -47,6 +48,27 @@ mixin $SetupPinRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/setup/pin');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $SetupPatternRoute on GoRouteData {
+  static SetupPatternRoute _fromState(GoRouterState state) =>
+      const SetupPatternRoute();
+
+  @override
+  String get location => GoRouteData.$location('/setup/pattern');
 
   @override
   void go(BuildContext context) => context.go(location);

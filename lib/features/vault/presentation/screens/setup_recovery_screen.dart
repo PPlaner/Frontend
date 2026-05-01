@@ -5,7 +5,7 @@ import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/ui/widgets/back_app_bar.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:frontend/features/vault/presentation/notifiers/vault_setup_notifier.dart';
-import 'package:frontend/features/vault/presentation/widgets/recovery_phrase_view.dart';
+import 'package:frontend/features/vault/presentation/widgets/recovery_phrase_display.dart';
 import 'package:frontend/features/vault/presentation/widgets/safe_padding.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
