@@ -44,7 +44,7 @@ class VaultUnlock extends _$VaultUnlock {
 
     final result = await ref
         .read(vaultServiceProvider)
-        .unlock(KeyType.graph, secret.join());
+        .unlock(KeyType.pattern, secret.join());
 
     if (!ref.mounted) return;
 

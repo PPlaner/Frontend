@@ -22,7 +22,7 @@ void main() {
 
   group('KeySlotsDao', () {
     final pinSlot = VaultFixtures.buildKeySlot(type: KeyType.pin);
-    final graphSlot = VaultFixtures.buildKeySlot(type: KeyType.graph);
+    final graphSlot = VaultFixtures.buildKeySlot(type: KeyType.pattern);
     final newPinSlot = VaultFixtures.buildKeySlot(
       wmk: VaultFixtures.generateBytes(32, 99),
     );
@@ -51,7 +51,7 @@ void main() {
         expect(savedSlots.length, 2);
 
         final types = savedSlots.map((slot) => slot.toDomain().type);
-        expect(types, containsAll([KeyType.pin, KeyType.graph]));
+        expect(types, containsAll([KeyType.pin, KeyType.pattern]));
       },
     );
 

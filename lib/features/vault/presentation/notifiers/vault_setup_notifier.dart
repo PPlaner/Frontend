@@ -34,7 +34,7 @@ class VaultSetup extends _$VaultSetup {
   );
 
   void setupPattern(List<int> secret) => state = state.copyWith(
-    selectedType: KeyType.graph,
+    selectedType: KeyType.pattern,
     temporarySecret: secret.join(),
     failure: null,
   );
