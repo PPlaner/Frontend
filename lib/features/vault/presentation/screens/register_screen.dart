@@ -75,9 +75,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   keyboardType: TextInputType.emailAddress,
                   colors: colors,
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return t.auth.email_error;
-                    final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
-                    if (!emailRegex.hasMatch(v.trim())) return t.auth.email_format_error;
+                    if (v == null || v.trim().isEmpty)
+                      return t.auth.email_error;
+                    final emailRegex = RegExp(
+                      r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    );
+                    if (!emailRegex.hasMatch(v.trim()))
+                      return t.auth.email_format_error;
                     return null;
                   },
                 ),
@@ -91,10 +95,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   colors: colors,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      _obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       color: colors.textSecondary,
                     ),
-                    onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
                   validator: (v) {
                     if (v == null || v.isEmpty) return t.auth.password_error;
@@ -112,14 +119,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   colors: colors,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                      _obscureConfirm
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
                       color: colors.textSecondary,
                     ),
-                    onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                    onPressed: () =>
+                        setState(() => _obscureConfirm = !_obscureConfirm),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return t.auth.confirm_password; // Або окремий ключ confirm_password_error
-                    if (v != _passwordController.text) return t.auth.passwords_not_match;
+                    if (v == null || v.isEmpty)
+                      return t
+                          .auth
+                          .confirm_password; // Або окремий ключ confirm_password_error
+                    if (v != _passwordController.text)
+                      return t.auth.passwords_not_match;
                     return null;
                   },
                 ),
@@ -244,18 +258,22 @@ class _PrimaryButton extends StatelessWidget {
       ),
       child: isLoading
           ? const SizedBox(
-        height: 20,
-        width: 20,
-        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-      )
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            )
           : Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-      ),
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
     );
   }
 }
+

@@ -57,7 +57,7 @@ class AuthMethodSelectionScreen extends StatelessWidget {
                             horizontal: 20,
                           ),
                           decoration: BoxDecoration(
-                            color: colors.surface,              // адаптивний — білий/темний
+                            color: colors.surface, // адаптивний — білий/темний
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
@@ -76,14 +76,14 @@ class AuthMethodSelectionScreen extends StatelessWidget {
                               Text(
                                 methods[index]['title']!,
                                 style: textTheme.titleMedium?.copyWith(
-                                  color: AppColors.primary,    // статичний primary
+                                  color: AppColors.primary, // статичний primary
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               Icon(
                                 Icons.arrow_forward_ios,
                                 size: 16,
-                                color: AppColors.primary,      // статичний primary
+                                color: AppColors.primary, // статичний primary
                               ),
                             ],
                           ),
@@ -100,3 +100,4 @@ class AuthMethodSelectionScreen extends StatelessWidget {
     );
   }
 }
+

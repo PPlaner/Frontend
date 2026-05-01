@@ -6,9 +6,9 @@ import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class AssociationScreen extends ConsumerStatefulWidget {
-  final bool isSetup;
-
   const AssociationScreen({super.key, this.isSetup = false});
+
+  final bool isSetup;
 
   @override
   ConsumerState<AssociationScreen> createState() => _AssociationScreenState();
@@ -52,7 +52,9 @@ class _AssociationScreenState extends ConsumerState<AssociationScreen> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);       // адаптивні кольори (як у profile_screen)
+    final colors = AppColors.of(
+      context,
+    ); // адаптивні кольори (як у profile_screen)
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
@@ -80,8 +82,9 @@ class _AssociationScreenState extends ConsumerState<AssociationScreen> {
                     : t.setup.word_desc_login,
                 style: textTheme.bodyMedium?.copyWith(
                   color: _hasError
-                      ? colorScheme.error          // error — через colorScheme
-                      : colors.textSecondary,      // звичайний — через colors
+                      ? colorScheme
+                            .error // error — через colorScheme
+                      : colors.textSecondary, // звичайний — через colors
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -91,7 +94,7 @@ class _AssociationScreenState extends ConsumerState<AssociationScreen> {
               Container(
                 height: 60,
                 decoration: BoxDecoration(
-                  color: colors.surface,           // surface адаптивний
+                  color: colors.surface, // surface адаптивний
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: _hasError
@@ -141,13 +144,13 @@ class _AssociationScreenState extends ConsumerState<AssociationScreen> {
               FilledButton(
                 onPressed: _isButtonEnabled ? _onSubmit : null,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,  // статичний primary
+                  backgroundColor: AppColors.primary, // статичний primary
                   minimumSize: const Size(double.infinity, 56),
                 ),
                 child: Text(
                   widget.isSetup ? t.common.register : t.common.login,
                   style: textTheme.labelLarge?.copyWith(
-                    color: Colors.white,               // білий завжди на primary кнопці
+                    color: Colors.white, // білий завжди на primary кнопці
                   ),
                 ),
               ),

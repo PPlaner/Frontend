@@ -8,7 +8,8 @@ class EmailVerificationScreen extends StatefulWidget {
   final String? email;
 
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
@@ -36,7 +37,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     if (!mounted) return;
     Navigator.of(context).pushNamedAndRemoveUntil(
       '/security_method',
-          (route) => false,
+      (route) => false,
     );
   }
 
@@ -64,14 +65,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               const SizedBox(height: 24),
               Text(
                 t.email_verify.title,
-                style: theme.textTheme.displayLarge,  // колір вже в textTheme
+                style: theme.textTheme.displayLarge, // колір вже в textTheme
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               if (widget.email != null)
                 Text(
                   '${t.email_verify.sent_to}\n${widget.email}',
-                  style: theme.textTheme.bodyMedium,  // колір вже в textTheme
+                  style: theme.textTheme.bodyMedium, // колір вже в textTheme
                   textAlign: TextAlign.center,
                 ),
               const SizedBox(height: 40),
@@ -108,24 +109,24 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               FilledButton(
                 onPressed: _isLoading ? null : _onConfirm,
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,  // явно статичний
+                  backgroundColor: AppColors.primary, // явно статичний
                   minimumSize: const Size(double.infinity, 56),
                 ),
                 child: _isLoading
                     ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : Text(
-                  t.common.confirm,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
+                        t.common.confirm,
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
               ),
               const SizedBox(height: 24),
               Center(
@@ -148,3 +149,4 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     );
   }
 }
+

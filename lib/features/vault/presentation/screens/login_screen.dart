@@ -70,11 +70,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: theme.textTheme.bodyLarge,
-                  decoration: _inputDecoration(hint: t.auth.email, colors: colors),
+                  decoration: _inputDecoration(
+                    hint: t.auth.email,
+                    colors: colors,
+                  ),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) return t.auth.email_error;
-                    final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
-                    if (!emailRegex.hasMatch(v.trim())) return t.auth.email_format_error;
+                    if (v == null || v.trim().isEmpty)
+                      return t.auth.email_error;
+                    final emailRegex = RegExp(
+                      r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    );
+                    if (!emailRegex.hasMatch(v.trim()))
+                      return t.auth.email_format_error;
                     return null;
                   },
                 ),
@@ -116,19 +123,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: _isLoading
                       ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : Text(
-                    t.common.login,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: Colors.white,    // консистентно з рештою екранів
-                    ),
-                  ),
+                          t.common.login,
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color:
+                                Colors.white, // консистентно з рештою екранів
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 24),
 
@@ -137,7 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       t.auth.no_account,
-                      style: theme.textTheme.bodyMedium,  // колір вже в textTheme
+                      style:
+                          theme.textTheme.bodyMedium, // колір вже в textTheme
                     ),
                     const SizedBox(height: 4),
                     GestureDetector(
@@ -194,3 +203,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
