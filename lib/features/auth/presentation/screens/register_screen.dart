@@ -62,7 +62,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              t.widgets.register_title,
+              t.common.register,
               style: theme.textTheme.displayLarge?.copyWith(
                 color: colors.textPrimary,
               ),

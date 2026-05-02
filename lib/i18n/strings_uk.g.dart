@@ -40,6 +40,7 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 
 	// Translations
 	@override late final _TranslationsCommonUk common = _TranslationsCommonUk._(_root);
+	@override late final _TranslationsAuthUk auth = _TranslationsAuthUk._(_root);
 	@override late final _TranslationsHomeUk home = _TranslationsHomeUk._(_root);
 	@override late final _TranslationsCalendarUk calendar = _TranslationsCalendarUk._(_root);
 	@override late final _TranslationsProfileUk profile = _TranslationsProfileUk._(_root);
@@ -47,7 +48,6 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _TranslationsTimezonesUk timezones = _TranslationsTimezonesUk._(_root);
 	@override late final _TranslationsBottomNavUk bottomNav = _TranslationsBottomNavUk._(_root);
 	@override late final _TranslationsWidgetsUk widgets = _TranslationsWidgetsUk._(_root);
-	@override late final _TranslationsAuthUk auth = _TranslationsAuthUk._(_root);
 	@override late final _TranslationsEmailVerifyUk email_verify = _TranslationsEmailVerifyUk._(_root);
 	@override late final _TranslationsSecurityMethodsUk security_methods = _TranslationsSecurityMethodsUk._(_root);
 	@override late final _TranslationsSetupUk setup = _TranslationsSetupUk._(_root);
@@ -67,6 +67,9 @@ class _TranslationsCommonUk extends TranslationsCommonEn {
 	@override String get kContinue => 'Продовжити';
 	@override String get confirm => 'Підтвердити';
 	@override String get login => 'Увійти';
+	@override String get register => 'Зареєструватись';
+	@override String get error_title => 'Помилка';
+	@override String get loading => 'Завантаження...';
 	@override String get logout => 'Вийти';
 	@override String get createLocalStorage => 'Створити локальне сховище';
 	@override String get haveAccount => 'У мене вже є акаунт';
@@ -75,6 +78,21 @@ class _TranslationsCommonUk extends TranslationsCommonEn {
 	@override String get save => 'Зберегти';
 	@override String get cancel => 'Скасувати';
 	@override String get delete => 'Видалити';
+}
+
+// Path: auth
+class _TranslationsAuthUk extends TranslationsAuthEn {
+	_TranslationsAuthUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get login => 'Увійти';
+	@override String get logout => 'Вийти';
+	@override String get createLocalStorage => 'Створити локальне сховище';
+	@override String get haveAccount => 'У мене вже є акаунт';
+	@override String get tagline => 'Ваші плани під надійним захистом';
+	@override String get chooseMethod => 'Оберіть спосіб використання';
 }
 
 // Path: home
@@ -91,8 +109,6 @@ class _TranslationsHomeUk extends TranslationsHomeEn {
 	@override String get addDetails => 'Додати деталі...';
 	@override String get deleteTask => 'Видалити завдання?';
 	@override String get deleteTaskMessage => 'Це завдання буде видалено назавжди.';
-	@override String get cancel => 'Скасувати';
-	@override String get delete => 'Видалити';
 }
 
 // Path: calendar
@@ -110,7 +126,6 @@ class _TranslationsCalendarUk extends TranslationsCalendarEn {
 	@override String get viewDay => 'День';
 	@override String get calendarView => 'Вигляд календаря';
 	@override String get taskCategory => 'Категорія завдань';
-	@override String get save => 'Зберегти';
 	@override String get chooseTimezone => 'Оберіть часовий пояс';
 	@override String get filter => 'Фільтр';
 	@override List<String> get months => [
@@ -138,7 +153,7 @@ class _TranslationsProfileUk extends TranslationsProfileEn {
 	// Translations
 	@override String get title => 'Профіль';
 	@override String get name => 'Ім\'я';
-	@override String get email => 'email';
+	@override String get email => 'Електронна пошта';
 	@override String get createAccount => 'Створити акаунт';
 	@override String get createAccountSubtitle => 'Створи акаунт, щоб не втратити дані';
 	@override String get personalization => 'Персоналізація';
@@ -146,7 +161,6 @@ class _TranslationsProfileUk extends TranslationsProfileEn {
 	@override String get appearance => 'Вигляд';
 	@override String get dateTime => 'Дата та час';
 	@override String get widgets => 'Віджети';
-	@override String get logout => 'Вийти';
 	@override String get deleteAccount => 'Видалити акаунт';
 	@override String get deleteAccountSubtitle => 'Дані будуть втрачені';
 	@override String get changeName => 'Змінити ім\'я';
@@ -159,9 +173,6 @@ class _TranslationsProfileUk extends TranslationsProfileEn {
 	@override String get chooseLanguage => 'Оберіть мову';
 	@override String get chooseAppearance => 'Вигляд';
 	@override String get addWidget => 'Додайте віджет';
-	@override String get widgetTasks => 'Задачі на сьогодні';
-	@override String get widgetCalendar => 'Календар';
-	@override String get widgetProgress => 'Прогрес';
 }
 
 // Path: category
@@ -200,9 +211,9 @@ class _TranslationsBottomNavUk extends TranslationsBottomNavEn {
 	final TranslationsUk _root; // ignore: unused_field
 
 	// Translations
-	@override String get tasks => 'Tasks';
-	@override String get calendar => 'Calendar';
-	@override String get profile => 'Profile';
+	@override String get tasks => 'Завдання';
+	@override String get calendar => 'Календар';
+	@override String get profile => 'Профіль';
 }
 
 // Path: widgets
@@ -215,24 +226,6 @@ class _TranslationsWidgetsUk extends TranslationsWidgetsEn {
 	@override String get tasks => 'Задачі на сьогодні';
 	@override String get calendar => 'Календар';
 	@override String get progress => 'Прогрес';
-	@override String get register => 'Зареєструватись';
-	@override String get error_title => 'Помилка';
-	@override String get loading => 'Завантаження...';
-}
-
-// Path: auth
-class _TranslationsAuthUk extends TranslationsAuthEn {
-	_TranslationsAuthUk._(TranslationsUk root) : this._root = root, super.internal(root);
-
-	final TranslationsUk _root; // ignore: unused_field
-
-	// Translations
-	@override String get welcome_title => 'Ваші плани під надійним захистом';
-	@override String get welcome_subtitle => 'Оберіть спосіб використання';
-	@override String get create_local => 'Створити локальне сховище';
-	@override String get already_have_account => 'У мене вже є акаунт';
-	@override String get login_title => 'Авторизація';
-	@override String get register_title => 'Створення акаунту';
 	@override String get email => 'Електронна пошта';
 	@override String get password => 'Пароль';
 	@override String get confirm_password => 'Повторіть пароль';
@@ -268,7 +261,7 @@ class _TranslationsSecurityMethodsUk extends TranslationsSecurityMethodsEn {
 
 	// Translations
 	@override String get title => 'Метод захисту';
-	@override String get subtitle => 'Оберіть спосіб швидкого входу. Секретна фраза буде створена обов’язково на наступному кроці.';
+	@override String get subtitle => 'Оберіть спосіб швидкого входу. Секретна фраза буде створена обов\'язково на наступному кроці.';
 	@override String get pin_title => 'PIN-код';
 	@override String get pin_sub => 'Швидкий доступ через 4-значний код';
 	@override String get pattern_title => 'Графічний ключ';
@@ -341,6 +334,9 @@ extension on TranslationsUk {
 			'common.kContinue' => 'Продовжити',
 			'common.confirm' => 'Підтвердити',
 			'common.login' => 'Увійти',
+			'common.register' => 'Зареєструватись',
+			'common.error_title' => 'Помилка',
+			'common.loading' => 'Завантаження...',
 			'common.logout' => 'Вийти',
 			'common.createLocalStorage' => 'Створити локальне сховище',
 			'common.haveAccount' => 'У мене вже є акаунт',
@@ -349,6 +345,12 @@ extension on TranslationsUk {
 			'common.save' => 'Зберегти',
 			'common.cancel' => 'Скасувати',
 			'common.delete' => 'Видалити',
+			'auth.login' => 'Увійти',
+			'auth.logout' => 'Вийти',
+			'auth.createLocalStorage' => 'Створити локальне сховище',
+			'auth.haveAccount' => 'У мене вже є акаунт',
+			'auth.tagline' => 'Ваші плани під надійним захистом',
+			'auth.chooseMethod' => 'Оберіть спосіб використання',
 			'home.today' => 'Сьогодні',
 			'home.completed' => 'Завершені',
 			'home.newTask' => 'Нове завдання',
@@ -356,8 +358,6 @@ extension on TranslationsUk {
 			'home.addDetails' => 'Додати деталі...',
 			'home.deleteTask' => 'Видалити завдання?',
 			'home.deleteTaskMessage' => 'Це завдання буде видалено назавжди.',
-			'home.cancel' => 'Скасувати',
-			'home.delete' => 'Видалити',
 			'calendar.title' => 'Календар',
 			'calendar.noTasks' => 'Немає завдань на цей день',
 			'calendar.viewMonth' => 'Місяць',
@@ -366,7 +366,6 @@ extension on TranslationsUk {
 			'calendar.viewDay' => 'День',
 			'calendar.calendarView' => 'Вигляд календаря',
 			'calendar.taskCategory' => 'Категорія завдань',
-			'calendar.save' => 'Зберегти',
 			'calendar.chooseTimezone' => 'Оберіть часовий пояс',
 			'calendar.filter' => 'Фільтр',
 			'calendar.months.0' => 'січня',
@@ -383,7 +382,7 @@ extension on TranslationsUk {
 			'calendar.months.11' => 'грудня',
 			'profile.title' => 'Профіль',
 			'profile.name' => 'Ім\'я',
-			'profile.email' => 'email',
+			'profile.email' => 'Електронна пошта',
 			'profile.createAccount' => 'Створити акаунт',
 			'profile.createAccountSubtitle' => 'Створи акаунт, щоб не втратити дані',
 			'profile.personalization' => 'Персоналізація',
@@ -391,7 +390,6 @@ extension on TranslationsUk {
 			'profile.appearance' => 'Вигляд',
 			'profile.dateTime' => 'Дата та час',
 			'profile.widgets' => 'Віджети',
-			'profile.logout' => 'Вийти',
 			'profile.deleteAccount' => 'Видалити акаунт',
 			'profile.deleteAccountSubtitle' => 'Дані будуть втрачені',
 			'profile.changeName' => 'Змінити ім\'я',
@@ -404,9 +402,6 @@ extension on TranslationsUk {
 			'profile.chooseLanguage' => 'Оберіть мову',
 			'profile.chooseAppearance' => 'Вигляд',
 			'profile.addWidget' => 'Додайте віджет',
-			'profile.widgetTasks' => 'Задачі на сьогодні',
-			'profile.widgetCalendar' => 'Календар',
-			'profile.widgetProgress' => 'Прогрес',
 			'category.all' => 'Усі',
 			'category.work' => 'Робота',
 			'category.personal' => 'Особисте',
@@ -418,31 +413,22 @@ extension on TranslationsUk {
 			'timezones.usaNy' => 'США (Нью-Йорк)',
 			'timezones.usaLa' => 'США (Лос-Анджелес)',
 			'timezones.greatBritain' => 'Велика Британія',
-			'bottomNav.tasks' => 'Tasks',
-			'bottomNav.calendar' => 'Calendar',
-			'bottomNav.profile' => 'Profile',
+			'bottomNav.tasks' => 'Завдання',
+			'bottomNav.calendar' => 'Календар',
+			'bottomNav.profile' => 'Профіль',
 			'widgets.tasks' => 'Задачі на сьогодні',
 			'widgets.calendar' => 'Календар',
 			'widgets.progress' => 'Прогрес',
-			'widgets.register' => 'Зареєструватись',
-			'widgets.error_title' => 'Помилка',
-			'widgets.loading' => 'Завантаження...',
-			'auth.welcome_title' => 'Ваші плани під надійним захистом',
-			'auth.welcome_subtitle' => 'Оберіть спосіб використання',
-			'auth.create_local' => 'Створити локальне сховище',
-			'auth.already_have_account' => 'У мене вже є акаунт',
-			'auth.login_title' => 'Авторизація',
-			'auth.register_title' => 'Створення акаунту',
-			'auth.email' => 'Електронна пошта',
-			'auth.password' => 'Пароль',
-			'auth.confirm_password' => 'Повторіть пароль',
-			'auth.no_account' => 'Ще не маєте акаунту?',
-			'auth.have_account' => 'Вже маєте акаунт?',
-			'auth.email_error' => 'Введіть email',
-			'auth.email_format_error' => 'Невірний формат email',
-			'auth.password_error' => 'Введіть пароль',
-			'auth.password_length_error' => 'Мінімум 6 символів',
-			'auth.passwords_not_match' => 'Паролі не співпадають',
+			'widgets.email' => 'Електронна пошта',
+			'widgets.password' => 'Пароль',
+			'widgets.confirm_password' => 'Повторіть пароль',
+			'widgets.no_account' => 'Ще не маєте акаунту?',
+			'widgets.have_account' => 'Вже маєте акаунт?',
+			'widgets.email_error' => 'Введіть email',
+			'widgets.email_format_error' => 'Невірний формат email',
+			'widgets.password_error' => 'Введіть пароль',
+			'widgets.password_length_error' => 'Мінімум 6 символів',
+			'widgets.passwords_not_match' => 'Паролі не співпадають',
 			'email_verify.title' => 'Підтвердження\nелектронної пошти',
 			'email_verify.sent_to' => 'Ми надіслали код на',
 			'email_verify.code_hint' => 'Код підтвердження',
@@ -450,7 +436,7 @@ extension on TranslationsUk {
 			'email_verify.resend' => 'Надіслати повторно',
 			'email_verify.resend_success' => 'Код відправлено повторно',
 			'security_methods.title' => 'Метод захисту',
-			'security_methods.subtitle' => 'Оберіть спосіб швидкого входу. Секретна фраза буде створена обов’язково на наступному кроці.',
+			'security_methods.subtitle' => 'Оберіть спосіб швидкого входу. Секретна фраза буде створена обов\'язково на наступному кроці.',
 			'security_methods.pin_title' => 'PIN-код',
 			'security_methods.pin_sub' => 'Швидкий доступ через 4-значний код',
 			'security_methods.pattern_title' => 'Графічний ключ',

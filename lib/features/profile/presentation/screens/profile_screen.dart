@@ -383,7 +383,7 @@ class _LogoutTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child: Center(
           child: Text(
-            t.profile.logout,
+            t.auth.logout,
             style: textTheme.titleMedium?.copyWith(
               color: colors.textPrimary,
             ),

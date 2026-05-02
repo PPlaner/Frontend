@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  t.widgets.welcome_title,
+                  t.auth.tagline,
                   style: textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),

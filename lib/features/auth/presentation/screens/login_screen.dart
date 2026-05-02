@@ -55,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              context.t.widgets.login_title,
+              context.t.common.login,
               style: context.textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
