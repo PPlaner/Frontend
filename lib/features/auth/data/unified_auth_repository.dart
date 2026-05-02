@@ -22,22 +22,32 @@ class UnifiedAuthRepository
   // --- Repository interface implementation ---
 
   @override
-  Future<Result<void, AuthFailure>> login(String email, String password) {
-    return remoteRunner(
+  Future<Result<String, AuthFailure>> login(
+    String email,
+    String password,
+  ) async {
+    final result = await remoteRunner(
       call: () =>
           _remote.login(LoginRequestDto(email: email, password: password)),
       mapCore: AuthFailure.core,
     );
+
+    return result.map((dto) => dto.accessToken);
   }
 
   @override
-  Future<Result<void, AuthFailure>> register(String email, String password) {
-    return remoteRunner(
+  Future<Result<String, AuthFailure>> register(
+    String email,
+    String password,
+  ) async {
+    final result = await remoteRunner(
       call: () => _remote.register(
         RegisterRequestDto(email: email, password: password),
       ),
       mapCore: AuthFailure.core,
     );
+
+    return result.map((dto) => dto.accessToken);
   }
 
   // --- Token refresher interface implementation ---

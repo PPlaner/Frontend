@@ -16,10 +16,10 @@ abstract class AuthRemoteDataSource {
   @POST(endpoints.login)
   Future<AuthResponseDto> login(@Body() LoginRequestDto request);
 
-  @POST(endpoints.login)
+  @POST(endpoints.register)
   Future<AuthResponseDto> register(@Body() RegisterRequestDto request);
 
-  @POST(endpoints.login)
+  @POST(endpoints.refresh)
   Future<AuthResponseDto> refresh();
 }
 
