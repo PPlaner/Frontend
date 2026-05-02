@@ -19,8 +19,6 @@ class VaultNotifier extends _$VaultNotifier {
     return const VaultInitializing();
   }
 
-  void markAsUnlocked() => state = const VaultUnlocked();
-
   void lockVault() {
     ref.read(sessionControllerProvider).clearSession();
     state = const VaultLocked();
