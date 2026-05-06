@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/utils/validators.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -23,12 +24,10 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return TextFormField(
       controller: widget.controller,
       obscureText: _obscureInput,
-      style: theme.textTheme.bodyLarge,
+      style: context.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: widget.hintText ?? context.t.widgets.password,
         suffixIcon: IconButton(

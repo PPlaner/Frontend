@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({
@@ -15,25 +16,21 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
+    return WideFilledButton(
       onPressed: isLoading ? null : onPressed,
-      style: FilledButton.styleFrom(
-        minimumSize: const Size(double.infinity, 56),
-        backgroundColor: AppColors.primary,
-      ),
       child: isLoading
-          ? const SizedBox(
+          ? SizedBox(
               height: 20,
               width: 20,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: context.colorScheme.surface,
               ),
             )
           : Text(
               label,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: context.colorScheme.surface,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
