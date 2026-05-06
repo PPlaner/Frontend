@@ -1,20 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 
 extension AppSnackbarExtension on BuildContext {
   void showSnackbarError(String message) {
-    final theme = Theme.of(this);
-
     ScaffoldMessenger.of(this)
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          backgroundColor: theme.colorScheme.error,
+          backgroundColor: colorScheme.error,
           // behavior: SnackBarBehavior.floating,
           content: Text(
             message,
             textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onError,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onError,
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+  }
+
+  void showSnackBarInfo(String message) {
+    ScaffoldMessenger.of(this)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: colorScheme.surfaceContainer,
+          // behavior: SnackBarBehavior.floating,
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
             ),
           ),
           shape: RoundedRectangleBorder(
