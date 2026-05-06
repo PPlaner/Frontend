@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
 import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
@@ -12,13 +13,8 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: context.colorScheme.surfaceContainer,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -26,7 +22,10 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 3),
 
-              Text(t.common.app_name, style: textTheme.displayLarge),
+              Text(
+                context.t.common.app_name,
+                style: context.textTheme.displayLarge,
+              ),
 
               const SizedBox(height: 24),
 
@@ -40,39 +39,28 @@ class WelcomeScreen extends StatelessWidget {
               const Spacer(flex: 2),
 
               Text(
-                t.auth.tagline,
+                context.t.auth.tagline,
                 textAlign: TextAlign.center,
-                style: textTheme.bodyMedium,
               ),
 
               const SizedBox(height: 8),
 
               Text(
-                t.auth.chooseMethod,
+                context.t.auth.chooseMethod,
                 textAlign: TextAlign.center,
-                style: textTheme.bodyMedium,
               ),
 
               const Spacer(flex: 3),
 
               // ── Створити локальне сховище ──
-              FilledButton(
+              WideFilledButton(
                 onPressed: () {
                   if (context.mounted) {
                     unawaited(const SetupVaultRoute().push<void>(context));
                   }
                 },
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 51),
-                  backgroundColor: colorScheme.primary,
-                  foregroundColor: colors.surface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
                 child: Text(
-                  t.auth.createLocalStorage,
-                  style: textTheme.labelLarge?.copyWith(color: colors.surface),
+                  context.t.auth.createLocalStorage,
                 ),
               ),
 
@@ -87,18 +75,9 @@ class WelcomeScreen extends StatelessWidget {
                 },
                 style: OutlinedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 51),
-                  foregroundColor: colorScheme.primary,
-                  side: BorderSide(color: colorScheme.primary),
-                  backgroundColor: colors.surface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
                 ),
                 child: Text(
-                  t.auth.haveAccount,
-                  style: textTheme.labelLarge?.copyWith(
-                    color: colorScheme.primary,
-                  ),
+                  context.t.auth.haveAccount,
                 ),
               ),
 
