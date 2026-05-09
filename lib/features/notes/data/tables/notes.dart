@@ -1,10 +1,11 @@
 import 'package:drift/drift.dart';
-import 'package:frontend/features/notes/data/tables/projects.dart';
 import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/features/notes/data/tables/projects.dart';
+import 'package:uuid/v7.dart';
 
 @DataClassName('NoteModel')
 class Notes extends Table {
-  TextColumn get id => text()();
+  TextColumn get id => text().clientDefault(const UuidV7().generate)();
   BlobColumn get encryptedTitle => blob()();
   BlobColumn get encryptedContent => blob()();
 

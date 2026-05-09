@@ -1,9 +1,10 @@
 import 'package:drift/drift.dart';
 import 'package:frontend/core/sync/sync_status.dart';
+import 'package:uuid/v7.dart';
 
 @DataClassName('ProjectModel')
 class Projects extends Table {
-  TextColumn get id => text()();
+  TextColumn get id => text().clientDefault(const UuidV7().generate)();
   BlobColumn get encryptedContent => blob()();
 
   IntColumn get localVersion => integer().withDefault(const Constant(1))();
