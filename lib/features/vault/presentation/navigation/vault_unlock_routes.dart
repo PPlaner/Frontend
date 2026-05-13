@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/vault/presentation/screens/fatal_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/unlock_method_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/unlock_pattern_screen.dart';
 import 'package:frontend/features/vault/presentation/screens/unlock_pin_screen.dart';
@@ -13,6 +14,7 @@ part 'vault_unlock_routes.g.dart';
     TypedGoRoute<UnlockPinRoute>(path: 'pin'),
     TypedGoRoute<UnlockPatternRoute>(path: 'pattern'),
     TypedGoRoute<UnlockRecoveryRoute>(path: 'recovery'),
+    TypedGoRoute<FatalRoute>(path: 'fatal'),
   ],
 )
 class UnlockVaultRoute extends GoRouteData with $UnlockVaultRoute {
@@ -48,5 +50,14 @@ class UnlockRecoveryRoute extends GoRouteData with $UnlockRecoveryRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const UnlockRecoveryScreen();
+  }
+}
+
+class FatalRoute extends GoRouteData with $FatalRoute {
+  const FatalRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const FatalScreen();
   }
 }

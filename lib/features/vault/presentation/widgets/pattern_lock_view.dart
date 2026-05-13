@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:pattern_lock/pattern_lock.dart';
 
@@ -56,8 +55,6 @@ class _PatternLockViewState extends State<PatternLockView>
 
   @override
   Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-
     return AnimatedBuilder(
       animation: _shakeController,
       builder: (context, child) {
@@ -73,7 +70,7 @@ class _PatternLockViewState extends State<PatternLockView>
           selectedColor: _isError
               ? context.colorScheme.error
               : context.colorScheme.primary,
-          notSelectedColor: colors.textSecondary.withValues(alpha: 0.3),
+          notSelectedColor: context.colorScheme.onSurfaceVariant,
           onInputComplete: (input) async {
             if (input.length < 4) {
               widget.onPatternTooShort?.call();

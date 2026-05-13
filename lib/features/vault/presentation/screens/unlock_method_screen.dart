@@ -7,6 +7,8 @@ import 'package:frontend/core/constants/app_sizes.dart' as sizes;
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
 import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
+import 'package:frontend/features/vault/domain/entities/key_type.dart';
+import 'package:frontend/features/vault/domain/vault_state.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_unlock_routes.dart';
 import 'package:frontend/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:frontend/features/vault/presentation/widgets/unlock_method.dart';
@@ -23,6 +25,8 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
   String? _selectedMethodId;
 
   Future<void> _onSubmit() async {
+    // TO-DO: replace String with KeyType once
+    // nuke database is not required anymore
     switch (_selectedMethodId) {
       case 'pin':
         unawaited(const UnlockPinRoute().push<void>(context));
@@ -39,12 +43,20 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(vaultProvider);
+    var methods = <KeyType>[];
+
+    if (state is VaultLocked) {
+      methods = state.unlockMethods;
+    }
+
     return FlowScaffold(
+      showAppBar: false,
       body: Column(
         children: [
           Text(
             context.t.security_methods.title,
-            style: context.textTheme.displayLarge?.copyWith(fontSize: 28),
+            style: context.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
 
@@ -58,32 +70,35 @@ class _UnlockMethodScreenState extends ConsumerState<UnlockMethodScreen> {
 
           const SizedBox(height: 48),
 
-          UnlockMethod(
-            title: context.t.security_methods.pin_title,
-            subtitle: context.t.security_methods.pin_sub,
-            isSelected: _selectedMethodId == 'pin',
-            onTap: () => setState(
-              () => _selectedMethodId = 'pin',
+          if (methods.contains(KeyType.pin))
+            UnlockMethod(
+              title: context.t.security_methods.pin_title,
+              subtitle: context.t.security_methods.pin_sub,
+              isSelected: _selectedMethodId == 'pin',
+              onTap: () => setState(
+                () => _selectedMethodId = 'pin',
+              ),
             ),
-          ),
 
-          UnlockMethod(
-            title: context.t.security_methods.pattern_title,
-            subtitle: context.t.security_methods.pattern_sub,
-            isSelected: _selectedMethodId == 'pattern',
-            onTap: () => setState(
-              () => _selectedMethodId = 'pattern',
+          if (methods.contains(KeyType.pattern))
+            UnlockMethod(
+              title: context.t.security_methods.pattern_title,
+              subtitle: context.t.security_methods.pattern_sub,
+              isSelected: _selectedMethodId == 'pattern',
+              onTap: () => setState(
+                () => _selectedMethodId = 'pattern',
+              ),
             ),
-          ),
 
-          UnlockMethod(
-            title: context.t.security_methods.word_title,
-            subtitle: context.t.security_methods.word_sub,
-            isSelected: _selectedMethodId == 'phrase',
-            onTap: () => setState(
-              () => _selectedMethodId = 'phrase',
+          if (methods.contains(KeyType.recoveryPhrase))
+            UnlockMethod(
+              title: context.t.security_methods.word_title,
+              subtitle: context.t.security_methods.word_sub,
+              isSelected: _selectedMethodId == 'phrase',
+              onTap: () => setState(
+                () => _selectedMethodId = 'phrase',
+              ),
             ),
-          ),
 
           UnlockMethod(
             title: 'nuke database',

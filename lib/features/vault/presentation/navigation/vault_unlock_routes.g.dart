@@ -21,6 +21,7 @@ RouteBase get $unlockVaultRoute => GoRouteData.$route(
       path: 'recovery',
       factory: $UnlockRecoveryRoute._fromState,
     ),
+    GoRouteData.$route(path: 'fatal', factory: $FatalRoute._fromState),
   ],
 );
 
@@ -93,6 +94,26 @@ mixin $UnlockRecoveryRoute on GoRouteData {
 
   @override
   String get location => GoRouteData.$location('/unlock/recovery');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $FatalRoute on GoRouteData {
+  static FatalRoute _fromState(GoRouterState state) => const FatalRoute();
+
+  @override
+  String get location => GoRouteData.$location('/unlock/fatal');
 
   @override
   void go(BuildContext context) => context.go(location);

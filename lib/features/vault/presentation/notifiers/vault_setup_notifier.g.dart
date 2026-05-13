@@ -20,7 +20,7 @@ final class VaultSetupProvider
         argument: null,
         retry: null,
         name: r'vaultSetupProvider',
-        isAutoDispose: false,
+        isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +41,7 @@ final class VaultSetupProvider
   }
 }
 
-String _$vaultSetupHash() => r'95a3ee8b660462bfe8dcd1d1ce906903caf8720f';
+String _$vaultSetupHash() => r'bcf9b71c8c2c2caf13a592de2716dfeb80ac9093';
 
 abstract class _$VaultSetup extends $Notifier<VaultSetupData> {
   VaultSetupData build();
