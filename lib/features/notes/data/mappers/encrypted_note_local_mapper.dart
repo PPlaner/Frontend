@@ -23,7 +23,7 @@ extension NoteModelToEncrypted on NoteModel {
 
 extension EncryptedNoteToCompanion on EncryptedNote {
   NotesCompanion toCompanion() => NotesCompanion.insert(
-    id: id,
+    id: Value(id),
 
     encryptedTitle: encryptedTitle,
     encryptedContent: encryptedContent,
