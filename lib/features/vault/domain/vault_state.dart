@@ -1,3 +1,4 @@
+import 'package:frontend/features/vault/domain/entities/key_type.dart';
 import 'package:frontend/features/vault/domain/failures/vault_failure.dart';
 
 sealed class VaultState {
@@ -13,7 +14,9 @@ class VaultNotInitialized extends VaultState {
 }
 
 class VaultLocked extends VaultState {
-  const VaultLocked();
+  const VaultLocked({required this.unlockMethods});
+
+  final List<KeyType> unlockMethods;
 }
 
 class VaultUnlocked extends VaultState {
@@ -24,4 +27,8 @@ class VaultError extends VaultState {
   const VaultError(this.failure);
 
   final VaultFailure failure;
+}
+
+class VaultFatal extends VaultState {
+  const VaultFatal();
 }

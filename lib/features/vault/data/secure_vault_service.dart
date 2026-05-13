@@ -34,13 +34,6 @@ class SecureVaultService implements VaultService {
   final VaultRepository _repository;
 
   @override
-  Future<Result<bool, VaultFailure>> isInitialized() async {
-    final result = await _repository.getAll();
-
-    return result.map((slots) => slots.isNotEmpty);
-  }
-
-  @override
   Future<Result<void, VaultFailure>> intializeNewVault(
     Map<KeyType, String> initialSecrets,
   ) async {
@@ -62,6 +55,7 @@ class SecureVaultService implements VaultService {
             type: type,
             salt: salt,
             wrappedMasterKey: wmk,
+            updatedAt: DateTime.now().toUtc(),
           ),
         );
       }
@@ -73,6 +67,13 @@ class SecureVaultService implements VaultService {
 
       return const Success(null);
     });
+  }
+
+  @override
+  Future<Result<List<KeyType>, VaultFailure>> getUnlockMethods() async {
+    final result = await _repository.getAll();
+
+    return result.map((slots) => slots.map((slot) => slot.type).toList());
   }
 
   @override
@@ -97,6 +98,11 @@ class SecureVaultService implements VaultService {
 
       return const Success(null);
     });
+  }
+
+  @override
+  Future<Result<void, VaultFailure>> pushKeys() async {
+    return _guard(_repository.pushKeys);
   }
 
   Future<Result<T, VaultFailure>> _guard<T>(
