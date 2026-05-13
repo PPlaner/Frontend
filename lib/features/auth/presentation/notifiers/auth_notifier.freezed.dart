@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AuthData {
 
- bool get isProcessing;
+ String? get email; String? get password; bool get isProcessing; AuthFailure? get failure;
 /// Create a copy of AuthData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AuthDataCopyWith<AuthData> get copyWith => _$AuthDataCopyWithImpl<AuthData>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthData&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthData&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing)&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isProcessing);
+int get hashCode => Object.hash(runtimeType,email,password,isProcessing,failure);
 
 @override
 String toString() {
-  return 'AuthData(isProcessing: $isProcessing)';
+  return 'AuthData(email: $email, password: $password, isProcessing: $isProcessing, failure: $failure)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $AuthDataCopyWith<$Res>  {
   factory $AuthDataCopyWith(AuthData value, $Res Function(AuthData) _then) = _$AuthDataCopyWithImpl;
 @useResult
 $Res call({
- bool isProcessing
+ String? email, String? password, bool isProcessing, AuthFailure? failure
 });
 
 
-
+$AuthFailureCopyWith<$Res>? get failure;
 
 }
 /// @nodoc
@@ -62,13 +62,28 @@ class _$AuthDataCopyWithImpl<$Res>
 
 /// Create a copy of AuthData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isProcessing = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? email = freezed,Object? password = freezed,Object? isProcessing = null,Object? failure = freezed,}) {
   return _then(_self.copyWith(
-isProcessing: null == isProcessing ? _self.isProcessing : isProcessing // ignore: cast_nullable_to_non_nullable
-as bool,
+email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,password: freezed == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
+as String?,isProcessing: null == isProcessing ? _self.isProcessing : isProcessing // ignore: cast_nullable_to_non_nullable
+as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
+as AuthFailure?,
   ));
 }
+/// Create a copy of AuthData
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AuthFailureCopyWith<$Res>? get failure {
+    if (_self.failure == null) {
+    return null;
+  }
 
+  return $AuthFailureCopyWith<$Res>(_self.failure!, (value) {
+    return _then(_self.copyWith(failure: value));
+  });
+}
 }
 
 
@@ -147,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isProcessing)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? email,  String? password,  bool isProcessing,  AuthFailure? failure)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AuthData() when $default != null:
-return $default(_that.isProcessing);case _:
+return $default(_that.email,_that.password,_that.isProcessing,_that.failure);case _:
   return orElse();
 
 }
@@ -168,10 +183,10 @@ return $default(_that.isProcessing);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isProcessing)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? email,  String? password,  bool isProcessing,  AuthFailure? failure)  $default,) {final _that = this;
 switch (_that) {
 case _AuthData():
-return $default(_that.isProcessing);}
+return $default(_that.email,_that.password,_that.isProcessing,_that.failure);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -185,10 +200,10 @@ return $default(_that.isProcessing);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isProcessing)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? email,  String? password,  bool isProcessing,  AuthFailure? failure)?  $default,) {final _that = this;
 switch (_that) {
 case _AuthData() when $default != null:
-return $default(_that.isProcessing);case _:
+return $default(_that.email,_that.password,_that.isProcessing,_that.failure);case _:
   return null;
 
 }
@@ -200,10 +215,13 @@ return $default(_that.isProcessing);case _:
 
 
 class _AuthData implements AuthData {
-  const _AuthData({this.isProcessing = false});
+  const _AuthData({this.email, this.password, this.isProcessing = false, this.failure});
   
 
+@override final  String? email;
+@override final  String? password;
 @override@JsonKey() final  bool isProcessing;
+@override final  AuthFailure? failure;
 
 /// Create a copy of AuthData
 /// with the given fields replaced by the non-null parameter values.
@@ -215,16 +233,16 @@ _$AuthDataCopyWith<_AuthData> get copyWith => __$AuthDataCopyWithImpl<_AuthData>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthData&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AuthData&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.isProcessing, isProcessing) || other.isProcessing == isProcessing)&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isProcessing);
+int get hashCode => Object.hash(runtimeType,email,password,isProcessing,failure);
 
 @override
 String toString() {
-  return 'AuthData(isProcessing: $isProcessing)';
+  return 'AuthData(email: $email, password: $password, isProcessing: $isProcessing, failure: $failure)';
 }
 
 
@@ -235,11 +253,11 @@ abstract mixin class _$AuthDataCopyWith<$Res> implements $AuthDataCopyWith<$Res>
   factory _$AuthDataCopyWith(_AuthData value, $Res Function(_AuthData) _then) = __$AuthDataCopyWithImpl;
 @override @useResult
 $Res call({
- bool isProcessing
+ String? email, String? password, bool isProcessing, AuthFailure? failure
 });
 
 
-
+@override $AuthFailureCopyWith<$Res>? get failure;
 
 }
 /// @nodoc
@@ -252,14 +270,29 @@ class __$AuthDataCopyWithImpl<$Res>
 
 /// Create a copy of AuthData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isProcessing = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? email = freezed,Object? password = freezed,Object? isProcessing = null,Object? failure = freezed,}) {
   return _then(_AuthData(
-isProcessing: null == isProcessing ? _self.isProcessing : isProcessing // ignore: cast_nullable_to_non_nullable
-as bool,
+email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,password: freezed == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
+as String?,isProcessing: null == isProcessing ? _self.isProcessing : isProcessing // ignore: cast_nullable_to_non_nullable
+as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nullable_to_non_nullable
+as AuthFailure?,
   ));
 }
 
+/// Create a copy of AuthData
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AuthFailureCopyWith<$Res>? get failure {
+    if (_self.failure == null) {
+    return null;
+  }
 
+  return $AuthFailureCopyWith<$Res>(_self.failure!, (value) {
+    return _then(_self.copyWith(failure: value));
+  });
+}
 }
 
 // dart format on
