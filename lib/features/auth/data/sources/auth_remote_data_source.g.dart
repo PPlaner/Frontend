@@ -47,6 +47,25 @@ class _AuthRemoteDataSource implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> requestVerification(RequestVerificationDto request) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = request;
+    final _options = _setStreamType<void>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/v1/auth/verify-email',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    await _dio.fetch<void>(_options);
+  }
+
+  @override
   Future<AuthResponseDto> register(RegisterRequestDto request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -56,7 +75,7 @@ class _AuthRemoteDataSource implements AuthRemoteDataSource {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/api/v1/auth/register',
+            '/api/v1/auth/confirm-register',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -154,7 +173,7 @@ final class AuthRemoteDataSourceProvider
         argument: null,
         retry: null,
         name: r'authRemoteDataSourceProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -183,4 +202,4 @@ final class AuthRemoteDataSourceProvider
 }
 
 String _$authRemoteDataSourceHash() =>
-    r'e1a2df62edab4af11297a47d5bd522b5dd51942b';
+    r'4280908d9a1f9498261bc6efc668360503004b18';

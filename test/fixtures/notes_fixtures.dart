@@ -27,7 +27,7 @@ class NotesFixtures {
     String? projectId,
   }) {
     return NotesCompanion.insert(
-      id: id ?? 'note_1',
+      id: id != null ? Value(id) : const Value('note_1'),
       encryptedTitle: encryptedTitle ?? defaultBytes,
       encryptedContent: encryptedContent ?? defaultBytes,
       localVersion: localVersion != null ? Value(localVersion) : const Value(1),
@@ -77,7 +77,7 @@ class NotesFixtures {
     DateTime? deletedAt,
   }) {
     return ProjectsCompanion.insert(
-      id: id ?? 'project_1',
+      id: id != null ? Value(id) : const Value('project_1'),
       encryptedContent: encryptedContent ?? defaultBytes,
       localVersion: localVersion != null ? Value(localVersion) : const Value(1),
       lastSyncedVersion: lastSyncedVersion != null
@@ -109,8 +109,6 @@ class NotesFixtures {
       syncStatus: syncStatus ?? SyncStatus.synced,
       createdAt: defaultDate,
       updatedAt: defaultDate,
-      deletedAt: null,
-      projectId: null,
     );
   }
 

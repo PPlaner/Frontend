@@ -4,6 +4,7 @@ import 'package:frontend/core/network/token_refresher.dart';
 import 'package:frontend/core/utils/data_source_runner.dart';
 import 'package:frontend/features/auth/data/dto/login_request_dto.dart';
 import 'package:frontend/features/auth/data/dto/register_request_dto.dart';
+import 'package:frontend/features/auth/data/dto/request_verification_dto.dart';
 import 'package:frontend/features/auth/data/sources/auth_remote_data_source.dart';
 import 'package:frontend/features/auth/domain/auth_repository.dart';
 import 'package:frontend/features/auth/domain/failures/auth_failure.dart';
@@ -36,13 +37,23 @@ class UnifiedAuthRepository
   }
 
   @override
+  Future<Result<void, AuthFailure>> requestVerification(String email) {
+    return remoteRunner(
+      call: () =>
+          _remote.requestVerification(RequestVerificationDto(email: email)),
+      mapCore: AuthFailure.core,
+    );
+  }
+
+  @override
   Future<Result<String, AuthFailure>> register(
     String email,
     String password,
+    String code,
   ) async {
     final result = await remoteRunner(
       call: () => _remote.register(
-        RegisterRequestDto(email: email, password: password),
+        RegisterRequestDto(email: email, password: password, code: code),
       ),
       mapCore: AuthFailure.core,
     );

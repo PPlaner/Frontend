@@ -1,45 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
-import 'package:frontend/core/ui/widgets/back_app_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/config/user_config.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
+import 'package:frontend/core/utils/app_snackbar.dart';
+import 'package:frontend/core/utils/navigation_helper.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_navigator.dart';
+import 'package:frontend/features/auth/presentation/notifiers/auth_notifier.dart';
+import 'package:frontend/features/auth/presentation/widgets/code_form_field.dart';
+import 'package:frontend/features/auth/presentation/widgets/primary_button.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
-  const EmailVerificationScreen({super.key, this.email});
+class EmailVerificationScreen extends ConsumerStatefulWidget {
+  const EmailVerificationScreen({required this.source, super.key});
 
-  final String? email;
+  final String source;
 
   @override
-  State<EmailVerificationScreen> createState() =>
+  ConsumerState<EmailVerificationScreen> createState() =>
       _EmailVerificationScreenState();
 }
 
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
+class _EmailVerificationScreenState
+    extends ConsumerState<EmailVerificationScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _codeController = TextEditingController();
-  bool _isLoading = false;
 
   @override
   void dispose() {
     _codeController.dispose();
+
     super.dispose();
   }
 
   Future<void> _onConfirm() async {
-    final code = _codeController.text.trim();
-    if (code.isEmpty || code.length < 4) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(t.email_verify.code_error)),
-      );
-      return;
-    }
-    setState(() => _isLoading = true);
-    // TODO: виклик AuthBloc / AuthRepository для верифікації коду
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() => _isLoading = false);
+    if (!_formKey.currentState!.validate()) return;
+
+    final success = await ref
+        .read(authProvider.notifier)
+        .confirmRegister(_codeController.text.trim());
+
     if (!mounted) return;
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      '/security_method',
-      (route) => false,
-    );
+
+    if (success) {
+      context.showSnackBarSuccess(context.t.auth.registerSuccess);
+      await ref.read(userPreferencesProvider).setAuthenticatedBefore(true);
+
+      if (widget.source == 'inApp') {
+        ref.read(authNavigatorProvider).onAuthCompleted();
+      }
+    } else {
+      final failure = ref.read(authProvider).failure;
+      if (failure != null) context.showSnackbarError('$failure');
+    }
   }
 
   Future<void> _onResend() async {
@@ -51,109 +64,50 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = AppColors.of(context);
+    final isProcessing = ref.watch(
+      authProvider.select((state) => state.isProcessing),
+    );
 
-    return Scaffold(
-      backgroundColor: colors.background,
-      appBar: const BackAppBar(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 24),
+    return FlowScaffold(
+      body: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              context.t.email_verify.title,
+              style: context.textTheme.headlineMedium,
+              textAlign: TextAlign.center,
+            ),
 
-              Text(
-                t.email_verify.title,
-                style: theme.textTheme.displayLarge,
-                textAlign: TextAlign.center,
-              ),
+            const SizedBox(height: 40),
 
-              const SizedBox(height: 16),
+            CodeFormField(controller: _codeController),
 
-              if (widget.email != null)
-                Text(
-                  '${t.email_verify.sent_to}\n${widget.email}',
-                  style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
+            const SizedBox(height: 32),
 
-              const SizedBox(height: 40),
+            PrimaryButton(
+              label: context.t.common.confirm,
+              isLoading: isProcessing,
+              onPressed: _onConfirm,
+            ),
 
-              TextFormField(
-                controller: _codeController,
-                keyboardType: TextInputType.number,
-                style: theme.textTheme.bodyLarge,
-                decoration: InputDecoration(
-                  hintText: t.email_verify.code_hint,
-                  hintStyle: theme.textTheme.bodyLarge?.copyWith(
-                    color: colors.textSecondary,
-                  ),
-                  filled: true,
-                  fillColor: colors.surface,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: colors.cardBorder),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: AppColors.primary),
-                  ),
-                  errorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: AppColors.error),
-                  ),
-                  focusedErrorBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: const BorderSide(color: AppColors.error),
+            const SizedBox(height: 24),
+
+            Center(
+              child: TextButton(
+                onPressed: _onResend,
+                child: Text(
+                  context.t.email_verify.resend,
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    color: context.colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: context.colorScheme.primary,
                   ),
                 ),
               ),
-
-              const SizedBox(height: 32),
-
-              FilledButton(
-                onPressed: _isLoading ? null : _onConfirm,
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  minimumSize: const Size(double.infinity, 56),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(
-                        t.common.confirm,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-              ),
-
-              const SizedBox(height: 24),
-
-              Center(
-                child: TextButton(
-                  onPressed: _onResend,
-                  child: Text(
-                    t.email_verify.resend,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

@@ -1,7 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/app/database/database.dart';
+import 'package:frontend/core/config/user_config.dart';
+import 'package:frontend/core/sync/sync_status.dart';
 import 'package:frontend/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:frontend/features/vault/data/sources/vault_local_data_source.dart';
+import 'package:frontend/features/vault/data/sources/vault_remote_data_source.dart';
 import 'package:frontend/features/vault/data/unified_vault_repository.dart';
 import 'package:frontend/features/vault/domain/vault_repository.dart';
 import 'package:mocktail/mocktail.dart';
@@ -11,15 +14,27 @@ import '../../../helpers/test_helpers.dart';
 
 class MockVaultLocalDataSource extends Mock implements VaultLocalDataSource {}
 
+class MockVaultRemoteDataSource extends Mock implements VaultRemoteDataSource {}
+
+class MockUserPreferences extends Mock implements UserPreferences {}
+
 void main() {
   setUpAll(registerTestFallbacks);
 
   late MockVaultLocalDataSource mockLocal;
+  late MockVaultRemoteDataSource mockRemote;
+  late MockUserPreferences mockUserPrefs;
   late VaultRepository repository;
 
   setUp(() {
     mockLocal = MockVaultLocalDataSource();
-    repository = UnifiedVaultRepository(local: mockLocal);
+    mockRemote = MockVaultRemoteDataSource();
+    mockUserPrefs = MockUserPreferences();
+    repository = UnifiedVaultRepository(
+      local: mockLocal,
+      remote: mockRemote,
+      userPrefs: mockUserPrefs,
+    );
   });
 
   group('VaultRepository', () {
@@ -40,6 +55,8 @@ void main() {
         type: slot.type,
         salt: slot.salt,
         wrappedMasterKey: slot.wrappedMasterKey,
+        updatedAt: slot.updatedAt,
+        syncStatus: SyncStatus.synced,
       );
 
       when(() => mockLocal.getKeySlotByType(any())).thenAnswer((_) async {

@@ -40,7 +40,35 @@ class $KeySlotsTable extends KeySlots
         requiredDuringInsert: true,
       );
   @override
-  List<GeneratedColumn> get $columns => [type, salt, wrappedMasterKey];
+  late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus =
+      GeneratedColumn<int>(
+        'sync_status',
+        aliasedName,
+        false,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(1),
+      ).withConverter<SyncStatus>($KeySlotsTable.$convertersyncStatus);
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    type,
+    salt,
+    wrappedMasterKey,
+    syncStatus,
+    updatedAt,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -72,6 +100,12 @@ class $KeySlotsTable extends KeySlots
     } else if (isInserting) {
       context.missing(_wrappedMasterKeyMeta);
     }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
     return context;
   }
 
@@ -95,6 +129,16 @@ class $KeySlotsTable extends KeySlots
         DriftSqlType.blob,
         data['${effectivePrefix}wrapped_master_key'],
       )!,
+      syncStatus: $KeySlotsTable.$convertersyncStatus.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.int,
+          data['${effectivePrefix}sync_status'],
+        )!,
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
     );
   }
 
@@ -105,16 +149,22 @@ class $KeySlotsTable extends KeySlots
 
   static JsonTypeConverter2<KeyType, int, int> $convertertype =
       const EnumIndexConverter<KeyType>(KeyType.values);
+  static JsonTypeConverter2<SyncStatus, int, int> $convertersyncStatus =
+      const EnumIndexConverter<SyncStatus>(SyncStatus.values);
 }
 
 class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
   final KeyType type;
   final Uint8List salt;
   final Uint8List wrappedMasterKey;
+  final SyncStatus syncStatus;
+  final DateTime updatedAt;
   const KeySlotModel({
     required this.type,
     required this.salt,
     required this.wrappedMasterKey,
+    required this.syncStatus,
+    required this.updatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -124,6 +174,12 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
     }
     map['salt'] = Variable<Uint8List>(salt);
     map['wrapped_master_key'] = Variable<Uint8List>(wrappedMasterKey);
+    {
+      map['sync_status'] = Variable<int>(
+        $KeySlotsTable.$convertersyncStatus.toSql(syncStatus),
+      );
+    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
     return map;
   }
 
@@ -132,6 +188,8 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
       type: Value(type),
       salt: Value(salt),
       wrappedMasterKey: Value(wrappedMasterKey),
+      syncStatus: Value(syncStatus),
+      updatedAt: Value(updatedAt),
     );
   }
 
@@ -148,6 +206,10 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
       wrappedMasterKey: serializer.fromJson<Uint8List>(
         json['wrappedMasterKey'],
       ),
+      syncStatus: $KeySlotsTable.$convertersyncStatus.fromJson(
+        serializer.fromJson<int>(json['syncStatus']),
+      ),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
   }
   @override
@@ -159,6 +221,10 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
       ),
       'salt': serializer.toJson<Uint8List>(salt),
       'wrappedMasterKey': serializer.toJson<Uint8List>(wrappedMasterKey),
+      'syncStatus': serializer.toJson<int>(
+        $KeySlotsTable.$convertersyncStatus.toJson(syncStatus),
+      ),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
   }
 
@@ -166,10 +232,14 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
     KeyType? type,
     Uint8List? salt,
     Uint8List? wrappedMasterKey,
+    SyncStatus? syncStatus,
+    DateTime? updatedAt,
   }) => KeySlotModel(
     type: type ?? this.type,
     salt: salt ?? this.salt,
     wrappedMasterKey: wrappedMasterKey ?? this.wrappedMasterKey,
+    syncStatus: syncStatus ?? this.syncStatus,
+    updatedAt: updatedAt ?? this.updatedAt,
   );
   KeySlotModel copyWithCompanion(KeySlotsCompanion data) {
     return KeySlotModel(
@@ -178,6 +248,10 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
       wrappedMasterKey: data.wrappedMasterKey.present
           ? data.wrappedMasterKey.value
           : this.wrappedMasterKey,
+      syncStatus: data.syncStatus.present
+          ? data.syncStatus.value
+          : this.syncStatus,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
   }
 
@@ -186,7 +260,9 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
     return (StringBuffer('KeySlotModel(')
           ..write('type: $type, ')
           ..write('salt: $salt, ')
-          ..write('wrappedMasterKey: $wrappedMasterKey')
+          ..write('wrappedMasterKey: $wrappedMasterKey, ')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -196,6 +272,8 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
     type,
     $driftBlobEquality.hash(salt),
     $driftBlobEquality.hash(wrappedMasterKey),
+    syncStatus,
+    updatedAt,
   );
   @override
   bool operator ==(Object other) =>
@@ -206,33 +284,45 @@ class KeySlotModel extends DataClass implements Insertable<KeySlotModel> {
           $driftBlobEquality.equals(
             other.wrappedMasterKey,
             this.wrappedMasterKey,
-          ));
+          ) &&
+          other.syncStatus == this.syncStatus &&
+          other.updatedAt == this.updatedAt);
 }
 
 class KeySlotsCompanion extends UpdateCompanion<KeySlotModel> {
   final Value<KeyType> type;
   final Value<Uint8List> salt;
   final Value<Uint8List> wrappedMasterKey;
+  final Value<SyncStatus> syncStatus;
+  final Value<DateTime> updatedAt;
   const KeySlotsCompanion({
     this.type = const Value.absent(),
     this.salt = const Value.absent(),
     this.wrappedMasterKey = const Value.absent(),
+    this.syncStatus = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   KeySlotsCompanion.insert({
     this.type = const Value.absent(),
     required Uint8List salt,
     required Uint8List wrappedMasterKey,
+    this.syncStatus = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   }) : salt = Value(salt),
        wrappedMasterKey = Value(wrappedMasterKey);
   static Insertable<KeySlotModel> custom({
     Expression<int>? type,
     Expression<Uint8List>? salt,
     Expression<Uint8List>? wrappedMasterKey,
+    Expression<int>? syncStatus,
+    Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (type != null) 'type': type,
       if (salt != null) 'salt': salt,
       if (wrappedMasterKey != null) 'wrapped_master_key': wrappedMasterKey,
+      if (syncStatus != null) 'sync_status': syncStatus,
+      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
@@ -240,11 +330,15 @@ class KeySlotsCompanion extends UpdateCompanion<KeySlotModel> {
     Value<KeyType>? type,
     Value<Uint8List>? salt,
     Value<Uint8List>? wrappedMasterKey,
+    Value<SyncStatus>? syncStatus,
+    Value<DateTime>? updatedAt,
   }) {
     return KeySlotsCompanion(
       type: type ?? this.type,
       salt: salt ?? this.salt,
       wrappedMasterKey: wrappedMasterKey ?? this.wrappedMasterKey,
+      syncStatus: syncStatus ?? this.syncStatus,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -262,6 +356,14 @@ class KeySlotsCompanion extends UpdateCompanion<KeySlotModel> {
     if (wrappedMasterKey.present) {
       map['wrapped_master_key'] = Variable<Uint8List>(wrappedMasterKey.value);
     }
+    if (syncStatus.present) {
+      map['sync_status'] = Variable<int>(
+        $KeySlotsTable.$convertersyncStatus.toSql(syncStatus.value),
+      );
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
     return map;
   }
 
@@ -270,7 +372,9 @@ class KeySlotsCompanion extends UpdateCompanion<KeySlotModel> {
     return (StringBuffer('KeySlotsCompanion(')
           ..write('type: $type, ')
           ..write('salt: $salt, ')
-          ..write('wrappedMasterKey: $wrappedMasterKey')
+          ..write('wrappedMasterKey: $wrappedMasterKey, ')
+          ..write('syncStatus: $syncStatus, ')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -289,7 +393,8 @@ class $ProjectsTable extends Projects
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
+    clientDefault: const UuidV7().generate,
   );
   static const VerificationMeta _encryptedContentMeta = const VerificationMeta(
     'encryptedContent',
@@ -397,8 +502,6 @@ class $ProjectsTable extends Projects
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('encrypted_content')) {
       context.handle(
@@ -698,7 +801,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     this.rowid = const Value.absent(),
   });
   ProjectsCompanion.insert({
-    required String id,
+    this.id = const Value.absent(),
     required Uint8List encryptedContent,
     this.localVersion = const Value.absent(),
     this.lastSyncedVersion = const Value.absent(),
@@ -707,8 +810,7 @@ class ProjectsCompanion extends UpdateCompanion<ProjectModel> {
     this.updatedAt = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       encryptedContent = Value(encryptedContent);
+  }) : encryptedContent = Value(encryptedContent);
   static Insertable<ProjectModel> custom({
     Expression<String>? id,
     Expression<Uint8List>? encryptedContent,
@@ -821,7 +923,8 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: true,
+    requiredDuringInsert: false,
+    clientDefault: const UuidV7().generate,
   );
   static const VerificationMeta _encryptedTitleMeta = const VerificationMeta(
     'encryptedTitle',
@@ -957,8 +1060,6 @@ class $NotesTable extends Notes with TableInfo<$NotesTable, NoteModel> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
     }
     if (data.containsKey('encrypted_title')) {
       context.handle(
@@ -1320,7 +1421,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     this.rowid = const Value.absent(),
   });
   NotesCompanion.insert({
-    required String id,
+    this.id = const Value.absent(),
     required Uint8List encryptedTitle,
     required Uint8List encryptedContent,
     this.localVersion = const Value.absent(),
@@ -1331,8 +1432,7 @@ class NotesCompanion extends UpdateCompanion<NoteModel> {
     this.deletedAt = const Value.absent(),
     this.projectId = const Value.absent(),
     this.rowid = const Value.absent(),
-  }) : id = Value(id),
-       encryptedTitle = Value(encryptedTitle),
+  }) : encryptedTitle = Value(encryptedTitle),
        encryptedContent = Value(encryptedContent);
   static Insertable<NoteModel> custom({
     Expression<String>? id,
@@ -2063,12 +2163,16 @@ typedef $$KeySlotsTableCreateCompanionBuilder =
       Value<KeyType> type,
       required Uint8List salt,
       required Uint8List wrappedMasterKey,
+      Value<SyncStatus> syncStatus,
+      Value<DateTime> updatedAt,
     });
 typedef $$KeySlotsTableUpdateCompanionBuilder =
     KeySlotsCompanion Function({
       Value<KeyType> type,
       Value<Uint8List> salt,
       Value<Uint8List> wrappedMasterKey,
+      Value<SyncStatus> syncStatus,
+      Value<DateTime> updatedAt,
     });
 
 class $$KeySlotsTableFilterComposer
@@ -2093,6 +2197,17 @@ class $$KeySlotsTableFilterComposer
 
   ColumnFilters<Uint8List> get wrappedMasterKey => $composableBuilder(
     column: $table.wrappedMasterKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<SyncStatus, SyncStatus, int> get syncStatus =>
+      $composableBuilder(
+        column: $table.syncStatus,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2120,6 +2235,16 @@ class $$KeySlotsTableOrderingComposer
     column: $table.wrappedMasterKey,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get syncStatus => $composableBuilder(
+    column: $table.syncStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$KeySlotsTableAnnotationComposer
@@ -2141,6 +2266,15 @@ class $$KeySlotsTableAnnotationComposer
     column: $table.wrappedMasterKey,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<SyncStatus, int> get syncStatus =>
+      $composableBuilder(
+        column: $table.syncStatus,
+        builder: (column) => column,
+      );
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
 }
 
 class $$KeySlotsTableTableManager
@@ -2177,20 +2311,28 @@ class $$KeySlotsTableTableManager
                 Value<KeyType> type = const Value.absent(),
                 Value<Uint8List> salt = const Value.absent(),
                 Value<Uint8List> wrappedMasterKey = const Value.absent(),
+                Value<SyncStatus> syncStatus = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => KeySlotsCompanion(
                 type: type,
                 salt: salt,
                 wrappedMasterKey: wrappedMasterKey,
+                syncStatus: syncStatus,
+                updatedAt: updatedAt,
               ),
           createCompanionCallback:
               ({
                 Value<KeyType> type = const Value.absent(),
                 required Uint8List salt,
                 required Uint8List wrappedMasterKey,
+                Value<SyncStatus> syncStatus = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
               }) => KeySlotsCompanion.insert(
                 type: type,
                 salt: salt,
                 wrappedMasterKey: wrappedMasterKey,
+                syncStatus: syncStatus,
+                updatedAt: updatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -2219,7 +2361,7 @@ typedef $$KeySlotsTableProcessedTableManager =
     >;
 typedef $$ProjectsTableCreateCompanionBuilder =
     ProjectsCompanion Function({
-      required String id,
+      Value<String> id,
       required Uint8List encryptedContent,
       Value<int> localVersion,
       Value<int> lastSyncedVersion,
@@ -2578,7 +2720,7 @@ class $$ProjectsTableTableManager
               ),
           createCompanionCallback:
               ({
-                required String id,
+                Value<String> id = const Value.absent(),
                 required Uint8List encryptedContent,
                 Value<int> localVersion = const Value.absent(),
                 Value<int> lastSyncedVersion = const Value.absent(),
@@ -2683,7 +2825,7 @@ typedef $$ProjectsTableProcessedTableManager =
     >;
 typedef $$NotesTableCreateCompanionBuilder =
     NotesCompanion Function({
-      required String id,
+      Value<String> id,
       required Uint8List encryptedTitle,
       required Uint8List encryptedContent,
       Value<int> localVersion,
@@ -3081,7 +3223,7 @@ class $$NotesTableTableManager
               ),
           createCompanionCallback:
               ({
-                required String id,
+                Value<String> id = const Value.absent(),
                 required Uint8List encryptedTitle,
                 required Uint8List encryptedContent,
                 Value<int> localVersion = const Value.absent(),

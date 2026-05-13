@@ -41,3 +41,16 @@ String? passwordConfirmValidator(
 
   return null;
 }
+
+String? verificationCodeValidator(
+  String? v, {
+  required String emptyError,
+  required String lengthError,
+}) {
+  final value = v?.trim() ?? '';
+
+  if (value.isEmpty) return emptyError;
+  if (value.length < 4) return lengthError;
+
+  return null;
+}

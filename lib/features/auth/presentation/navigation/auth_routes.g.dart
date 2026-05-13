@@ -14,6 +14,10 @@ RouteBase get $authRoute => GoRouteData.$route(
   routes: [
     GoRouteData.$route(path: 'login', factory: $LoginRoute._fromState),
     GoRouteData.$route(path: 'register', factory: $RegisterRoute._fromState),
+    GoRouteData.$route(
+      path: 'email-verification',
+      factory: $EmailVerificationRoute._fromState,
+    ),
   ],
 );
 
@@ -38,10 +42,16 @@ mixin $AuthRoute on GoRouteData {
 }
 
 mixin $LoginRoute on GoRouteData {
-  static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
+  static LoginRoute _fromState(GoRouterState state) =>
+      LoginRoute(source: state.uri.queryParameters['source'] ?? 'onboarding');
+
+  LoginRoute get _self => this as LoginRoute;
 
   @override
-  String get location => GoRouteData.$location('/auth/login');
+  String get location => GoRouteData.$location(
+    '/auth/login',
+    queryParams: {if (_self.source != 'onboarding') 'source': _self.source},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -58,10 +68,45 @@ mixin $LoginRoute on GoRouteData {
 }
 
 mixin $RegisterRoute on GoRouteData {
-  static RegisterRoute _fromState(GoRouterState state) => const RegisterRoute();
+  static RegisterRoute _fromState(GoRouterState state) => RegisterRoute(
+    source: state.uri.queryParameters['source'] ?? 'onboarding',
+  );
+
+  RegisterRoute get _self => this as RegisterRoute;
 
   @override
-  String get location => GoRouteData.$location('/auth/register');
+  String get location => GoRouteData.$location(
+    '/auth/register',
+    queryParams: {if (_self.source != 'onboarding') 'source': _self.source},
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $EmailVerificationRoute on GoRouteData {
+  static EmailVerificationRoute _fromState(GoRouterState state) =>
+      EmailVerificationRoute(
+        source: state.uri.queryParameters['source'] ?? 'onboarding',
+      );
+
+  EmailVerificationRoute get _self => this as EmailVerificationRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/auth/email-verification',
+    queryParams: {if (_self.source != 'onboarding') 'source': _self.source},
+  );
 
   @override
   void go(BuildContext context) => context.go(location);

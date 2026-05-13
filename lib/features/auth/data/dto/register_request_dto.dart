@@ -8,6 +8,7 @@ sealed class RegisterRequestDto with _$RegisterRequestDto {
   const factory RegisterRequestDto({
     required String email,
     required String password,
+    required String code,
   }) = _RegisterRequestDto;
 
   factory RegisterRequestDto.fromJson(Map<String, dynamic> json) =>

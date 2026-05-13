@@ -4,6 +4,7 @@ import 'package:frontend/core/network/dio_provider.dart';
 import 'package:frontend/features/auth/data/dto/auth_response_dto.dart';
 import 'package:frontend/features/auth/data/dto/login_request_dto.dart';
 import 'package:frontend/features/auth/data/dto/register_request_dto.dart';
+import 'package:frontend/features/auth/data/dto/request_verification_dto.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -16,6 +17,9 @@ abstract class AuthRemoteDataSource {
   @POST(endpoints.login)
   Future<AuthResponseDto> login(@Body() LoginRequestDto request);
 
+  @POST(endpoints.requestVerification)
+  Future<void> requestVerification(@Body() RequestVerificationDto request);
+
   @POST(endpoints.register)
   Future<AuthResponseDto> register(@Body() RegisterRequestDto request);
 
@@ -23,6 +27,6 @@ abstract class AuthRemoteDataSource {
   Future<AuthResponseDto> refresh();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 AuthRemoteDataSource authRemoteDataSource(Ref ref) =>
     AuthRemoteDataSource(ref.watch(refreshDioProvider));

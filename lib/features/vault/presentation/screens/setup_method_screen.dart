@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/app/database/database_provider.dart';
 import 'package:frontend/core/constants/app_sizes.dart' as sizes;
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
 import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
+import 'package:frontend/features/vault/presentation/notifiers/vault_notifier.dart';
 import 'package:frontend/features/vault/presentation/widgets/unlock_method.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -21,11 +23,16 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
   String? _selectedMethodId;
 
   Future<void> _onSubmit() async {
+    // TO-DO: replace String with KeyType once
+    // nuke database is not required anymore
     switch (_selectedMethodId) {
       case 'pin':
         unawaited(const SetupPinRoute().push<void>(context));
       case 'pattern':
         unawaited(const SetupPatternRoute().push<void>(context));
+      case 'nuke':
+        await ref.read(appDatabaseProvider).resetDatabase();
+        ref.invalidate(vaultProvider);
       default:
     }
   }
@@ -37,7 +44,7 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
         children: [
           Text(
             context.t.security_methods.title,
-            style: context.textTheme.displayLarge?.copyWith(fontSize: 28),
+            style: context.textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
 
@@ -66,6 +73,15 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
             isSelected: _selectedMethodId == 'pattern',
             onTap: () => setState(
               () => _selectedMethodId = 'pattern',
+            ),
+          ),
+
+          UnlockMethod(
+            title: 'nuke database',
+            subtitle: 'nuke database',
+            isSelected: _selectedMethodId == 'nuke',
+            onTap: () => setState(
+              () => _selectedMethodId = 'nuke',
             ),
           ),
 

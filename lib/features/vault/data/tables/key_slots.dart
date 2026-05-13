@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:frontend/core/sync/sync_status.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
 
 @DataClassName('KeySlotModel')
@@ -6,6 +7,10 @@ class KeySlots extends Table {
   IntColumn get type => intEnum<KeyType>()();
   BlobColumn get salt => blob()();
   BlobColumn get wrappedMasterKey => blob()();
+
+  IntColumn get syncStatus =>
+      intEnum<SyncStatus>().withDefault(const Constant(1))();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
 
   @override
   Set<Column> get primaryKey => {type};

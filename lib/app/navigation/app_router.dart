@@ -47,6 +47,8 @@ GoRouter appRouter(Ref ref) {
           }
         case VaultError():
           return null;
+        case VaultFatal():
+          return const FatalRoute().location;
       }
 
       return null;

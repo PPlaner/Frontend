@@ -31,7 +31,7 @@ class _SetupPinScreenState extends ConsumerState<SetupPinScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       onPopInvokedWithResult: (didPop, _) =>
-          didPop ? ref.invalidate(vaultSetupProvider) : null,
+          didPop ? ref.read(vaultSetupProvider.notifier).abortFlow() : null,
       child: FlowScaffold(
         body: Column(
           children: [

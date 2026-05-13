@@ -42,6 +42,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	// Translations
 	late final TranslationsCommonEn common = TranslationsCommonEn.internal(_root);
 	late final TranslationsAuthEn auth = TranslationsAuthEn.internal(_root);
+	late final TranslationsVaultEn vault = TranslationsVaultEn.internal(_root);
 	late final TranslationsHomeEn home = TranslationsHomeEn.internal(_root);
 	late final TranslationsCalendarEn calendar = TranslationsCalendarEn.internal(_root);
 	late final TranslationsProfileEn profile = TranslationsProfileEn.internal(_root);
@@ -140,6 +141,25 @@ class TranslationsAuthEn {
 
 	/// en: 'Choose how to use'
 	String get chooseMethod => 'Choose how to use';
+
+	/// en: 'Confirmation code sent to $email'
+	String codeSent({required Object email}) => 'Confirmation code sent to ${email}';
+
+	/// en: 'Successfully registered'
+	String get registerSuccess => 'Successfully registered';
+
+	/// en: 'Successfully logged in'
+	String get loginSuccess => 'Successfully logged in';
+}
+
+// Path: vault
+class TranslationsVaultEn {
+	TranslationsVaultEn.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+	late final TranslationsVaultFatalEn fatal = TranslationsVaultFatalEn.internal(_root);
 }
 
 // Path: home
@@ -622,6 +642,21 @@ class TranslationsSeedEn {
 	String get verify_input_hint => 'Enter word...';
 }
 
+// Path: vault.fatal
+class TranslationsVaultFatalEn {
+	TranslationsVaultFatalEn.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'App crashed fatally'
+	String get title => 'App crashed fatally';
+
+	/// en: 'Failed to load keys both locally and remotely'
+	String get subtitle => 'Failed to load keys both locally and remotely';
+}
+
 /// The flat map containing all translations for locale <en>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -653,6 +688,11 @@ extension on Translations {
 			'auth.haveAccount' => 'I already have an account',
 			'auth.tagline' => 'Your plans under reliable protection',
 			'auth.chooseMethod' => 'Choose how to use',
+			'auth.codeSent' => ({required Object email}) => 'Confirmation code sent to ${email}',
+			'auth.registerSuccess' => 'Successfully registered',
+			'auth.loginSuccess' => 'Successfully logged in',
+			'vault.fatal.title' => 'App crashed fatally',
+			'vault.fatal.subtitle' => 'Failed to load keys both locally and remotely',
 			'home.today' => 'Today',
 			'home.completed' => 'Completed',
 			'home.newTask' => 'New task',
@@ -660,16 +700,8 @@ extension on Translations {
 			'home.addDetails' => 'Add details...',
 			'home.deleteTask' => 'Delete task?',
 			'home.deleteTaskMessage' => 'This task will be permanently deleted.',
-			'home.myLists' => 'My lists',
-			'home.addList' => 'Add a list',
-			'home.editList' => 'Edit list',
-			'home.deleteList' => 'Delete list',
-			'home.deleteListTitle' => 'Delete list?',
-			'home.deleteListMessage' => 'The list and all its tasks will be permanently deleted.',
-			'home.listName' => 'Name',
-			'home.listColor' => 'List colour',
-			'home.listIcon' => 'Icon',
-			'home.inbox' => 'Inbox',
+			'home.cancel' => 'Cancel',
+			'home.delete' => 'Delete',
 			'calendar.title' => 'Calendar',
 			'calendar.noTasks' => 'No tasks for this day',
 			'calendar.viewMonth' => 'Month',

@@ -49,4 +49,4 @@ final class VaultRepositoryProvider
   }
 }
 
-String _$vaultRepositoryHash() => r'28f861a3214d1c1bea15e72d226ac782ec5e479c';
+String _$vaultRepositoryHash() => r'cc9b2a86394f0a9b984f8a941569ee34e392f918';

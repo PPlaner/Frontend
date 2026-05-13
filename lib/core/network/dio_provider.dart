@@ -10,7 +10,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dio_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: true, dependencies: [])
 TokenRefresher tokenRefresher(Ref ref) =>
     throw UnimplementedError('tokenRefresher must be overriden in main');
 

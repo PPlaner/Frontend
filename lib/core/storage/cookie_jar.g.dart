@@ -27,8 +27,8 @@ final class CookieJarProvider
         retry: null,
         name: r'cookieJarProvider',
         isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[],
+        $allTransitiveDependencies: <ProviderOrFamily>[],
       );
 
   @override
@@ -53,4 +53,4 @@ final class CookieJarProvider
   }
 }
 
-String _$cookieJarHash() => r'36412d0bbf1f506486e7a4f036402bed05813fab';
+String _$cookieJarHash() => r'2775660dceea5114083220479dd0b18d2276d605';

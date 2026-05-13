@@ -11,25 +11,37 @@ part 'vault_notifier.g.dart';
 class VaultNotifier extends _$VaultNotifier {
   @override
   VaultState build() {
+    final hasAccesssToken = ref.watch(isAccessTokenPresentProvider);
     final hasMasterKey = ref.watch(isMasterKeyPresentProvider);
 
     if (hasMasterKey) return const VaultUnlocked();
 
-    unawaited(_checkIntitalizationState());
+    unawaited(_checkIntitalizationState(hasAccesssToken));
     return const VaultInitializing();
   }
 
-  void lockVault() {
-    ref.read(sessionControllerProvider).clearSession();
-    state = const VaultLocked();
+  Future<void> forcePushKeys() async {
+    await ref.read(vaultServiceProvider).pushKeys();
+
+    if (!ref.read(isMasterKeyPresentProvider)) {
+      unawaited(
+        _checkIntitalizationState(ref.read(isAccessTokenPresentProvider)),
+      );
+    }
   }
 
-  Future<void> _checkIntitalizationState() async {
+  Future<void> _checkIntitalizationState(bool hasAccesssToken) async {
     final vaultService = ref.read(vaultServiceProvider);
-    final result = await vaultService.isInitialized();
+    final result = await vaultService.getUnlockMethods();
+
+    if (ref.read(isMasterKeyPresentProvider)) return;
 
     state = result.fold(
-      (isInit) => isInit ? const VaultLocked() : const VaultNotInitialized(),
+      (keys) => keys.isNotEmpty
+          ? VaultLocked(unlockMethods: keys)
+          : hasAccesssToken
+          ? const VaultFatal()
+          : const VaultNotInitialized(),
       VaultError.new,
     );
   }

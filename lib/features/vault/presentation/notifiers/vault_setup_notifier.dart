@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/misc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/features/vault/data/secure_vault_service.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
@@ -21,19 +22,30 @@ sealed class VaultSetupData with _$VaultSetupData {
   }) = _VaultSetupData;
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 class VaultSetup extends _$VaultSetup {
+  KeepAliveLink? _link;
+
   @override
-  VaultSetupData build() => VaultSetupData(
-    generatedRecoveryPhrase: List<String>.filled(12, 'a'),
-    verifyIndecies: _generateIndices(),
-  );
+  VaultSetupData build() {
+    _link = ref.keepAlive();
+
+    return VaultSetupData(
+      generatedRecoveryPhrase: List<String>.filled(12, 'a'),
+      verifyIndecies: _generateIndices(),
+    );
+  }
 
   List<int> _generateIndices() {
     final list = List<int>.generate(12, (i) => i)..shuffle();
     final indices = list.take(3).toList()..sort();
 
     return indices;
+  }
+
+  void abortFlow() {
+    _link?.close();
+    ref.invalidateSelf();
   }
 
   void setupPin(String secret) => state = state.copyWith(
@@ -79,14 +91,14 @@ class VaultSetup extends _$VaultSetup {
         .intializeNewVault(secrets);
 
     result.fold(
-      (success) {
-        state = state.copyWith(isSubmitting: false);
-        // ref.read(vaultProvider.notifier).markAsUnlocked();
-        ref.invalidateSelf();
-      },
-      (failure) {
-        state = state.copyWith(isSubmitting: false, failure: failure);
-      },
+      (success) => _completeFlow(),
+      (failure) =>
+          state = state.copyWith(isSubmitting: false, failure: failure),
     );
+  }
+
+  void _completeFlow() {
+    _link?.close();
+    ref.invalidateSelf();
   }
 }

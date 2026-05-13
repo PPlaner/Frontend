@@ -15,11 +15,13 @@ class VaultFixtures {
     KeyType? type,
     Uint8List? salt,
     Uint8List? wmk,
+    DateTime? updatedAt,
   }) {
     return KeySlot(
       type: type ?? KeyType.pin,
       salt: salt ?? defaultSalt,
       wrappedMasterKey: wmk ?? defaultWmk,
+      updatedAt: updatedAt ?? DateTime.now().toUtc(),
     );
   }
 }

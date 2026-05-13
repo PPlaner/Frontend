@@ -7,6 +7,8 @@ extension KeySlotModelToDomain on KeySlotModel {
     type: type,
     salt: salt,
     wrappedMasterKey: wrappedMasterKey,
+    updatedAt: updatedAt,
+    syncStatus: syncStatus,
   );
 }
 
@@ -15,5 +17,7 @@ extension KeySlotToCompanion on KeySlot {
     type: Value(type),
     salt: salt,
     wrappedMasterKey: wrappedMasterKey,
+    updatedAt: Value(updatedAt),
+    syncStatus: Value(syncStatus),
   );
 }

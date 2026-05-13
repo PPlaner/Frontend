@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:frontend/core/sync/sync_status.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
 
 part 'key_slot.freezed.dart';
@@ -10,5 +11,7 @@ sealed class KeySlot with _$KeySlot {
     required KeyType type,
     required Uint8List salt,
     required Uint8List wrappedMasterKey,
+    required DateTime updatedAt,
+    @Default(SyncStatus.modified) SyncStatus syncStatus,
   }) = _KeySlot;
 }

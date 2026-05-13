@@ -230,4 +230,46 @@ final class IsMasterKeyPresentProvider
 }
 
 String _$isMasterKeyPresentHash() =>
-    r'a7acb74929e7ad336091c9bf9dc0c59ae8dac7a3';
+    r'6b045e1b87a77349e97a1ce5617bd6d8a50bdfa3';
+
+@ProviderFor(isAccessTokenPresent)
+final isAccessTokenPresentProvider = IsAccessTokenPresentProvider._();
+
+final class IsAccessTokenPresentProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  IsAccessTokenPresentProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isAccessTokenPresentProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$isAccessTokenPresentHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return isAccessTokenPresent(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$isAccessTokenPresentHash() =>
+    r'970e0ebfad55bdbcfd49c286a41f119844bbe497';

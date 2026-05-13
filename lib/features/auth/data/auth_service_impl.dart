@@ -31,11 +31,17 @@ class AuthServiceImpl implements AuthService {
   }
 
   @override
+  Future<Result<void, AuthFailure>> requestVerification(String email) {
+    return _repo.requestVerification(email);
+  }
+
+  @override
   Future<Result<void, AuthFailure>> register(
     String email,
     String password,
+    String code,
   ) async {
-    final result = await _repo.register(email, password);
+    final result = await _repo.register(email, password, code);
 
     if (result case Failure(error: final e)) return Failure(e);
     final accessToken = result.unwrap;

@@ -8,4 +8,6 @@ abstract class VaultRepository {
   Future<Result<void, VaultFailure>> saveKeySlots(List<KeySlot> slots);
   Future<Result<List<KeySlot>, VaultFailure>> getAll();
   Future<Result<KeySlot?, VaultFailure>> getKeySlotByType(KeyType type);
+  Future<Result<void, VaultFailure>> pushKeys();
+  Future<Result<void, VaultFailure>> syncKeys();
 }

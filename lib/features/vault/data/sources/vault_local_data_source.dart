@@ -27,6 +27,10 @@ class VaultLocalDataSource {
   Future<KeySlotModel?> getKeySlotByType(KeyType type) {
     return _keySlotsDao.getKeySlotByType(type);
   }
+
+  Future<List<KeySlotModel>> getPending() {
+    return _keySlotsDao.getPendingKeySlots();
+  }
 }
 
 @Riverpod(keepAlive: true)

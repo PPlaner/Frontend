@@ -24,7 +24,20 @@
         "createLocalStorage": "Create local storage",
         "haveAccount": "I already have an account",
         "tagline": "Your plans under reliable protection",
-        "chooseMethod": "Choose how to use"
+        "chooseMethod": "Choose how to use",
+        "codeSent": "Confirmation code sent to $email",
+        "registerSuccess": "Successfully registered",
+        "loginSuccess": "Successfully logged in"
+    },
+    "vault": {
+        "fatal": {
+            "title": "App crashed fatally",
+            "subtitle": "Failed to load keys both locally and remotely"
+        },
+        "setup": {
+        },
+        "unlock": {
+        }
     },
     "home": {
         "today": "Today",

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:frontend/app/database/database.dart';
+import 'package:frontend/core/sync/sync_status.dart';
 import 'package:frontend/features/vault/data/tables/key_slots.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
 
@@ -22,6 +23,10 @@ class KeySlotsDao extends DatabaseAccessor<AppDatabase>
   Future<KeySlotModel?> getKeySlotByType(KeyType type) => (select(
     keySlots,
   )..where((tbl) => tbl.type.equals(type.index))).getSingleOrNull();
+
+  Future<List<KeySlotModel>> getPendingKeySlots() => (select(
+    keySlots,
+  )..where((tbl) => tbl.syncStatus.equals(SyncStatus.modified.index))).get();
 
   Future<void> deleteKeySlot(KeyType type) => (delete(
     keySlots,

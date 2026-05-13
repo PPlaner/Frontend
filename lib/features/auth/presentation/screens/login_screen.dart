@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/config/user_config.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
+import 'package:frontend/core/utils/app_snackbar.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_navigator.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/auth/presentation/notifiers/auth_notifier.dart';
 import 'package:frontend/features/auth/presentation/widgets/email_form_field.dart';
@@ -10,7 +13,9 @@ import 'package:frontend/features/auth/presentation/widgets/primary_button.dart'
 import 'package:frontend/i18n/strings.g.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({required this.source, super.key});
+
+  final String source;
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -20,8 +25,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -34,74 +37,95 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _onLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
-
-    await ref
+    final success = await ref
         .read(authProvider.notifier)
         .login(
           _emailController.text.trim(),
           _passwordController.text.trim(),
         );
 
-    setState(() => _isLoading = false);
+    if (!mounted) return;
+
+    if (success) {
+      context.showSnackBarSuccess(context.t.auth.loginSuccess);
+      await ref.read(userPreferencesProvider).setAuthenticatedBefore(true);
+
+      if (widget.source == 'inApp') {
+        ref.read(authNavigatorProvider).onAuthCompleted();
+      }
+    } else {
+      final failure = ref.read(authProvider).failure;
+      if (failure != null) context.showSnackbarError('$failure');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlowScaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              context.t.common.login,
-              style: context.textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
+    final isProcessing = ref.watch(
+      authProvider.select((state) => state.isProcessing),
+    );
 
-            const SizedBox(height: 40),
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) =>
+          didPop ? ref.read(authProvider.notifier).abortFlow() : null,
+      child: FlowScaffold(
+        body: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                context.t.common.login,
+                style: context.textTheme.headlineMedium,
+                textAlign: TextAlign.center,
+              ),
 
-            EmailFormField(controller: _emailController),
+              const SizedBox(height: 40),
 
-            const SizedBox(height: 16),
+              EmailFormField(controller: _emailController),
 
-            PasswordFormField(controller: _passwordController),
+              const SizedBox(height: 16),
 
-            const SizedBox(height: 32),
+              PasswordFormField(controller: _passwordController),
 
-            PrimaryButton(
-              label: context.t.common.login,
-              isLoading: _isLoading,
-              onPressed: _onLogin,
-            ),
+              const SizedBox(height: 32),
 
-            const SizedBox(height: 24),
+              PrimaryButton(
+                label: context.t.common.login,
+                isLoading: isProcessing,
+                onPressed: _onLogin,
+              ),
 
-            Column(
-              children: [
-                Text(
-                  context.t.widgets.no_account,
-                  style: context.textTheme.bodyMedium,
-                ),
+              const SizedBox(height: 24),
 
-                const SizedBox(height: 4),
-
-                GestureDetector(
-                  onTap: () => const RegisterRoute().push<void>(context),
-                  child: Text(
-                    context.t.common.register,
-                    style: context.textTheme.bodyMedium?.copyWith(
-                      color: context.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      decoration: TextDecoration.underline,
-                      decorationColor: context.colorScheme.primary,
+              if (widget.source == 'inApp')
+                Column(
+                  children: [
+                    Text(
+                      context.t.widgets.no_account,
+                      style: context.textTheme.bodyMedium,
                     ),
-                  ),
+
+                    const SizedBox(height: 4),
+
+                    GestureDetector(
+                      onTap: () => RegisterRoute(
+                        source: widget.source,
+                      ).push<void>(context),
+                      child: Text(
+                        context.t.common.register,
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: context.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          decorationColor: context.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

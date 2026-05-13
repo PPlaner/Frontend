@@ -55,8 +55,11 @@ SessionController sessionController(Ref ref) =>
     ref.watch(sessionManagerProvider.notifier);
 
 @Riverpod(keepAlive: true)
-bool isMasterKeyPresent(Ref ref) {
-  return ref.watch(
-    sessionManagerProvider.select((state) => state.masterKey != null),
-  );
-}
+bool isMasterKeyPresent(Ref ref) => ref.watch(
+  sessionManagerProvider.select((state) => state.masterKey != null),
+);
+
+@Riverpod(keepAlive: true)
+bool isAccessTokenPresent(Ref ref) => ref.watch(
+  sessionManagerProvider.select((state) => state.accessToken != null),
+);

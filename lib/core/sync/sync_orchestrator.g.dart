@@ -22,8 +22,8 @@ final class RegisteredSyncablesProvider
         retry: null,
         name: r'registeredSyncablesProvider',
         isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[],
+        $allTransitiveDependencies: <ProviderOrFamily>[],
       );
 
   @override
@@ -49,7 +49,7 @@ final class RegisteredSyncablesProvider
 }
 
 String _$registeredSyncablesHash() =>
-    r'b114ee13034b186322020448102ea43ffb137b74';
+    r'2e657285c7aa0d326aaf971f01c5957f405438c5';
 
 @ProviderFor(SyncOrchestrator)
 final syncOrchestratorProvider = SyncOrchestratorProvider._();
@@ -63,9 +63,13 @@ final class SyncOrchestratorProvider
         retry: null,
         name: r'syncOrchestratorProvider',
         isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[registeredSyncablesProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          SyncOrchestratorProvider.$allTransitiveDependencies0,
+        ],
       );
+
+  static final $allTransitiveDependencies0 = registeredSyncablesProvider;
 
   @override
   String debugGetCreateSourceHash() => _$syncOrchestratorHash();
@@ -83,7 +87,7 @@ final class SyncOrchestratorProvider
   }
 }
 
-String _$syncOrchestratorHash() => r'98cd7109bd1fbe39eff36f708165b5353bdd9e6e';
+String _$syncOrchestratorHash() => r'1f3b38b7e86e29dc520c9a3a5dfc76ce33ab6bcc';
 
 abstract class _$SyncOrchestrator extends $Notifier<SyncState> {
   SyncState build();

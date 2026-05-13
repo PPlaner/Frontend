@@ -1,6 +1,6 @@
 const String apiUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://localhost:8080',
+  defaultValue: 'http://192.168.0.237:8080',
 );
 
 const String environmentName = String.fromEnvironment(

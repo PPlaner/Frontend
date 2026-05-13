@@ -1,10 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
+import 'package:frontend/core/utils/app_snackbar.dart';
 import 'package:frontend/core/utils/navigation_helper.dart';
 import 'package:frontend/core/utils/validators.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/auth/presentation/notifiers/auth_notifier.dart';
 import 'package:frontend/features/auth/presentation/widgets/email_form_field.dart';
 import 'package:frontend/features/auth/presentation/widgets/password_form_field.dart';
@@ -12,7 +15,9 @@ import 'package:frontend/features/auth/presentation/widgets/primary_button.dart'
 import 'package:frontend/i18n/strings.g.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
-  const RegisterScreen({super.key});
+  const RegisterScreen({required this.source, super.key});
+
+  final String source;
 
   @override
   ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
@@ -24,7 +29,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  bool _isLoading = false;
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.text = '11111111';
+    _confirmPasswordController.text = '11111111';
+  }
 
   @override
   void dispose() {
@@ -38,22 +48,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _onRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isLoading = true);
+    final email = _emailController.text.trim();
 
-    await ref
+    final result = await ref
         .read(authProvider.notifier)
-        .register(
-          _emailController.text.trim(),
+        .setupRegister(
+          email,
           _passwordController.text.trim(),
         );
 
-    setState(() => _isLoading = false);
+    if (!mounted) return;
+
+    switch (result) {
+      case RegisterResult.codeSent:
+        context.showSnackBarInfo(context.t.auth.codeSent(email: email));
+        unawaited(
+          EmailVerificationRoute(source: widget.source).push<void>(context),
+        );
+      case RegisterResult.alreadySent:
+        unawaited(
+          EmailVerificationRoute(source: widget.source).push<void>(context),
+        );
+      case RegisterResult.processing:
+      case RegisterResult.failure:
+        final failure = ref.read(authProvider).failure;
+        if (failure != null) context.showSnackbarError('$failure');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = AppColors.of(context);
+    final isProcessing = ref.watch(
+      authProvider.select((state) => state.isProcessing),
+    );
 
     return FlowScaffold(
       body: Form(
@@ -62,10 +89,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              t.common.register,
-              style: theme.textTheme.displayLarge?.copyWith(
-                color: colors.textPrimary,
-              ),
+              context.t.common.register,
+              style: context.textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
 
@@ -81,7 +106,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
             PasswordFormField(
               controller: _confirmPasswordController,
-              hintText: t.widgets.confirm_password,
+              hintText: context.t.widgets.confirm_password,
               validator: (v) => passwordConfirmValidator(
                 v,
                 password: _passwordController.text,
@@ -94,7 +119,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
             PrimaryButton(
               label: t.common.register,
-              isLoading: _isLoading,
+              isLoading: isProcessing,
               onPressed: _onRegister,
             ),
 
@@ -103,8 +128,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             Column(
               children: [
                 Text(
-                  t.widgets.have_account,
-                  style: theme.textTheme.bodyMedium,
+                  context.t.widgets.have_account,
+                  style: context.textTheme.bodyMedium,
                 ),
 
                 const SizedBox(height: 4),
@@ -113,7 +138,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   onTap: () => context.safePop(),
                   child: Text(
                     context.t.common.login,
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: context.textTheme.bodyMedium?.copyWith(
                       color: context.colorScheme.primary,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,

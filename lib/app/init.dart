@@ -44,7 +44,7 @@ Future<ProviderScope> wrapWithProviderScope({required Widget child}) async {
           ];
         },
       ),
-      ...overrideFlowDelegates(),
+      ...overrideNavigators(),
     ],
     child: child,
   );

@@ -20,7 +20,7 @@ extension ProjectModelToEncrypted on ProjectModel {
 
 extension EncryptedProjectToCompanion on EncryptedProject {
   ProjectsCompanion toCompanion() => ProjectsCompanion.insert(
-    id: id,
+    id: Value(id),
 
     encryptedContent: encryptedContent,
 

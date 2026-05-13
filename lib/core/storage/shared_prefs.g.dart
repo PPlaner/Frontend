@@ -27,8 +27,8 @@ final class SharedPreferencesProvider
         retry: null,
         name: r'sharedPreferencesProvider',
         isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[],
+        $allTransitiveDependencies: <ProviderOrFamily>[],
       );
 
   @override
@@ -54,4 +54,4 @@ final class SharedPreferencesProvider
   }
 }
 
-String _$sharedPreferencesHash() => r'9273e9580eb3d3039c92303cb60f9d88eb5c7055';
+String _$sharedPreferencesHash() => r'9487e16e52066e8e166bd46e988be11795fdea93';
