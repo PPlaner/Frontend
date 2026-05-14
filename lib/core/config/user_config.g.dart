@@ -22,7 +22,7 @@ final class UserPreferencesProvider
         argument: null,
         retry: null,
         name: r'userPreferencesProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -49,4 +49,4 @@ final class UserPreferencesProvider
   }
 }
 
-String _$userPreferencesHash() => r'0c2a8df615756da99832918c5bffbeeb8b79d43b';
+String _$userPreferencesHash() => r'21c01b49b21bec58796f8194f8a872a87adc919a';

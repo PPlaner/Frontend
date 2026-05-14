@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:frontend/core/config/user_config.dart';
+import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
 import 'package:frontend/core/sync/sync_status.dart';
 import 'package:frontend/core/utils/data_source_runner.dart';
@@ -33,7 +34,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   Future<Result<void, VaultFailure>> saveKeySlot(KeySlot slot) async {
     return localRunner(
       call: () => _local.saveKeySlot(slot.toCompanion()),
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
   }
 
@@ -43,7 +44,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
     return localRunner(
       call: () => _local.saveKeySlots(companions),
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
   }
 
@@ -54,13 +55,20 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
       if (connectivityResult.contains(ConnectivityResult.wifi)) {
         final syncResult = await syncKeys();
-        if (syncResult case Failure(error: final e)) return Failure(e);
+        if (syncResult case Failure(error: final e)) {
+          switch (e) {
+            case VaultCoreFailure(core: NetworkFailure()):
+              break;
+            default:
+              return Failure(e);
+          }
+        }
       }
     }
 
     final result = await localRunner(
       call: _local.getAll,
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
 
     return result.map(
@@ -72,7 +80,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   Future<Result<KeySlot?, VaultFailure>> getKeySlotByType(KeyType type) async {
     final result = await localRunner(
       call: () => _local.getKeySlotByType(type),
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
 
     return result.map((model) => model?.toDomain());
@@ -82,7 +90,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   Future<Result<void, VaultFailure>> pushKeys() async {
     final result = await localRunner(
       call: _local.getAll,
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
 
     if (result case Failure(error: final e)) return Failure(e);
@@ -92,7 +100,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
       call: () => _remote.pushKeys(
         KeySlotsDto(keys: keys.map((m) => m.toDomain().toDto()).toList()),
       ),
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
   }
 
@@ -100,7 +108,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
   Future<Result<void, VaultFailure>> syncKeys() async {
     final remoteResult = await remoteRunner(
       call: _remote.getKeys,
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
 
     if (remoteResult case Failure(error: final e)) return Failure(e);
@@ -110,7 +118,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
     for (final remoteDto in remoteKeys) {
       final localModelResult = await localRunner(
         call: () => _local.getKeySlotByType(remoteDto.type),
-        mapCore: VaultFailure.core,
+        mapCore: VaultCoreFailure.new,
       );
 
       if (localModelResult case Failure(error: final e)) return Failure(e);
@@ -120,14 +128,14 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
           remoteDto.updatedAt.isAfter(localModel.updatedAt)) {
         await localRunner(
           call: () => _local.saveKeySlot(remoteDto.toDomain().toCompanion()),
-          mapCore: VaultFailure.core,
+          mapCore: VaultCoreFailure.new,
         );
       }
     }
 
     final pendingModelsResult = await localRunner(
       call: _local.getPending,
-      mapCore: VaultFailure.core,
+      mapCore: VaultCoreFailure.new,
     );
 
     if (pendingModelsResult case Failure(error: final e)) return Failure(e);
@@ -140,7 +148,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
       final pushResult = await remoteRunner(
         call: () => _remote.pushKeys(KeySlotsDto(keys: dtosToPush)),
-        mapCore: VaultFailure.core,
+        mapCore: VaultCoreFailure.new,
       );
 
       if (pushResult is Success) {
@@ -155,7 +163,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
         await localRunner(
           call: () => _local.saveKeySlots(toUpdate),
-          mapCore: VaultFailure.core,
+          mapCore: VaultCoreFailure.new,
         );
       }
     }

@@ -37,7 +37,7 @@ class UnifiedNotesRepository
   Future<Result<void, NotesFailure>> saveNote(EncryptedNote note) async {
     return localRunner(
       call: () => _localNotes.create(note.toCompanion()),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
   }
 
@@ -45,7 +45,7 @@ class UnifiedNotesRepository
   Future<Result<EncryptedNote?, NotesFailure>> getNote(String id) async {
     final result = await localRunner(
       call: () => _localNotes.get(id),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
 
     return result.map((model) => model?.toDomain());
@@ -57,7 +57,7 @@ class UnifiedNotesRepository
   Future<Result<List<NoteDto>, NotesFailure>> getPendingNotes() async {
     final result = await localRunner(
       call: _localNotes.getPending,
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
 
     return result.map(
@@ -71,7 +71,7 @@ class UnifiedNotesRepository
   ) async {
     return localRunner(
       call: () => _localNotes.acknowledgePushed(acknowledgements),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
   }
 
@@ -94,7 +94,7 @@ class UnifiedNotesRepository
   Future<Result<List<ProjectDto>, NotesFailure>> getPendingProjects() async {
     final result = await localRunner(
       call: _localProjects.getPending,
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
 
     return result.map(
@@ -108,7 +108,7 @@ class UnifiedNotesRepository
   ) async {
     return localRunner(
       call: () => _localProjects.acknowledgePushed(acknowledgements),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
   }
 
@@ -134,7 +134,7 @@ class UnifiedNotesRepository
 
     final getResult = await localRunner(
       call: () => _localNotes.get(dto.id),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
 
     if (getResult case Failure(error: final e)) return Failure(e);
@@ -147,7 +147,7 @@ class UnifiedNotesRepository
 
       return localRunner(
         call: () => _localNotes.create(serverNote.toCompanion()),
-        mapCore: NotesFailure.core,
+        mapCore: NotesCoreFailure.new,
       );
     }
 
@@ -160,7 +160,7 @@ class UnifiedNotesRepository
               .toCompanion(true),
           serverNote.toConflictCompanion(),
         ),
-        mapCore: NotesFailure.core,
+        mapCore: NotesCoreFailure.new,
       );
     }
 
@@ -178,20 +178,20 @@ class UnifiedNotesRepository
                 .toCompanion(true),
             serverNote.toConflictCompanion(),
           ),
-          mapCore: NotesFailure.core,
+          mapCore: NotesCoreFailure.new,
         );
       }
 
       return localRunner(
         call: () => _localNotes.delete(dto.id),
-        mapCore: NotesFailure.core,
+        mapCore: NotesCoreFailure.new,
       );
     }
 
     // No conflict => normal update
     return localRunner(
       call: () => _localNotes.save(serverNote.toCompanion()),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
   }
 
@@ -202,7 +202,7 @@ class UnifiedNotesRepository
 
     final getResult = await localRunner(
       call: () => _localProjects.get(dto.id),
-      mapCore: NotesFailure.core,
+      mapCore: NotesCoreFailure.new,
     );
 
     if (getResult case Failure(error: final e)) return Failure(e);
@@ -215,7 +215,7 @@ class UnifiedNotesRepository
 
       return localRunner(
         call: () => _localProjects.create(serverProject.toCompanion()),
-        mapCore: NotesFailure.core,
+        mapCore: NotesCoreFailure.new,
       );
     }
 
@@ -225,7 +225,7 @@ class UnifiedNotesRepository
       if (serverProject.deletedAt != null) {
         return localRunner(
           call: () => _localProjects.delete(projectModel.id),
-          mapCore: NotesFailure.core,
+          mapCore: NotesCoreFailure.new,
         );
       }
 
@@ -233,7 +233,7 @@ class UnifiedNotesRepository
         call: () => _localProjects.save(
           serverProject.toCompanion(),
         ),
-        mapCore: NotesFailure.core,
+        mapCore: NotesCoreFailure.new,
       );
     }
 

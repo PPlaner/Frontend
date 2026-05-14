@@ -49,7 +49,7 @@ $Res call({
 });
 
 
-$AuthFailureCopyWith<$Res>? get failure;
+
 
 }
 /// @nodoc
@@ -71,19 +71,7 @@ as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nu
 as AuthFailure?,
   ));
 }
-/// Create a copy of AuthData
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AuthFailureCopyWith<$Res>? get failure {
-    if (_self.failure == null) {
-    return null;
-  }
 
-  return $AuthFailureCopyWith<$Res>(_self.failure!, (value) {
-    return _then(_self.copyWith(failure: value));
-  });
-}
 }
 
 
@@ -257,7 +245,7 @@ $Res call({
 });
 
 
-@override $AuthFailureCopyWith<$Res>? get failure;
+
 
 }
 /// @nodoc
@@ -280,19 +268,7 @@ as AuthFailure?,
   ));
 }
 
-/// Create a copy of AuthData
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$AuthFailureCopyWith<$Res>? get failure {
-    if (_self.failure == null) {
-    return null;
-  }
 
-  return $AuthFailureCopyWith<$Res>(_self.failure!, (value) {
-    return _then(_self.copyWith(failure: value));
-  });
-}
 }
 
 // dart format on

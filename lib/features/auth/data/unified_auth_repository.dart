@@ -30,7 +30,7 @@ class UnifiedAuthRepository
     final result = await remoteRunner(
       call: () =>
           _remote.login(LoginRequestDto(email: email, password: password)),
-      mapCore: AuthFailure.core,
+      mapCore: AuthCoreFailure.new,
     );
 
     return result.map((dto) => dto.accessToken);
@@ -41,7 +41,7 @@ class UnifiedAuthRepository
     return remoteRunner(
       call: () =>
           _remote.requestVerification(RequestVerificationDto(email: email)),
-      mapCore: AuthFailure.core,
+      mapCore: AuthCoreFailure.new,
     );
   }
 
@@ -55,7 +55,7 @@ class UnifiedAuthRepository
       call: () => _remote.register(
         RegisterRequestDto(email: email, password: password, code: code),
       ),
-      mapCore: AuthFailure.core,
+      mapCore: AuthCoreFailure.new,
     );
 
     return result.map((dto) => dto.accessToken);

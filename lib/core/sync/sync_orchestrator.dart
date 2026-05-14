@@ -11,11 +11,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'sync_orchestrator.g.dart';
 
-@Riverpod(keepAlive: true, dependencies: [])
+@Riverpod(keepAlive: true)
 List<Syncable> registeredSyncables(Ref ref) =>
     throw UnimplementedError('registeredSyncables must be overriden in main');
 
-@Riverpod(keepAlive: true, dependencies: [registeredSyncables])
+@Riverpod(keepAlive: true)
 class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
   @override
   SyncState build() => const SyncIdle();
@@ -67,7 +67,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
       final responseData = networkResult.unwrap.data;
 
       if (responseData == null) {
-        state = const SyncError(CoreFailure.unexpected('Null response data'));
+        state = const SyncError(UnexpectedFailure('Null response data'));
         return;
       }
 
@@ -109,7 +109,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         stackTrace: st,
       );
 
-      state = SyncError(CoreFailure.unexpected(e));
+      state = SyncError(UnexpectedFailure(e));
     }
   }
 }

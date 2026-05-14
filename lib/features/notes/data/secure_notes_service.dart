@@ -62,7 +62,7 @@ class SecureNotesService implements NotesService {
       final encryptedNote = encryptedNoteResult.unwrap;
 
       if (encryptedNote == null) {
-        return const Failure(NotesFailure.idNotFound());
+        return const Failure(IdNotFound());
       }
 
       final title = await _encryption.decryptString(
@@ -90,12 +90,12 @@ class SecureNotesService implements NotesService {
     try {
       return await action();
     } on SessionLockedException catch (_) {
-      return const Failure(NotesFailure.sessionLocked());
+      return const Failure(SessionLocked());
     } on CryptoException catch (e) {
-      return Failure(NotesFailure.core(CoreFailure.crypto(e.message)));
+      return Failure(NotesCoreFailure(CryptoFailure(e.message)));
     } on Exception catch (e, st) {
       logger.e('SecureNotesService operation failed', error: e, stackTrace: st);
-      return Failure(NotesFailure.core(CoreFailure.unexpected(e)));
+      return Failure(NotesCoreFailure(UnexpectedFailure(e)));
     }
   }
 }

@@ -36,7 +36,7 @@ Future<ProviderScope> wrapWithProviderScope({required Widget child}) async {
       ),
       registeredSyncablesProvider.overrideWith(
         (ref) {
-          final concreteNotesRepo = ref.read(unifiedNotesRepositoryProvider);
+          final concreteNotesRepo = ref.watch(unifiedNotesRepositoryProvider);
 
           return [
             ProjectsSyncDelegate(engine: concreteNotesRepo),

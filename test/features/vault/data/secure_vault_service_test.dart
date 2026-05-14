@@ -102,7 +102,7 @@ void main() {
 
         expect(
           result,
-          const Failure<void, VaultFailure>(VaultFailure.vaultNotInitialized()),
+          const Failure<void, VaultFailure>(VaultNotInitialized()),
         );
 
         verifyNever(() => mockSessionController.setMasterKey(any()));
@@ -148,7 +148,7 @@ void main() {
 
         expect(
           result,
-          const Failure<Never, VaultFailure>(VaultFailure.invalidSecret()),
+          const Failure<Never, VaultFailure>(InvalidSecret()),
         );
 
         verifyNever(() => mockSessionController.setMasterKey(any()));

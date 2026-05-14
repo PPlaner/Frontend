@@ -1,13 +1,32 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+sealed class CoreFailure {
+  const CoreFailure();
+}
 
-part 'core_failure.freezed.dart';
+class NetworkFailure extends CoreFailure {
+  const NetworkFailure();
+}
 
-@freezed
-sealed class CoreFailure with _$CoreFailure {
-  const factory CoreFailure.network() = _Network;
-  const factory CoreFailure.api(int statusCode, String? message) = _Api;
-  const factory CoreFailure.storage(String message) = _Storage;
-  const factory CoreFailure.crypto(String message) = _Crypto;
-  const factory CoreFailure.unexpected(Object e) = _Unexpected;
+class ApiFailure extends CoreFailure {
+  const ApiFailure(this.statusCode, this.message);
+
+  final int statusCode;
+  final String? message;
+}
+
+class StorageFailure extends CoreFailure {
+  const StorageFailure(this.message);
+
+  final String message;
+}
+
+class CryptoFailure extends CoreFailure {
+  const CryptoFailure(this.message);
+
+  final String message;
+}
+
+class UnexpectedFailure extends CoreFailure {
+  const UnexpectedFailure(this.e);
+
+  final Object e;
 }

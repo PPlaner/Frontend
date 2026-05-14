@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:frontend/core/session/session_manager.dart';
 import 'package:frontend/features/vault/data/secure_vault_service.dart';
+import 'package:frontend/features/vault/domain/vault_service.dart';
 import 'package:frontend/features/vault/domain/vault_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -16,22 +17,30 @@ class VaultNotifier extends _$VaultNotifier {
 
     if (hasMasterKey) return const VaultUnlocked();
 
-    unawaited(_checkIntitalizationState(hasAccesssToken));
+    final vaultService = ref.watch(vaultServiceProvider);
+
+    unawaited(_checkInitalizationState(vaultService, hasAccesssToken));
     return const VaultInitializing();
   }
 
   Future<void> forcePushKeys() async {
-    await ref.read(vaultServiceProvider).pushKeys();
+    final vaultService = ref.read(vaultServiceProvider);
+    await vaultService.pushKeys();
 
     if (!ref.read(isMasterKeyPresentProvider)) {
       unawaited(
-        _checkIntitalizationState(ref.read(isAccessTokenPresentProvider)),
+        _checkInitalizationState(
+          vaultService,
+          ref.read(isAccessTokenPresentProvider),
+        ),
       );
     }
   }
 
-  Future<void> _checkIntitalizationState(bool hasAccesssToken) async {
-    final vaultService = ref.read(vaultServiceProvider);
+  Future<void> _checkInitalizationState(
+    VaultService vaultService,
+    bool hasAccesssToken,
+  ) async {
     final result = await vaultService.getUnlockMethods();
 
     if (ref.read(isMasterKeyPresentProvider)) return;

@@ -1,12 +1,19 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/core/domain/core_failure.dart';
 
-part 'auth_failure.freezed.dart';
+sealed class AuthFailure {
+  const AuthFailure();
+}
 
-@freezed
-sealed class AuthFailure with _$AuthFailure {
-  const factory AuthFailure.invalidCredentials() = _InvalidCredentials;
-  const factory AuthFailure.emailAlreadyInUse() = _EmailAlreadyInUse;
+class InvalidCredentials extends AuthFailure {
+  const InvalidCredentials();
+}
 
-  const factory AuthFailure.core(CoreFailure core) = _AuthCore;
+class EmailAlreadyInUse extends AuthFailure {
+  const EmailAlreadyInUse();
+}
+
+class AuthCoreFailure extends AuthFailure {
+  const AuthCoreFailure(this.core);
+
+  final CoreFailure core;
 }

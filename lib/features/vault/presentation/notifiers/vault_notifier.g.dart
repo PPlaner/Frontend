@@ -41,7 +41,7 @@ final class VaultNotifierProvider
   }
 }
 
-String _$vaultNotifierHash() => r'806815d98f4c07223fcf24c8435e7f6abcbacae4';
+String _$vaultNotifierHash() => r'dff2b68676b15dca39e3b76cbc58389f7dc6af09';
 
 abstract class _$VaultNotifier extends $Notifier<VaultState> {
   VaultState build();

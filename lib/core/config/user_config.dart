@@ -20,6 +20,6 @@ class UserPreferences {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 UserPreferences userPreferences(Ref ref) =>
     UserPreferences(ref.watch(sharedPreferencesProvider));

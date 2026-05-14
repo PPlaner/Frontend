@@ -4,6 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_config_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AppConfig appConfig(Ref ref) =>
     const AppConfig(apiUrl: env.apiUrl, environment: env.environmentName);
