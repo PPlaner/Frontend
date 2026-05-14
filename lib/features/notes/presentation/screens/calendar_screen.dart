@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/features/notes/domain/entities/task_list_model.dart';
 import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
+import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -50,14 +53,20 @@ class CalendarTaskItem {
     required this.date,
     required this.listId,
     this.isCompleted = false,
+    this.dueTime,
+    this.priority = TaskPriority.none,
+    this.reminderMinutesBefore,
   });
 
   final String id;
-  final String title;
-  final String subtitle;
-  final DateTime date;
-  final String listId;
+  String title;
+  String subtitle;
+  DateTime date;
+  String listId;
   bool isCompleted;
+  TimeOfDay? dueTime;
+  TaskPriority priority;
+  int? reminderMinutesBefore;
 }
 
 const String kAllListsId = '__all__';
@@ -87,12 +96,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
   String _selectedListId = kAllListsId;
   bool _completedExpanded = true;
 
+  /// Показувати підзаголовок/деталі завдань у списку
+  bool _showDescription = true;
+
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
 
   // Геттери
 
-  List<TaskList> get _allLists => widget.externalLists;
+  List<TaskList> get _allLists {
+    return widget.externalLists.map((l) {
+      if (l.id == 'inbox') return l.copyWith(name: context.t.home.inbox);
+      return l;
+    }).toList();
+  }
 
   List<CalendarTaskItem> get _filteredTasks {
     return _tasks.where((task) {
@@ -110,6 +127,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _filteredTasks.where((t) => t.isCompleted).toList();
 
   bool get _hasTasksForSelectedDay => _filteredTasks.isNotEmpty;
+
+  /// Повертає true якщо в цей день є хоча б одне завдання
+  /// (для позначки на календарі)
+  bool _hasTasks(DateTime day) =>
+      _tasks.any((t) => isSameDay(t.date, day));
 
   // Назва активного фільтру
   String _filterLabel(Translations t) {
@@ -171,19 +193,65 @@ class _CalendarScreenState extends State<CalendarScreen> {
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.1),
       builder: (_) => AddTaskBottomSheet(
-        onTaskAdded: (title, subtitle) {
+        lists: _allLists,
+        onSaved: (data) {
           setState(() {
             _tasks.add(CalendarTaskItem(
               id: DateTime.now().millisecondsSinceEpoch.toString(),
-              title: title,
-              subtitle: subtitle,
-              date: _selectedDay,
-              listId: _selectedListId == kAllListsId
-                  ? (_allLists.isNotEmpty ? _allLists.first.id : 'inbox')
-                  : _selectedListId,
+              title: data.title,
+              subtitle: data.subtitle,
+              date: data.dueDate ?? _selectedDay,
+              dueTime: data.dueTime,
+              priority: data.priority,
+              reminderMinutesBefore: data.reminderMinutesBefore,
+              listId: data.listId ??
+                  (_selectedListId == kAllListsId
+                      ? (_allLists.isNotEmpty ? _allLists.first.id : 'inbox')
+                      : _selectedListId),
             ));
           });
         },
+        // Зворотна сумісність
+        onTaskAdded: null,
+      ),
+    );
+  }
+
+  Future<void> _openTaskDetailSheet(CalendarTaskItem task) async {
+    final detailData = TaskDetailData(
+      id: task.id,
+      title: task.title,
+      subtitle: task.subtitle,
+      isCompleted: task.isCompleted,
+      dueDate: task.date,
+      dueTime: task.dueTime,
+      listId: task.listId,
+      priority: task.priority,
+      reminderMinutesBefore: task.reminderMinutesBefore,
+    );
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.15),
+      builder: (_) => TaskDetailBottomSheet(
+        task: detailData,
+        lists: _allLists,
+        listName: _listNameFor(task.listId),
+        onSaved: (data) {
+          setState(() {
+            task..title = data.title
+            ..subtitle = data.subtitle
+            ..date = data.dueDate ?? task.date
+            ..dueTime = data.dueTime
+            ..priority = data.priority
+            ..reminderMinutesBefore = data.reminderMinutesBefore
+            ..listId = data.listId ?? task.listId;
+          });
+        },
+        onToggle: () => _toggleTask(task),
+        onDelete: () => _deleteTask(task),
       ),
     );
   }
@@ -240,6 +308,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Кнопка режиму перегляду
                       IconButton(
                         icon: Icon(
                           _viewMode.icon,
@@ -268,9 +337,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               children: [
                                 Text(
                                   _filterLabel(t),
-                                  style:
-                                  Theme.of(context).textTheme.labelMedium?.
-                                    copyWith(color: AppColors.primary,),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium
+                                      ?.copyWith(color: AppColors.primary),
                                 ),
                                 const SizedBox(width: 4),
                                 const Icon(
@@ -284,16 +354,40 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         )
                       else
                         const SizedBox.shrink(),
-                      IconButton(
-                        icon: Icon(
-                          Icons.filter_alt_outlined,
-                          color: isFilterActive
-                              ? AppColors.primary
-                              : colors.textPrimary,
-                          size: 24,
-                        ),
-                        tooltip: t.calendar.filter,
-                        onPressed: _openFilterSheet,
+
+                      // Права частина — вигляд списку + фільтр
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Перемикач показу опису завдань
+                          IconButton(
+                            icon: Icon(
+                              _showDescription
+                                  ? Icons.short_text_rounded
+                                  : Icons.subject_rounded,
+                              color: _showDescription
+                                  ? AppColors.primary
+                                  : colors.textPrimary,
+                              size: 24,
+                            ),
+                            tooltip: _showDescription
+                                ? t.calendar.hideDescription
+                                : t.calendar.showDescription,
+                            onPressed: () => setState(
+                                    () => _showDescription = !_showDescription),
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.filter_alt_outlined,
+                              color: isFilterActive
+                                  ? AppColors.primary
+                                  : colors.textPrimary,
+                              size: 24,
+                            ),
+                            tooltip: t.calendar.filter,
+                            onPressed: _openFilterSheet,
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -307,12 +401,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     date: _selectedDay,
                     title: _formatDayTitle(_selectedDay, t),
                     onPrev: () => setState(() {
-                      _selectedDay = _selectedDay.subtract(
-                          const Duration(days: 1));
+                      _selectedDay = _selectedDay
+                          .subtract(const Duration(days: 1));
                       _focusedDay = _selectedDay;
                     }),
                     onNext: () => setState(() {
-                      _selectedDay = _selectedDay.add(const Duration(days: 1));
+                      _selectedDay =
+                          _selectedDay.add(const Duration(days: 1));
                       _focusedDay = _selectedDay;
                     }),
                   )
@@ -321,6 +416,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     selectedDay: _selectedDay,
                     viewMode: _viewMode,
                     textTheme: Theme.of(context).textTheme,
+                    hasTasksForDay: _hasTasks,
                     onDaySelected: (selected, focused) {
                       setState(() {
                         _selectedDay = selected;
@@ -349,7 +445,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddTaskSheet,
         backgroundColor: AppColors.primary,
-        foregroundColor: colors.surface,
+        foregroundColor: AppColors.of(context).surface,
         elevation: 4,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 28),
@@ -373,8 +469,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
               key: ValueKey(task.id),
               task: task,
               listName: _listNameFor(task.listId),
+              showDescription: _showDescription,
               onToggle: () => _toggleTask(task),
               onDelete: () => _deleteTask(task),
+              onEdit: () => _openTaskDetailSheet(task),
             ),
           ),
         ),
@@ -384,16 +482,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
           _CompletedSection(
             isExpanded: _completedExpanded,
             count: _completedTasks.length,
-            onToggle: () => setState(() =>
-              _completedExpanded = !_completedExpanded),
+            onToggle: () =>
+                setState(() => _completedExpanded = !_completedExpanded),
             children: _completedTasks
                 .map(
                   (task) => _SwipableCompletedTile(
                 key: ValueKey(task.id),
                 task: task,
                 listName: _listNameFor(task.listId),
+                showDescription: _showDescription,
                 onToggle: () => _toggleTask(task),
                 onDelete: () => _deleteTask(task),
+                onEdit: () => _openTaskDetailSheet(task),
               ),
             )
                 .toList(),
@@ -472,7 +572,8 @@ class _ListFilterSheet extends StatelessWidget {
             ...lists.map(
                   (list) => ListTile(
                 contentPadding: EdgeInsets.zero,
-                leading: Text(list.emoji, style: const TextStyle(fontSize: 20)),
+                leading:
+                Text(list.emoji, style: const TextStyle(fontSize: 20)),
                 title: Text(
                   list.name,
                   style: textTheme.titleMedium?.copyWith(
@@ -483,12 +584,11 @@ class _ListFilterSheet extends StatelessWidget {
                 ),
                 trailing: selectedListId == list.id
                     ? const Icon(Icons.check,
-                        color: AppColors.primary, size: 20)
+                    color: AppColors.primary, size: 20)
                     : null,
                 onTap: () => onSelected(list.id),
               ),
             ),
-
             const SizedBox(height: 8),
           ],
         ),
@@ -497,21 +597,25 @@ class _ListFilterSheet extends StatelessWidget {
   }
 }
 
-// Активне завдання зі свайпом
+// Активне завдання зі свайпом і тапом для редагування
 
 class _SwipableTaskCard extends StatelessWidget {
   const _SwipableTaskCard({
     required this.task,
     required this.listName,
+    required this.showDescription,
     required this.onToggle,
     required this.onDelete,
+    required this.onEdit,
     super.key,
   });
 
   final CalendarTaskItem task;
   final String listName;
+  final bool showDescription;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -519,7 +623,7 @@ class _SwipableTaskCard extends StatelessWidget {
     final colors = AppColors.of(context);
 
     return Dismissible(
-      key: ValueKey('cal-dismissible-${task.id}'),
+      key: ValueKey('cal-task-${task.id}'),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -533,40 +637,73 @@ class _SwipableTaskCard extends StatelessWidget {
       ),
       confirmDismiss: (_) => _confirmDelete(context),
       onDismissed: (_) => onDelete(),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colors.cardBorder),
-        ),
-        child: ListTile(
-          contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          horizontalTitleGap: 8,
-          leading: SizedBox(
-            width: 24,
-            height: 24,
-            child: Checkbox(
-              value: task.isCompleted,
-              onChanged: (_) => onToggle(),
-              activeColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4)),
-              side: const BorderSide(color: AppColors.primary, width: 1.5),
-            ),
+      child: GestureDetector(
+        onTap: onEdit,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: colors.cardBorder),
           ),
-          title: Text(task.title, style: textTheme.titleMedium),
-          subtitle: task.subtitle.isNotEmpty
-              ? Text(
-            task.subtitle,
-            style: textTheme.bodySmall?.copyWith(color: colors.textSecondary),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          )
-              : null,
-          trailing: listName.isNotEmpty
-              ? Text(listName, style: textTheme.bodySmall)
-              : null,
+          child: ListTile(
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+            horizontalTitleGap: 8,
+            leading: SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: task.isCompleted,
+                onChanged: (_) => onToggle(),
+                activeColor: AppColors.primary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
+              ),
+            ),
+            title: Row(
+              children: [
+                // Індикатор пріоритету
+                if (task.priority != TaskPriority.none) ...[
+                  Icon(Icons.flag,
+                      size: 12, color: task.priority.color),
+                  const SizedBox(width: 4),
+                ],
+                Expanded(
+                  child: Text(task.title, style: textTheme.titleMedium),
+                ),
+              ],
+            ),
+            subtitle: showDescription && task.subtitle.isNotEmpty
+                ? Text(
+              _extractPlainText(task.subtitle),
+              style: textTheme.bodySmall
+                  ?.copyWith(color: colors.textSecondary),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
+                : null,
+            trailing: (listName.isNotEmpty || task.dueTime != null)
+                ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (task.dueTime != null)
+                  Text(
+                    '${task.dueTime!.hour.toString().padLeft(2, '0')}:'
+                        '${task.dueTime!.minute.toString().padLeft(2, '0')}',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                if (listName.isNotEmpty)
+                  Text(listName, style: textTheme.bodySmall),
+              ],
+            )
+                : null,
+          ),
         ),
       ),
     );
@@ -579,14 +716,19 @@ class _SwipableCompletedTile extends StatelessWidget {
   const _SwipableCompletedTile({
     required this.task,
     required this.listName,
+    required this.showDescription,
     required this.onToggle,
-    required this.onDelete, super.key,
+    required this.onDelete,
+    required this.onEdit,
+    super.key,
   });
 
   final CalendarTaskItem task;
   final String listName;
+  final bool showDescription;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -608,35 +750,72 @@ class _SwipableCompletedTile extends StatelessWidget {
       ),
       confirmDismiss: (_) => _confirmDelete(context),
       onDismissed: (_) => onDelete(),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: onToggle,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Icon(Icons.check, size: 14, color: colors.surface),
+      child: GestureDetector(
+        onTap: onEdit,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: onToggle,
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(Icons.check, size: 14, color: colors.surface),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      task.title,
+                      style: textTheme.titleMedium?.copyWith(
+                        decoration: TextDecoration.lineThrough,
+                        color: colors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      if (task.dueTime != null)
+                        Text(
+                          '${task.dueTime!.hour.toString().padLeft(2, '0')}:'
+                              '${task.dueTime!.minute.toString().
+                                  padLeft(2, '0')}',
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colors.textSecondary,
+                          ),
+                        ),
+                      if (listName.isNotEmpty)
+                        Text(listName, style: textTheme.bodySmall),
+                    ],
+                  ),
+                  if (listName.isNotEmpty)
+                    Text(listName, style: textTheme.bodySmall),
+                ],
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                task.title,
-                style: textTheme.titleMedium?.copyWith(
-                  decoration: TextDecoration.lineThrough,
-                  color: colors.textSecondary,
+              if (showDescription && task.subtitle.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Padding(
+                  padding: const EdgeInsets.only(left: 32),
+                  child: Text(
+                    _extractPlainText(task.subtitle),
+                    style: textTheme.bodySmall
+                        ?.copyWith(color: colors.textSecondary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-              ),
-            ),
-            if (listName.isNotEmpty)
-              Text(listName, style: textTheme.bodySmall),
-          ],
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -676,13 +855,14 @@ class _CompletedSection extends StatelessWidget {
             onTap: onToggle,
             borderRadius: BorderRadius.circular(20),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
                 children: [
                   Text(
                     t.home.completed,
-                    style: textTheme.titleMedium?.copyWith(
-                        color: colors.textSecondary),
+                    style: textTheme.titleMedium
+                        ?.copyWith(color: colors.textSecondary),
                   ),
                   const Spacer(),
                   Text('$count', style: textTheme.bodySmall),
@@ -700,8 +880,9 @@ class _CompletedSection extends StatelessWidget {
           AnimatedCrossFade(
             firstChild: Column(children: children),
             secondChild: const SizedBox.shrink(),
-            crossFadeState:
-            isExpanded ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            crossFadeState: isExpanded
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
             duration: const Duration(milliseconds: 200),
           ),
         ],
@@ -719,14 +900,16 @@ Future<bool> _confirmDelete(BuildContext context) async {
     builder: (ctx) {
       final t = ctx.t;
       return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         actionsAlignment: MainAxisAlignment.center,
         title: Text(
           t.home.deleteTask,
           textAlign: TextAlign.center,
           style: textTheme.titleLarge,
         ),
-        content: Text(t.home.deleteTaskMessage, textAlign: TextAlign.center),
+        content:
+        Text(t.home.deleteTaskMessage, textAlign: TextAlign.center),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -734,7 +917,8 @@ Future<bool> _confirmDelete(BuildContext context) async {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style:
+            TextButton.styleFrom(foregroundColor: AppColors.error),
             child: Text(t.common.delete),
           ),
         ],
@@ -744,7 +928,7 @@ Future<bool> _confirmDelete(BuildContext context) async {
   return result ?? false;
 }
 
-// Картка з TableCalendar
+// Картка з TableCalendar + позначки завдань
 
 class _CalendarCard extends StatelessWidget {
   const _CalendarCard({
@@ -752,6 +936,7 @@ class _CalendarCard extends StatelessWidget {
     required this.selectedDay,
     required this.viewMode,
     required this.textTheme,
+    required this.hasTasksForDay,
     required this.onDaySelected,
     required this.onPageChanged,
   });
@@ -760,6 +945,10 @@ class _CalendarCard extends StatelessWidget {
   final DateTime selectedDay;
   final CalendarViewMode viewMode;
   final TextTheme textTheme;
+
+  /// Повертає true якщо є завдання в цей день — для відображення крапки
+  final bool Function(DateTime day) hasTasksForDay;
+
   final void Function(DateTime, DateTime) onDaySelected;
   final void Function(DateTime) onPageChanged;
 
@@ -771,8 +960,8 @@ class _CalendarCard extends StatelessWidget {
       color: colors.textPrimary,
       fontWeight: FontWeight.w400,
     );
-    final selectedDayStyle = (textTheme.bodyMedium ?? const TextStyle()).
-    copyWith(
+    final selectedDayStyle =
+    (textTheme.bodyMedium ?? const TextStyle()).copyWith(
       color: AppColors.primary,
       fontWeight: FontWeight.w700,
     );
@@ -780,11 +969,13 @@ class _CalendarCard extends StatelessWidget {
       color: AppColors.primary,
       fontWeight: FontWeight.w600,
     );
-    final dowStyle = (textTheme.labelSmall ?? const TextStyle()).copyWith(
+    final dowStyle =
+    (textTheme.labelSmall ?? const TextStyle()).copyWith(
       color: AppColors.calendarDayOfWeek,
       fontWeight: FontWeight.w600,
     );
-    final headerStyle = (textTheme.titleMedium ?? const TextStyle()).copyWith(
+    final headerStyle =
+    (textTheme.titleMedium ?? const TextStyle()).copyWith(
       color: colors.textPrimary,
     );
 
@@ -802,14 +993,16 @@ class _CalendarCard extends StatelessWidget {
         ],
       ),
       child: TableCalendar<dynamic>(
-        firstDay: DateTime.utc(2020, 1, 1),
+        firstDay: DateTime.utc(2020),
         lastDay: DateTime.utc(2030, 12, 31),
         focusedDay: focusedDay,
         calendarFormat: viewMode.calendarFormat ?? CalendarFormat.month,
-        startingDayOfWeek: StartingDayOfWeek.sunday,
         selectedDayPredicate: (day) => isSameDay(selectedDay, day),
         onDaySelected: onDaySelected,
         onPageChanged: onPageChanged,
+
+        eventLoader: (day) => hasTasksForDay(day) ? [true] : [],
+
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
           titleTextStyle: headerStyle,
@@ -843,6 +1036,15 @@ class _CalendarCard extends StatelessWidget {
           defaultTextStyle: dayStyle,
           weekendTextStyle: dayStyle,
           outsideDaysVisible: false,
+
+          // Стиль маркерів (крапок) під днями
+          markerDecoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.7),
+            shape: BoxShape.circle,
+          ),
+          markersMaxCount: 1,
+          markerSize: 5,
+          markerMargin: const EdgeInsets.only(top: 1),
         ),
       ),
     );
@@ -883,7 +1085,8 @@ class _DayHeader extends StatelessWidget {
                 color: colors.textSecondary, size: 20),
           ),
           Expanded(
-            child: Text(title, textAlign: TextAlign.center,
+            child: Text(title,
+                textAlign: TextAlign.center,
                 style: textTheme.titleMedium),
           ),
           GestureDetector(
@@ -936,16 +1139,16 @@ class _ViewModeSheet extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(
                   mode.icon,
-                  color: current == mode ?
-                    AppColors.primary :
-                    colors.textSecondary,
+                  color: current == mode
+                      ? AppColors.primary
+                      : colors.textSecondary,
                 ),
                 title: Text(
                   mode.label(t),
                   style: textTheme.titleMedium?.copyWith(
-                    color: current == mode ?
-                      AppColors.primary :
-                      colors.textSecondary,
+                    color: current == mode
+                        ? AppColors.primary
+                        : colors.textSecondary,
                   ),
                 ),
                 trailing: current == mode
@@ -1006,5 +1209,19 @@ class _BottomNav extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+String _extractPlainText(String jsonOrText) {
+  if (jsonOrText.isEmpty) return '';
+  try {
+    if (jsonOrText.trim().startsWith('[')) {
+      final decoded = jsonDecode(jsonOrText) as List<dynamic>;
+      final doc = quill.Document.fromJson(decoded);
+      return doc.toPlainText().trim(); // Витягуємо чистий текст без стилів
+    }
+    return jsonOrText;
+  } on FormatException {
+    return jsonOrText;
   }
 }

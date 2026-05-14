@@ -43,6 +43,7 @@
         "today": "Today",
         "completed": "Completed",
         "newTask": "New task",
+        "editTask": "Edit task",
         "whatToDo": "What needs to be done?",
         "addDetails": "Add details...",
         "deleteTask": "Delete task?",
@@ -72,7 +73,33 @@
         "months": [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
-        ]
+        ],
+        "showDescription": "Show event details",
+        "hideDescription": "Hide task details"
+    },
+    "task": {
+        "chooseList": "Select a list",
+        "noList": "No list",
+        "choosePriority": "Select a priority",
+        "chooseReminder": "Select a reminder",
+        "noReminder": "No reminder",
+        "reminderAtTime": "Remind at time",
+        "reminderMinutes": {
+            "one": "1 minute",
+            "other": "$n minutes"
+        },
+        "reminderHours": {
+            "one": "1 hour",
+            "other": "$n hours"
+        },
+        "reminderDays": {
+            "one": "1 day",
+            "other": "$n days"
+        },
+        "priorityNone": "None",
+        "priorityLow": "Low",
+        "priorityMedium": "Medium",
+        "priorityHigh": "High"
     },
     "profile": {
         "title": "Profile",

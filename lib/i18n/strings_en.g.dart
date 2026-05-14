@@ -45,6 +45,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 	late final TranslationsVaultEn vault = TranslationsVaultEn.internal(_root);
 	late final TranslationsHomeEn home = TranslationsHomeEn.internal(_root);
 	late final TranslationsCalendarEn calendar = TranslationsCalendarEn.internal(_root);
+	late final TranslationsTaskEn task = TranslationsTaskEn.internal(_root);
 	late final TranslationsProfileEn profile = TranslationsProfileEn.internal(_root);
 	late final TranslationsCategoryEn category = TranslationsCategoryEn.internal(_root);
 	late final TranslationsTimezonesEn timezones = TranslationsTimezonesEn.internal(_root);
@@ -179,6 +180,9 @@ class TranslationsHomeEn {
 	/// en: 'New task'
 	String get newTask => 'New task';
 
+	/// en: 'Edit task'
+	String get editTask => 'Edit task';
+
 	/// en: 'What needs to be done?'
 	String get whatToDo => 'What needs to be done?';
 
@@ -274,6 +278,69 @@ class TranslationsCalendarEn {
 		'November',
 		'December',
 	];
+
+	/// en: 'Show event details'
+	String get showDescription => 'Show event details';
+
+	/// en: 'Hide task details'
+	String get hideDescription => 'Hide task details';
+}
+
+// Path: task
+class TranslationsTaskEn {
+	TranslationsTaskEn.internal(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Select a list'
+	String get chooseList => 'Select a list';
+
+	/// en: 'No list'
+	String get noList => 'No list';
+
+	/// en: 'Select a priority'
+	String get choosePriority => 'Select a priority';
+
+	/// en: 'Select a reminder'
+	String get chooseReminder => 'Select a reminder';
+
+	/// en: 'No reminder'
+	String get noReminder => 'No reminder';
+
+	/// en: 'Remind at time'
+	String get reminderAtTime => 'Remind at time';
+
+	/// en: '(one) {1 minute} (other) {$n minutes}'
+	String reminderMinutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '1 minute',
+		other: '${n} minutes',
+	);
+
+	/// en: '(one) {1 hour} (other) {$n hours}'
+	String reminderHours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '1 hour',
+		other: '${n} hours',
+	);
+
+	/// en: '(one) {1 day} (other) {$n days}'
+	String reminderDays({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '1 day',
+		other: '${n} days',
+	);
+
+	/// en: 'None'
+	String get priorityNone => 'None';
+
+	/// en: 'Low'
+	String get priorityLow => 'Low';
+
+	/// en: 'Medium'
+	String get priorityMedium => 'Medium';
+
+	/// en: 'High'
+	String get priorityHigh => 'High';
 }
 
 // Path: profile
@@ -696,10 +763,21 @@ extension on Translations {
 			'home.today' => 'Today',
 			'home.completed' => 'Completed',
 			'home.newTask' => 'New task',
+			'home.editTask' => 'Edit task',
 			'home.whatToDo' => 'What needs to be done?',
 			'home.addDetails' => 'Add details...',
 			'home.deleteTask' => 'Delete task?',
 			'home.deleteTaskMessage' => 'This task will be permanently deleted.',
+			'home.myLists' => 'My lists',
+			'home.addList' => 'Add a list',
+			'home.editList' => 'Edit list',
+			'home.deleteList' => 'Delete list',
+			'home.deleteListTitle' => 'Delete list?',
+			'home.deleteListMessage' => 'The list and all its tasks will be permanently deleted.',
+			'home.listName' => 'Name',
+			'home.listColor' => 'List colour',
+			'home.listIcon' => 'Icon',
+			'home.inbox' => 'Inbox',
 			'calendar.title' => 'Calendar',
 			'calendar.noTasks' => 'No tasks for this day',
 			'calendar.viewMonth' => 'Month',
@@ -722,6 +800,21 @@ extension on Translations {
 			'calendar.months.9' => 'October',
 			'calendar.months.10' => 'November',
 			'calendar.months.11' => 'December',
+			'calendar.showDescription' => 'Show event details',
+			'calendar.hideDescription' => 'Hide task details',
+			'task.chooseList' => 'Select a list',
+			'task.noList' => 'No list',
+			'task.choosePriority' => 'Select a priority',
+			'task.chooseReminder' => 'Select a reminder',
+			'task.noReminder' => 'No reminder',
+			'task.reminderAtTime' => 'Remind at time',
+			'task.reminderMinutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 minute', other: '${n} minutes', ), 
+			'task.reminderHours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 hour', other: '${n} hours', ), 
+			'task.reminderDays' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 day', other: '${n} days', ), 
+			'task.priorityNone' => 'None',
+			'task.priorityLow' => 'Low',
+			'task.priorityMedium' => 'Medium',
+			'task.priorityHigh' => 'High',
 			'profile.title' => 'Profile',
 			'profile.name' => 'Name',
 			'profile.email' => 'Email',

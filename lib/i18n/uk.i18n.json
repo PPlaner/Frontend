@@ -30,6 +30,7 @@
         "today": "Сьогодні",
         "completed": "Завершені",
         "newTask": "Нове завдання",
+        "editTask": "Редагувати завдання",
         "whatToDo": "Що потрібно зробити?",
         "addDetails": "Додати деталі...",
         "deleteTask": "Видалити завдання?",
@@ -59,7 +60,39 @@
         "months": [
             "січня", "лютого", "березня", "квітня", "травня", "червня",
             "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"
-        ]
+        ],
+        "showDescription": "Показати деталі завадння",
+        "hideDescription": "Сховати деталі завдання"
+    },
+    "task": {
+        "chooseList": "Вибрати список",
+        "noList": "Жоден список",
+        "choosePriority": "Вибрати пріоритет",
+        "chooseReminder": "Вибрати нагадування",
+        "noReminder": "Без нагадування",
+        "reminderAtTime": "Нагадати вчасно",
+        "reminderMinutes": {
+            "one": "1 хвилина",
+            "few": "$n хвилини",
+            "many": "$n хвилин",
+            "other": "$n хвилини"
+        },
+        "reminderHours": {
+            "one": "1 година",
+            "few": "$n години",
+            "many": "$n годин",
+            "other": "$n години"
+        },
+        "reminderDays": {
+            "one": "1 день",
+            "few": "$n дні",
+            "many": "$n днів",
+            "other": "$n дні"
+        },
+        "priorityNone": "Немає",
+        "priorityLow": "Низький",
+        "priorityMedium": "Середній",
+        "priorityHigh": "Високий"
     },
     "profile": {
         "title": "Профіль",

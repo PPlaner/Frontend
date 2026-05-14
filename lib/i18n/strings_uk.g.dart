@@ -43,6 +43,7 @@ class TranslationsUk extends Translations with BaseTranslations<AppLocale, Trans
 	@override late final _TranslationsAuthUk auth = _TranslationsAuthUk._(_root);
 	@override late final _TranslationsHomeUk home = _TranslationsHomeUk._(_root);
 	@override late final _TranslationsCalendarUk calendar = _TranslationsCalendarUk._(_root);
+	@override late final _TranslationsTaskUk task = _TranslationsTaskUk._(_root);
 	@override late final _TranslationsProfileUk profile = _TranslationsProfileUk._(_root);
 	@override late final _TranslationsCategoryUk category = _TranslationsCategoryUk._(_root);
 	@override late final _TranslationsTimezonesUk timezones = _TranslationsTimezonesUk._(_root);
@@ -105,6 +106,7 @@ class _TranslationsHomeUk extends TranslationsHomeEn {
 	@override String get today => 'Сьогодні';
 	@override String get completed => 'Завершені';
 	@override String get newTask => 'Нове завдання';
+	@override String get editTask => 'Редагувати завдання';
 	@override String get whatToDo => 'Що потрібно зробити?';
 	@override String get addDetails => 'Додати деталі...';
 	@override String get deleteTask => 'Видалити завдання?';
@@ -152,6 +154,45 @@ class _TranslationsCalendarUk extends TranslationsCalendarEn {
 		'листопада',
 		'грудня',
 	];
+	@override String get showDescription => 'Показати деталі завадння';
+	@override String get hideDescription => 'Сховати деталі завдання';
+}
+
+// Path: task
+class _TranslationsTaskUk extends TranslationsTaskEn {
+	_TranslationsTaskUk._(TranslationsUk root) : this._root = root, super.internal(root);
+
+	final TranslationsUk _root; // ignore: unused_field
+
+	// Translations
+	@override String get chooseList => 'Вибрати список';
+	@override String get noList => 'Жоден список';
+	@override String get choosePriority => 'Вибрати пріоритет';
+	@override String get chooseReminder => 'Вибрати нагадування';
+	@override String get noReminder => 'Без нагадування';
+	@override String get reminderAtTime => 'Нагадати вчасно';
+	@override String reminderMinutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n,
+		one: '1 хвилина',
+		few: '${n} хвилини',
+		many: '${n} хвилин',
+		other: '${n} хвилини',
+	);
+	@override String reminderHours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n,
+		one: '1 година',
+		few: '${n} години',
+		many: '${n} годин',
+		other: '${n} години',
+	);
+	@override String reminderDays({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n,
+		one: '1 день',
+		few: '${n} дні',
+		many: '${n} днів',
+		other: '${n} дні',
+	);
+	@override String get priorityNone => 'Немає';
+	@override String get priorityLow => 'Низький';
+	@override String get priorityMedium => 'Середній';
+	@override String get priorityHigh => 'Високий';
 }
 
 // Path: profile
@@ -364,10 +405,21 @@ extension on TranslationsUk {
 			'home.today' => 'Сьогодні',
 			'home.completed' => 'Завершені',
 			'home.newTask' => 'Нове завдання',
+			'home.editTask' => 'Редагувати завдання',
 			'home.whatToDo' => 'Що потрібно зробити?',
 			'home.addDetails' => 'Додати деталі...',
 			'home.deleteTask' => 'Видалити завдання?',
 			'home.deleteTaskMessage' => 'Це завдання буде видалено назавжди.',
+			'home.myLists' => 'Мої списки',
+			'home.addList' => 'Додати список',
+			'home.editList' => 'Редагувати список',
+			'home.deleteList' => 'Видалити список',
+			'home.deleteListTitle' => 'Видалити список?',
+			'home.deleteListMessage' => 'Список та всі його завдання буде видалено назавжди.',
+			'home.listName' => 'Назва',
+			'home.listColor' => 'Колір списку',
+			'home.listIcon' => 'Іконка',
+			'home.inbox' => 'Вхідні',
 			'calendar.title' => 'Календар',
 			'calendar.noTasks' => 'Немає завдань на цей день',
 			'calendar.viewMonth' => 'Місяць',
@@ -390,6 +442,21 @@ extension on TranslationsUk {
 			'calendar.months.9' => 'жовтня',
 			'calendar.months.10' => 'листопада',
 			'calendar.months.11' => 'грудня',
+			'calendar.showDescription' => 'Показати деталі завадння',
+			'calendar.hideDescription' => 'Сховати деталі завдання',
+			'task.chooseList' => 'Вибрати список',
+			'task.noList' => 'Жоден список',
+			'task.choosePriority' => 'Вибрати пріоритет',
+			'task.chooseReminder' => 'Вибрати нагадування',
+			'task.noReminder' => 'Без нагадування',
+			'task.reminderAtTime' => 'Нагадати вчасно',
+			'task.reminderMinutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n, one: '1 хвилина', few: '${n} хвилини', many: '${n} хвилин', other: '${n} хвилини', ), 
+			'task.reminderHours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n, one: '1 година', few: '${n} години', many: '${n} годин', other: '${n} години', ), 
+			'task.reminderDays' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(n, one: '1 день', few: '${n} дні', many: '${n} днів', other: '${n} дні', ), 
+			'task.priorityNone' => 'Немає',
+			'task.priorityLow' => 'Низький',
+			'task.priorityMedium' => 'Середній',
+			'task.priorityHigh' => 'Високий',
 			'profile.title' => 'Профіль',
 			'profile.name' => 'Ім\'я',
 			'profile.email' => 'Електронна пошта',
