@@ -19,13 +19,13 @@ mixin DataSourceRunner {
         final statusCode = e.response!.statusCode ?? 0;
         final message = e.response!.data?.toString();
 
-        return Failure(mapCore(CoreFailure.api(statusCode, message)));
+        return Failure(mapCore(ApiFailure(statusCode, message)));
       }
 
-      return Failure(mapCore(const CoreFailure.network()));
+      return Failure(mapCore(const NetworkFailure()));
     } on Exception catch (e, st) {
       logger.e('Unhandled exception in remoteRunner', error: e, stackTrace: st);
-      return Failure(mapCore(CoreFailure.unexpected(e)));
+      return Failure(mapCore(UnexpectedFailure(e)));
     }
   }
 
@@ -38,10 +38,10 @@ mixin DataSourceRunner {
       return Success(result);
     } on SqliteException catch (e, st) {
       logger.e('Call failed in localRunner', error: e, stackTrace: st);
-      return Failure(mapCore(CoreFailure.storage(e.message)));
+      return Failure(mapCore(StorageFailure(e.message)));
     } on Exception catch (e, st) {
       logger.e('Unhandled exception in localRunner', error: e, stackTrace: st);
-      return Failure(mapCore(CoreFailure.unexpected(e)));
+      return Failure(mapCore(UnexpectedFailure(e)));
     }
   }
 }

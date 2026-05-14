@@ -67,7 +67,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
       final responseData = networkResult.unwrap.data;
 
       if (responseData == null) {
-        state = const SyncError(CoreFailure.unexpected('Null response data'));
+        state = const SyncError(UnexpectedFailure('Null response data'));
         return;
       }
 
@@ -109,7 +109,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         stackTrace: st,
       );
 
-      state = SyncError(CoreFailure.unexpected(e));
+      state = SyncError(UnexpectedFailure(e));
     }
   }
 }
