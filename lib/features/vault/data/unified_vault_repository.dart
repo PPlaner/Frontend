@@ -55,7 +55,14 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
 
       if (connectivityResult.contains(ConnectivityResult.wifi)) {
         final syncResult = await syncKeys();
-        if (syncResult case Failure(error: final e)) return Failure(e);
+        if (syncResult case Failure(error: final e)) {
+          switch (e) {
+            case VaultCoreFailure(core: NetworkFailure()):
+              break;
+            default:
+              return Failure(e);
+          }
+        }
       }
     }
 
