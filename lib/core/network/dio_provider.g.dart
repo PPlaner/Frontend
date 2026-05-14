@@ -22,8 +22,8 @@ final class TokenRefresherProvider
         retry: null,
         name: r'tokenRefresherProvider',
         isAutoDispose: false,
-        dependencies: <ProviderOrFamily>[],
-        $allTransitiveDependencies: <ProviderOrFamily>[],
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
   @override
@@ -48,7 +48,7 @@ final class TokenRefresherProvider
   }
 }
 
-String _$tokenRefresherHash() => r'382ff14ace38b0c480c30157d1dbc597761eae3e';
+String _$tokenRefresherHash() => r'03e1eab9344c500fa2dba4e37d685558fa7009b9';
 
 @ProviderFor(dio)
 final dioProvider = DioProvider._();
