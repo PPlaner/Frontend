@@ -1,14 +1,23 @@
-import 'package:flutter/foundation.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/core/domain/core_failure.dart';
 
-part 'vault_failure.freezed.dart';
+sealed class VaultFailure {
+  const VaultFailure();
+}
 
-@freezed
-sealed class VaultFailure with _$VaultFailure {
-  const factory VaultFailure.vaultLocked() = _VaultLocked;
-  const factory VaultFailure.vaultNotInitialized() = _VaultNotInitialized;
-  const factory VaultFailure.invalidSecret() = _InvalidSecret;
+class VaultLocked extends VaultFailure {
+  const VaultLocked();
+}
 
-  const factory VaultFailure.core(CoreFailure core) = _VaultCore;
+class VaultNotInitialized extends VaultFailure {
+  const VaultNotInitialized();
+}
+
+class InvalidSecret extends VaultFailure {
+  const InvalidSecret();
+}
+
+class VaultCoreFailure extends VaultFailure {
+  const VaultCoreFailure(this.core);
+
+  final CoreFailure core;
 }

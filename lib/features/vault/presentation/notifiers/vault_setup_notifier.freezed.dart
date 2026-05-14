@@ -49,7 +49,7 @@ $Res call({
 });
 
 
-$VaultFailureCopyWith<$Res>? get failure;
+
 
 }
 /// @nodoc
@@ -73,19 +73,7 @@ as bool,failure: freezed == failure ? _self.failure : failure // ignore: cast_nu
 as VaultFailure?,
   ));
 }
-/// Create a copy of VaultSetupData
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$VaultFailureCopyWith<$Res>? get failure {
-    if (_self.failure == null) {
-    return null;
-  }
 
-  return $VaultFailureCopyWith<$Res>(_self.failure!, (value) {
-    return _then(_self.copyWith(failure: value));
-  });
-}
 }
 
 
@@ -273,7 +261,7 @@ $Res call({
 });
 
 
-@override $VaultFailureCopyWith<$Res>? get failure;
+
 
 }
 /// @nodoc
@@ -298,19 +286,7 @@ as VaultFailure?,
   ));
 }
 
-/// Create a copy of VaultSetupData
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$VaultFailureCopyWith<$Res>? get failure {
-    if (_self.failure == null) {
-    return null;
-  }
 
-  return $VaultFailureCopyWith<$Res>(_self.failure!, (value) {
-    return _then(_self.copyWith(failure: value));
-  });
-}
 }
 
 // dart format on

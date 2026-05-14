@@ -85,7 +85,7 @@ class SecureVaultService implements VaultService {
       final keySlot = keySlotResult.unwrap;
 
       if (keySlot == null) {
-        return const Failure(VaultFailure.vaultNotInitialized());
+        return const Failure(VaultNotInitialized());
       }
 
       final kek = await _derivation.deriveFromString(secret, keySlot.salt);
@@ -111,12 +111,12 @@ class SecureVaultService implements VaultService {
     try {
       return await action();
     } on CryptoDecryptionException catch (_) {
-      return const Failure(VaultFailure.invalidSecret());
+      return const Failure(InvalidSecret());
     } on CryptoException catch (e) {
-      return Failure(VaultFailure.core(CoreFailure.crypto(e.message)));
+      return Failure(VaultCoreFailure(CryptoFailure(e.message)));
     } on Exception catch (e, st) {
       logger.e('SecureVaultService operation failed', error: e, stackTrace: st);
-      return Failure(VaultFailure.core(CoreFailure.unexpected(e)));
+      return Failure(VaultCoreFailure(UnexpectedFailure(e)));
     }
   }
 }
