@@ -33,7 +33,17 @@
         "whatToDo": "Що потрібно зробити?",
         "addDetails": "Додати деталі...",
         "deleteTask": "Видалити завдання?",
-        "deleteTaskMessage": "Це завдання буде видалено назавжди."
+        "deleteTaskMessage": "Це завдання буде видалено назавжди.",
+        "myLists": "Мої списки",
+        "addList": "Додати список",
+        "editList": "Редагувати список",
+        "deleteList": "Видалити список",
+        "deleteListTitle": "Видалити список?",
+        "deleteListMessage": "Список та всі його завдання буде видалено назавжди.",
+        "listName": "Назва",
+        "listColor": "Колір списку",
+        "listIcon": "Іконка",
+        "inbox": "Вхідні"
     },
     "calendar": {
         "title": "Календар",

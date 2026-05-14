@@ -46,7 +46,17 @@
         "whatToDo": "What needs to be done?",
         "addDetails": "Add details...",
         "deleteTask": "Delete task?",
-        "deleteTaskMessage": "This task will be permanently deleted."
+        "deleteTaskMessage": "This task will be permanently deleted.",
+        "myLists": "My lists",
+        "addList": "Add a list",
+        "editList": "Edit list",
+        "deleteList": "Delete list",
+        "deleteListTitle": "Delete list?",
+        "deleteListMessage": "The list and all its tasks will be permanently deleted.",
+        "listName": "Name",
+        "listColor": "List colour",
+        "listIcon": "Icon",
+        "inbox": "Inbox"
     },
     "calendar": {
         "title": "Calendar",

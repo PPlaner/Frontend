@@ -109,6 +109,16 @@ class _TranslationsHomeUk extends TranslationsHomeEn {
 	@override String get addDetails => 'Додати деталі...';
 	@override String get deleteTask => 'Видалити завдання?';
 	@override String get deleteTaskMessage => 'Це завдання буде видалено назавжди.';
+	@override String get myLists => 'Мої списки';
+	@override String get addList => 'Додати список';
+	@override String get editList => 'Редагувати список';
+	@override String get deleteList => 'Видалити список';
+	@override String get deleteListTitle => 'Видалити список?';
+	@override String get deleteListMessage => 'Список та всі його завдання буде видалено назавжди.';
+	@override String get listName => 'Назва';
+	@override String get listColor => 'Колір списку';
+	@override String get listIcon => 'Іконка';
+	@override String get inbox => 'Вхідні';
 }
 
 // Path: calendar
