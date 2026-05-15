@@ -94,7 +94,7 @@ final class SelectedProjectTitleProvider
 }
 
 String _$selectedProjectTitleHash() =>
-    r'391040f33271d741b26c18e77d790c59528fec21';
+    r'd0d51e3c16d872a3de40a99c3f353a4f2fcda7ff';
 
 abstract class _$SelectedProjectTitle extends $Notifier<String> {
   String build();
@@ -211,58 +211,6 @@ abstract class _$ShowDescription extends $Notifier<bool> {
             as $ClassProviderElement<
               AnyNotifier<bool, bool>,
               bool,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
-@ProviderFor(BottomNavIndex)
-final bottomNavIndexProvider = BottomNavIndexProvider._();
-
-final class BottomNavIndexProvider
-    extends $NotifierProvider<BottomNavIndex, int> {
-  BottomNavIndexProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'bottomNavIndexProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$bottomNavIndexHash();
-
-  @$internal
-  @override
-  BottomNavIndex create() => BottomNavIndex();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$bottomNavIndexHash() => r'916e0a6f964a696caad6ff04eac5e5480e078fa9';
-
-abstract class _$BottomNavIndex extends $Notifier<int> {
-  int build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<int, int>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
               Object?,
               Object?
             >;

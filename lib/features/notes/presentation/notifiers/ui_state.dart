@@ -22,6 +22,7 @@ class SelectedProjectTitle extends _$SelectedProjectTitle {
     final projects = ref.watch(projectsProvider).value ?? [];
 
     return switch (selectedProjectId) {
+      _ when selectedProjectId == allProjectsId => t.home.today,
       _ when selectedProjectId == todayProjectId => t.home.today,
       _ when selectedProjectId == inboxProjectId => t.home.inbox,
       _ => projects.firstWhere((p) => p.id == selectedProjectId).title,
@@ -43,14 +44,6 @@ class ShowDescription extends _$ShowDescription {
   bool build() => true;
 
   void toggle() => state = !state;
-}
-
-@riverpod
-class BottomNavIndex extends _$BottomNavIndex {
-  @override
-  int build() => 0;
-
-  void set(int index) => state = index;
 }
 
 @riverpod
