@@ -11,8 +11,8 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
     with _$ProjectsDaoMixin {
   ProjectsDao(super.attachedDatabase);
 
-  Future<void> insertProject(ProjectsCompanion note) =>
-      into(projects).insert(note);
+  Future<ProjectModel> insertProject(ProjectsCompanion note) =>
+      into(projects).insertReturning(note);
 
   Future<void> updateProject(ProjectsCompanion note) =>
       update(projects).replace(note);
@@ -45,6 +45,8 @@ class ProjectsDao extends DatabaseAccessor<AppDatabase>
 
   Future<ProjectModel?> getProject(String id) =>
       (select(projects)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+
+  Future<List<ProjectModel>> getAll() => select(projects).get();
 
   Future<List<ProjectModel>> getPending() =>
       (select(projects)..where(

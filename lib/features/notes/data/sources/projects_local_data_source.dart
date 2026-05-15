@@ -12,7 +12,7 @@ class ProjectsLocalDataSource {
 
   final ProjectsDao _projectsDao;
 
-  Future<void> create(ProjectsCompanion note) =>
+  Future<ProjectModel> create(ProjectsCompanion note) =>
       _projectsDao.insertProject(note);
 
   Future<void> save(ProjectsCompanion note) => _projectsDao.updateProject(note);
@@ -22,6 +22,8 @@ class ProjectsLocalDataSource {
   ) => _projectsDao.acknowledgePushed(acknowledgements);
 
   Future<ProjectModel?> get(String id) => _projectsDao.getProject(id);
+
+  Future<List<ProjectModel>> getAll() => _projectsDao.getAll();
 
   Future<List<ProjectModel>> getPending() => _projectsDao.getPending();
 

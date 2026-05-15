@@ -1,3 +1,5 @@
+import 'package:drift/drift.dart';
+import 'package:frontend/app/database/database.dart';
 import 'package:frontend/core/domain/result.dart';
 import 'package:frontend/core/sync/sync_status.dart';
 import 'package:frontend/core/sync/sync_types.dart';
@@ -13,6 +15,7 @@ import 'package:frontend/features/notes/data/projects_sync_engine.dart';
 import 'package:frontend/features/notes/data/sources/notes_local_data_source.dart';
 import 'package:frontend/features/notes/data/sources/projects_local_data_source.dart';
 import 'package:frontend/features/notes/domain/entities/encrypted_note.dart';
+import 'package:frontend/features/notes/domain/entities/encrypted_project.dart';
 import 'package:frontend/features/notes/domain/failures/notes_failure.dart';
 import 'package:frontend/features/notes/domain/notes_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -34,9 +37,29 @@ class UnifiedNotesRepository
   // --- Repository interface implementation ---
 
   @override
+  Future<Result<EncryptedNote, NotesFailure>> createNote(
+    Uint8List encryptedTitle,
+    Uint8List encryptedContent,
+    String? projectId,
+  ) async {
+    final companion = NotesCompanion.insert(
+      encryptedTitle: encryptedTitle,
+      encryptedContent: encryptedContent,
+      projectId: Value(projectId),
+    );
+
+    final result = await localRunner(
+      call: () => _localNotes.create(companion),
+      mapCore: NotesCoreFailure.new,
+    );
+
+    return result.map((model) => model.toDomain());
+  }
+
+  @override
   Future<Result<void, NotesFailure>> saveNote(EncryptedNote note) async {
     return localRunner(
-      call: () => _localNotes.create(note.toCompanion()),
+      call: () => _localNotes.save(note.toCompanion()),
       mapCore: NotesCoreFailure.new,
     );
   }
@@ -49,6 +72,80 @@ class UnifiedNotesRepository
     );
 
     return result.map((model) => model?.toDomain());
+  }
+
+  @override
+  Future<Result<List<EncryptedNote>, NotesFailure>> getAllNotes() async {
+    final result = await localRunner(
+      call: _localNotes.getAll,
+      mapCore: NotesCoreFailure.new,
+    );
+
+    return result.map(
+      (models) => models.map((model) => model.toDomain()).toList(),
+    );
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> deleteNote(String id) {
+    return localRunner(
+      call: () => _localNotes.delete(id),
+      mapCore: NotesCoreFailure.new,
+    );
+  }
+
+  @override
+  Future<Result<EncryptedProject, NotesFailure>> createProject(
+    Uint8List encryptedContent,
+  ) async {
+    final companion = ProjectsCompanion.insert(
+      encryptedContent: encryptedContent,
+    );
+
+    final result = await localRunner(
+      call: () => _localProjects.create(companion),
+      mapCore: NotesCoreFailure.new,
+    );
+
+    return result.map((model) => model.toDomain());
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> saveProject(EncryptedProject note) async {
+    return localRunner(
+      call: () => _localProjects.save(note.toCompanion()),
+      mapCore: NotesCoreFailure.new,
+    );
+  }
+
+  @override
+  Future<Result<EncryptedProject?, NotesFailure>> getProject(String id) async {
+    final result = await localRunner(
+      call: () => _localProjects.get(id),
+      mapCore: NotesCoreFailure.new,
+    );
+
+    return result.map((model) => model?.toDomain());
+  }
+
+  @override
+  Future<Result<List<EncryptedProject>, NotesFailure>> getAllProjects() async {
+    final result = await localRunner(
+      call: _localProjects.getAll,
+      mapCore: NotesCoreFailure.new,
+    );
+
+    return result.map(
+      (models) => models.map((model) => model.toDomain()).toList(),
+    );
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> deleteProject(String id) {
+    return localRunner(
+      call: () => _localProjects.delete(id),
+      mapCore: NotesCoreFailure.new,
+    );
   }
 
   // --- Notes sync engine interface implementation ---

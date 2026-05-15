@@ -1,167 +1,75 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/theme/app_colors.dart';
-import 'package:frontend/features/notes/domain/entities/task_list_model.dart';
+import 'package:frontend/features/notes/domain/constants.dart';
+import 'package:frontend/features/notes/domain/entities/note.dart';
+import 'package:frontend/features/notes/domain/entities/project.dart';
+import 'package:frontend/features/notes/domain/models/note_creation_payload.dart';
+import 'package:frontend/features/notes/domain/task_priority.dart';
+import 'package:frontend/features/notes/presentation/helpers.dart';
+import 'package:frontend/features/notes/presentation/notifiers/notes_notifier.dart';
+import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:frontend/features/notes/presentation/widgets/meta_icon_button.dart';
+import 'package:frontend/features/notes/presentation/widgets/pickers/priority_picker_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/pickers/reminder_picker_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
-// Пріоритети завдання
-
-enum TaskPriority { none, low, medium, high }
-
-extension TaskPriorityExt on TaskPriority {
-  String label(Translations t) {
-    switch (this) {
-      case TaskPriority.none:   return t.task.priorityNone;
-      case TaskPriority.low:    return t.task.priorityLow;
-      case TaskPriority.medium: return t.task.priorityMedium;
-      case TaskPriority.high:   return t.task.priorityHigh;
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case TaskPriority.none:   return AppColors.calendarDayOfWeek;
-      case TaskPriority.low:    return const Color(0xFF4CAF50);
-      case TaskPriority.medium: return const Color(0xFFFFA726);
-      case TaskPriority.high:   return const Color(0xFFEF5350);
-    }
-  }
-}
-
-// Дані завдання що передаються при збереженні
-
-class TaskData {
-  const TaskData({
-    required this.title,
-    required this.subtitle,
-    this.dueDate,
-    this.dueTime,
-    this.listId,
-    this.priority = TaskPriority.none,
-    this.reminderMinutesBefore,
-  });
-
-  final String title;
-  final String subtitle;
-  final DateTime? dueDate;
-  final TimeOfDay? dueTime;
-  final String? listId;
-  final TaskPriority priority;
-  final int? reminderMinutesBefore; // null = без нагадування
-
-  TaskData copyWith({
-    String? title,
-    String? subtitle,
-    DateTime? dueDate,
-    bool clearDueDate = false,
-    TimeOfDay? dueTime,
-    bool clearDueTime = false,
-    String? listId,
-    TaskPriority? priority,
-    int? reminderMinutesBefore,
-    bool clearReminder = false,
-  }) =>
-      TaskData(
-        title: title ?? this.title,
-        subtitle: subtitle ?? this.subtitle,
-        dueDate: clearDueDate ? null : (dueDate ?? this.dueDate),
-        dueTime: clearDueTime ? null : (dueTime ?? this.dueTime),
-        listId: listId ?? this.listId,
-        priority: priority ?? this.priority,
-        reminderMinutesBefore:
-        clearReminder ? null : (reminderMinutesBefore
-            ?? this.reminderMinutesBefore),
-      );
-}
-
-/// Bottom Sheet для додавання / редагування завдання.
-///
-/// Використання (нове завдання):
-/// ```dart
-/// showModalBottomSheet(
-///   context: context,
-///   isScrollControlled: true,
-///   backgroundColor: Colors.transparent,
-///   barrierColor: Colors.transparent,
-///   builder: (_) => AddTaskBottomSheet(
-///     lists: _lists,
-///     onSaved: (data) { ... },
-///   ),
-/// );
-/// ```
-///
-/// Використання (редагування):
-/// ```dart
-/// showModalBottomSheet(
-///   context: context,
-///   isScrollControlled: true,
-///   backgroundColor: Colors.transparent,
-///   barrierColor: Colors.transparent,
-///   builder: (_) => AddTaskBottomSheet(
-///     lists: _lists,
-///     initialData: TaskData(title: task.title, subtitle: task.subtitle, ...),
-///     onSaved: (data) { ... },
-///   ),
-/// );
-/// ```
-class AddTaskBottomSheet extends StatefulWidget {
+class AddTaskBottomSheet extends ConsumerStatefulWidget {
   const AddTaskBottomSheet({
-    required this.onSaved, super.key,
-    this.lists = const [],
+    super.key,
     this.initialData,
-    this.onTaskAdded,
   });
 
-  final void Function(TaskData data) onSaved;
-
-  /// Якщо передано — режим редагування.
-  final TaskData? initialData;
-
-  /// Списки для вибору папки.
-  final List<TaskList> lists;
-
-  /// [Deprecated] Зворотна сумісність:
-  /// старі виклики через onTaskAdded(title, subtitle).
-  final void Function(String title, String subtitle)? onTaskAdded;
+  final Note? initialData;
 
   bool get isEditing => initialData != null;
 
   @override
-  State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
+  ConsumerState<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
 }
 
-class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
+class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
+  List<Project>? _projects;
+
   late final TextEditingController _titleController;
   late final QuillController _quillController;
   final FocusNode _titleFocus = FocusNode();
 
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
-  String? _listId;
+  String? _projectId;
   TaskPriority _priority = TaskPriority.none;
   int? _reminderMinutesBefore;
 
   @override
   void initState() {
     super.initState();
+
     final init = widget.initialData;
+
     _titleController = TextEditingController(text: init?.title ?? '');
     _quillController = QuillController.basic();
+
     if (init != null && init.subtitle.isNotEmpty) {
       try {
         final decoded = jsonDecode(init.subtitle) as List<dynamic>;
         _quillController.document = Document.fromJson(decoded);
       } on FormatException {
         _quillController.document = Document.fromJson([
-          {'insert': '${init.subtitle}\n'}
+          {'insert': '${init.subtitle}\n'},
         ]);
       }
     }
+
     _dueDate = init?.dueDate;
     _dueTime = init?.dueTime;
-    _listId  = init?.listId;
+    _projectId = init?.projectId;
     _priority = init?.priority ?? TaskPriority.none;
     _reminderMinutesBefore = init?.reminderMinutesBefore;
 
@@ -184,26 +92,43 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
   void _onConfirm() {
     final title = _titleController.text.trim();
+
     if (title.isEmpty) return;
 
-    final plainText = _quillController.document.toPlainText().trim();
-    final details = plainText.isEmpty
-        ? ''
-        : jsonEncode(_quillController.document.toDelta().toJson());
+    if (widget.isEditing) {
+      final updated = widget.initialData!.copyWith(
+        title: title,
+        content: _quillController.document,
+        projectId: _projectId,
+        dueDate: _dueDate,
+        dueTime: _dueTime,
+        priority: _priority,
+        reminderMinutesBefore: _reminderMinutesBefore,
+      );
 
-    final data = TaskData(
-      title: title,
-      subtitle: details,
-      dueDate: _dueDate,
-      dueTime: _dueTime,
-      listId: _listId,
-      priority: _priority,
-      reminderMinutesBefore: _reminderMinutesBefore,
-    );
+      unawaited(ref.read(notesProvider.notifier).saveNote(updated));
+    } else {
+      final selectedProjectId = ref.read(selectedProjectIdProvider);
 
-    widget.onSaved(data);
-    // Зворотна сумісність
-    widget.onTaskAdded?.call(title, details);
+      if (selectedProjectId != todayProjectId &&
+          selectedProjectId != inboxProjectId &&
+          selectedProjectId != allProjectsId) {
+        _projectId = selectedProjectId;
+      }
+
+      final payload = NoteCreationPayload(
+        title: title,
+        content: _quillController.document,
+        projectId: _projectId,
+        dueDate: _dueDate,
+        dueTime: _dueTime,
+        priority: _priority,
+        reminderMinutesBefore: _reminderMinutesBefore,
+      );
+
+      unawaited(ref.read(notesProvider.notifier).createNote(payload));
+    }
+
     Navigator.of(context).pop();
   }
 
@@ -211,6 +136,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
+
     final picked = await showDatePicker(
       context: context,
       initialDate: _dueDate ?? now,
@@ -225,9 +151,12 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
         child: child!,
       ),
     );
+
     if (picked == null) return;
+
     // Після вибору дати — запропонувати час
     if (!mounted) return;
+
     final pickedTime = await showTimePicker(
       context: context,
       initialTime: _dueTime ?? TimeOfDay.now(),
@@ -240,6 +169,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
         child: child!,
       ),
     );
+
     setState(() {
       _dueDate = picked;
       _dueTime = pickedTime; // може бути null якщо скасовано
@@ -247,18 +177,19 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   }
 
   Future<void> _pickList() async {
-    if (widget.lists.isEmpty) return;
+    if (_projects == null) return;
+
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.of(context).surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => _ListPickerSheet(
-        lists: widget.lists,
-        selectedListId: _listId,
+      builder: (_) => ProjectPickerSheet(
+        projects: _projects!,
+        selectedProjectId: _projectId,
         onSelected: (id) {
-          setState(() => _listId = id);
+          setState(() => _projectId = id);
           Navigator.pop(context);
         },
       ),
@@ -272,7 +203,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => _PriorityPickerSheet(
+      builder: (_) => PriorityPickerSheet(
         current: _priority,
         onSelected: (p) {
           setState(() => _priority = p);
@@ -289,7 +220,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => _ReminderPickerSheet(
+      builder: (_) => ReminderPickerSheet(
         current: _reminderMinutesBefore,
         onSelected: (minutes) {
           setState(() => _reminderMinutesBefore = minutes);
@@ -314,17 +245,16 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   }
 
   String? _listName() {
-    if (_listId == null) return null;
-    return widget.lists
-        .where((l) => l.id == _listId)
-        .firstOrNull
-        ?.name;
+    if (_projectId == null || _projects == null) return null;
+    return _projects!.where((p) => p.id == _projectId).firstOrNull?.title;
   }
 
   // Build
 
   @override
   Widget build(BuildContext context) {
+    _projects = ref.read(projectsProvider).value;
+
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
@@ -391,8 +321,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 color: colors.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
-              padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
               child: TextField(
                 controller: _titleController,
                 focusNode: _titleFocus,
@@ -435,10 +364,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                     ),
                     child: Builder(
                       builder: (context) {
-                        final fontFamily = Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.fontFamily;
+                        final fontFamily = Theme.of(
+                          context,
+                        ).textTheme.bodyLarge?.fontFamily;
                         return QuillEditor.basic(
                           controller: _quillController,
                           config: QuillEditorConfig(
@@ -481,66 +409,67 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
 
                   // Мета-іконки з активними значеннями
                   Center(
-                  child:
-                    Wrap(
+                    child: Wrap(
                       alignment: WrapAlignment.center,
                       runSpacing: 12,
                       children: [
-                      // Календар
-                      _MetaIconButton(
-                        icon: Icons.calendar_today_outlined,
-                        label: _dueDate != null ? _dueDateLabel(t) : null,
-                        isActive: _dueDate != null,
-                        onTap: _pickDate,
-                        onClear: _dueDate != null
-                            ? () => setState(() {
-                          _dueDate = null;
-                          _dueTime = null;
-                        })
-                            : null,
-                      ),
-                      const SizedBox(width: 16),
-                      // Папка
-                      _MetaIconButton(
-                        icon: Icons.folder_outlined,
-                        label: _listName(),
-                        isActive: _listId != null,
-                        onTap: _pickList,
-                        onClear: _listId != null
-                            ? () => setState(() => _listId = null)
-                            : null,
-                      ),
-                      const SizedBox(width: 16),
-                      // Прапорець — пріоритет
-                      _MetaIconButton(
-                        icon: Icons.flag_outlined,
-                        label: _priority != TaskPriority.none
-                            ? _priority.label(t)
-                            : null,
-                        isActive: _priority != TaskPriority.none,
-                        activeColor: _priority.color,
-                        onTap: _pickPriority,
-                        onClear: _priority != TaskPriority.none
-                            ? () => setState(
-                                () => _priority = TaskPriority.none)
-                            : null,
-                      ),
-                      const SizedBox(width: 16),
-                      // Нагадування
-                      _MetaIconButton(
-                        icon: Icons.notifications_none_outlined,
-                        label: _reminderMinutesBefore != null
-                            ? _reminderLabel(_reminderMinutesBefore!, t)
-                            : null,
-                        isActive: _reminderMinutesBefore != null,
-                        onTap: _pickReminder,
-                        onClear: _reminderMinutesBefore != null
-                            ? () => setState(
-                                () => _reminderMinutesBefore = null)
-                            : null,
-                      ),
-                    ],
-                  ),
+                        // Календар
+                        MetaIconButton(
+                          icon: Icons.calendar_today_outlined,
+                          label: _dueDate != null ? _dueDateLabel(t) : null,
+                          isActive: _dueDate != null,
+                          onTap: _pickDate,
+                          onClear: _dueDate != null
+                              ? () => setState(() {
+                                  _dueDate = null;
+                                  _dueTime = null;
+                                })
+                              : null,
+                        ),
+                        const SizedBox(width: 16),
+                        // Папка
+                        MetaIconButton(
+                          icon: Icons.folder_outlined,
+                          label: _listName(),
+                          isActive: _projectId != null,
+                          onTap: _pickList,
+                          onClear: _projectId != null
+                              ? () => setState(() => _projectId = null)
+                              : null,
+                        ),
+                        const SizedBox(width: 16),
+                        // Прапорець — пріоритет
+                        MetaIconButton(
+                          icon: Icons.flag_outlined,
+                          label: _priority != TaskPriority.none
+                              ? _priority.label(t)
+                              : null,
+                          isActive: _priority != TaskPriority.none,
+                          activeColor: _priority.color,
+                          onTap: _pickPriority,
+                          onClear: _priority != TaskPriority.none
+                              ? () => setState(
+                                  () => _priority = TaskPriority.none,
+                                )
+                              : null,
+                        ),
+                        const SizedBox(width: 16),
+                        // Нагадування
+                        MetaIconButton(
+                          icon: Icons.notifications_none_outlined,
+                          label: _reminderMinutesBefore != null
+                              ? reminderLabel(_reminderMinutesBefore!, t)
+                              : null,
+                          isActive: _reminderMinutesBefore != null,
+                          onTap: _pickReminder,
+                          onClear: _reminderMinutesBefore != null
+                              ? () => setState(
+                                  () => _reminderMinutesBefore = null,
+                                )
+                              : null,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -575,320 +504,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                 ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Допоміжний хелпер для рядка нагадування
-
-String _reminderLabel(int minutes, Translations t) {
-  if (minutes == 0)   return t.task.reminderAtTime;
-  if (minutes < 60)   return t.task.reminderMinutes(n: minutes);
-  if (minutes < 1440) return t.task.reminderHours(n: minutes ~/ 60);
-  return t.task.reminderDays(n: minutes ~/ 1440);
-}
-
-// Мета-іконка з опціональним лейблом і кнопкою очищення
-
-class _MetaIconButton extends StatelessWidget {
-  const _MetaIconButton({
-    required this.icon,
-    required this.onTap,
-    this.label,
-    this.isActive = false,
-    this.activeColor,
-    this.onClear,
-  });
-
-  final IconData icon;
-  final VoidCallback onTap;
-  final String? label;
-  final bool isActive;
-  final Color? activeColor;
-  final VoidCallback? onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveColor =
-    isActive ? (activeColor ?? AppColors.primary) : AppColors.primary;
-
-    if (label == null) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Icon(icon, size: 20, color: effectiveColor),
-      );
-    }
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: effectiveColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: effectiveColor.withValues(alpha: 0.4)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14, color: effectiveColor),
-            const SizedBox(width: 4),
-            Text(
-              label!,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: effectiveColor,
-              ),
-            ),
-            if (onClear != null) ...[
-              const SizedBox(width: 4),
-              GestureDetector(
-                onTap: onClear,
-                child: Icon(Icons.close, size: 12, color: effectiveColor),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Bottom Sheet: вибір списку
-
-class _ListPickerSheet extends StatelessWidget {
-  const _ListPickerSheet({
-    required this.lists,
-    required this.selectedListId,
-    required this.onSelected,
-  });
-
-  final List<TaskList> lists;
-  final String? selectedListId;
-  final ValueChanged<String?> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(t.task.chooseList, style: textTheme.titleLarge),
-            const SizedBox(height: 8),
-
-            // Без списку
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Text('📋', style: TextStyle(fontSize: 20)),
-              title: Text(
-                t.task.noList,
-                style: textTheme.titleMedium?.copyWith(
-                  color: selectedListId == null
-                      ? AppColors.primary
-                      : colors.textPrimary,
-                ),
-              ),
-              trailing: selectedListId == null
-                  ? const Icon(Icons.check,
-                  color: AppColors.primary, size: 20)
-                  : null,
-              onTap: () => onSelected(null),
-            ),
-
-            if (lists.isNotEmpty) Divider(color: colors.divider),
-
-            ...lists.map(
-                  (list) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Text(list.emoji, style: const TextStyle(fontSize: 20)),
-                title: Text(
-                  list.name,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: selectedListId == list.id
-                        ? AppColors.primary
-                        : colors.textPrimary,
-                  ),
-                ),
-                trailing: selectedListId == list.id
-                    ? const Icon(Icons.check,
-                    color: AppColors.primary, size: 20)
-                    : null,
-                onTap: () => onSelected(list.id),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Bottom Sheet: вибір пріоритету
-
-class _PriorityPickerSheet extends StatelessWidget {
-  const _PriorityPickerSheet({
-    required this.current,
-    required this.onSelected,
-  });
-
-  final TaskPriority current;
-  final ValueChanged<TaskPriority> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(t.task.choosePriority, style: textTheme.titleLarge),
-            const SizedBox(height: 8),
-            ...TaskPriority.values.map(
-                  (p) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(Icons.flag,
-                    color: p == TaskPriority.none
-                        ? colors.textSecondary
-                        : p.color,
-                    size: 22),
-                title: Text(
-                  p.label(t),
-                  style: textTheme.titleMedium?.copyWith(
-                    color: current == p ? AppColors.primary :
-                                          colors.textPrimary,
-                  ),
-                ),
-                trailing: current == p
-                    ? const Icon(Icons.check,
-                    color: AppColors.primary, size: 20)
-                    : null,
-                onTap: () => onSelected(p),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Bottom Sheet: вибір нагадування
-
-class _ReminderPickerSheet extends StatelessWidget {
-  const _ReminderPickerSheet({
-    required this.current,
-    required this.onSelected,
-  });
-
-  final int? current;
-  final ValueChanged<int?> onSelected;
-
-  static const List<int?> _options = [
-    null,   // без нагадування
-    0,      // у момент
-    10,     // за 10 хв
-    30,     // за 30 хв
-    60,     // за 1 год
-    1440,   // за 1 день
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(t.task.chooseReminder, style: textTheme.titleLarge),
-            const SizedBox(height: 8),
-            ..._options.map(
-                  (opt) {
-                final isSelected = opt == current;
-                final label = opt == null
-                    ? t.task.noReminder
-                    : _reminderLabel(opt, t);
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(
-                    opt == null
-                        ? Icons.notifications_off_outlined
-                        : Icons.notifications_outlined,
-                    color: isSelected ? AppColors.primary :
-                                        colors.textSecondary,
-                    size: 22,
-                  ),
-                  title: Text(
-                    label,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: isSelected ? AppColors.primary :
-                                          colors.textPrimary,
-                    ),
-                  ),
-                  trailing: isSelected
-                      ? const Icon(Icons.check,
-                      color: AppColors.primary, size: 20)
-                      : null,
-                  onTap: () => onSelected(opt),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
           ],
         ),
       ),

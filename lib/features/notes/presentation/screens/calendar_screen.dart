@@ -1,153 +1,45 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/utils/app_assets.dart';
-import 'package:frontend/features/notes/domain/entities/task_list_model.dart';
+import 'package:frontend/features/notes/domain/calendar_view_mode.dart';
+import 'package:frontend/features/notes/domain/constants.dart';
+import 'package:frontend/features/notes/domain/entities/project.dart';
+import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:frontend/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
+import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
-import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
+import 'package:frontend/features/notes/presentation/widgets/calendar/calendar_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/calendar/day_header.dart';
+import 'package:frontend/features/notes/presentation/widgets/calendar/list_filter_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/calendar/task_list_view.dart';
+import 'package:frontend/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
-import 'package:table_calendar/table_calendar.dart';
 
-// Моделі
-
-enum CalendarViewMode { month, twoWeeks, week, day }
-
-extension CalendarViewModeExt on CalendarViewMode {
-  String label(Translations t) {
-    switch (this) {
-      case CalendarViewMode.month:    return t.calendar.viewMonth;
-      case CalendarViewMode.twoWeeks: return t.calendar.viewTwoWeeks;
-      case CalendarViewMode.week:     return t.calendar.viewWeek;
-      case CalendarViewMode.day:      return t.calendar.viewDay;
-    }
-  }
-
-  IconData get icon {
-    switch (this) {
-      case CalendarViewMode.month:    return Icons.calendar_view_month_outlined;
-      case CalendarViewMode.twoWeeks: return Icons.calendar_view_week_outlined;
-      case CalendarViewMode.week:     return Icons.calendar_view_week_outlined;
-      case CalendarViewMode.day:      return Icons.calendar_view_day_outlined;
-    }
-  }
-
-  CalendarFormat? get calendarFormat {
-    switch (this) {
-      case CalendarViewMode.month:    return CalendarFormat.month;
-      case CalendarViewMode.twoWeeks: return CalendarFormat.twoWeeks;
-      case CalendarViewMode.week:     return CalendarFormat.week;
-      case CalendarViewMode.day:      return null;
-    }
-  }
-}
-
-// Зробити: перенести в domain/entities/ після підключення Riverpod
-class CalendarTaskItem {
-  CalendarTaskItem({
-    required this.id,
-    required this.title,
-    required this.subtitle,
-    required this.date,
-    required this.listId,
-    this.isCompleted = false,
-    this.dueTime,
-    this.priority = TaskPriority.none,
-    this.reminderMinutesBefore,
-  });
-
-  final String id;
-  String title;
-  String subtitle;
-  DateTime date;
-  String listId;
-  bool isCompleted;
-  TimeOfDay? dueTime;
-  TaskPriority priority;
-  int? reminderMinutesBefore;
-}
-
-const String kAllListsId = '__all__';
-
-// CalendarScreen
-
-class CalendarScreen extends StatefulWidget {
-  /// [externalLists] — список TaskList з HomeScreen.
-  /// Коли підключите Riverpod, замість цього параметра читайте з провайдера.
+class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({
     super.key,
-    this.externalLists = const [],
   });
 
-  final List<TaskList> externalLists;
-
   @override
-  State<CalendarScreen> createState() => _CalendarScreenState();
+  ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
 }
 
-class _CalendarScreenState extends State<CalendarScreen> {
-  // Зробити: замінити на Riverpod провайдер
-  final List<CalendarTaskItem> _tasks = [];
+class _CalendarScreenState extends ConsumerState<CalendarScreen> {
+  String _filterLabel(
+    List<Project> allProjects,
+    String selectedProjectId,
+  ) {
+    if (selectedProjectId == allProjectsId) return context.t.calendar.filter;
 
-  int _currentNavIndex = 1;
-  CalendarViewMode _viewMode = CalendarViewMode.month;
-  String _selectedListId = kAllListsId;
-  bool _completedExpanded = true;
+    final list = allProjects
+        .where((p) => p.id == selectedProjectId)
+        .firstOrNull;
 
-  /// Показувати підзаголовок/деталі завдань у списку
-  bool _showDescription = true;
-
-  DateTime _focusedDay = DateTime.now();
-  DateTime _selectedDay = DateTime.now();
-
-  // Геттери
-
-  List<TaskList> get _allLists {
-    return widget.externalLists.map((l) {
-      if (l.id == 'inbox') return l.copyWith(name: context.t.home.inbox);
-      return l;
-    }).toList();
-  }
-
-  List<CalendarTaskItem> get _filteredTasks {
-    return _tasks.where((task) {
-      final isSameDate = isSameDay(task.date, _selectedDay);
-      final matchesList =
-          _selectedListId == kAllListsId || task.listId == _selectedListId;
-      return isSameDate && matchesList;
-    }).toList();
-  }
-
-  List<CalendarTaskItem> get _activeTasks =>
-      _filteredTasks.where((t) => !t.isCompleted).toList();
-
-  List<CalendarTaskItem> get _completedTasks =>
-      _filteredTasks.where((t) => t.isCompleted).toList();
-
-  bool get _hasTasksForSelectedDay => _filteredTasks.isNotEmpty;
-
-  /// Повертає true якщо в цей день є хоча б одне завдання
-  /// (для позначки на календарі)
-  bool _hasTasks(DateTime day) =>
-      _tasks.any((t) => isSameDay(t.date, day));
-
-  // Назва активного фільтру
-  String _filterLabel(Translations t) {
-    if (_selectedListId == kAllListsId) return t.calendar.filter;
-    final list = _allLists.where((l) => l.id == _selectedListId).firstOrNull;
-    return list?.name ?? t.calendar.filter;
-  }
-
-  // Дії
-
-  void _toggleTask(CalendarTaskItem task) {
-    setState(() => task.isCompleted = !task.isCompleted);
-  }
-
-  void _deleteTask(CalendarTaskItem task) {
-    setState(() => _tasks.removeWhere((t) => t.id == task.id));
+    return list?.title ?? context.t.calendar.filter;
   }
 
   Future<void> _openViewModePicker() async {
@@ -157,17 +49,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => _ViewModeSheet(
-        current: _viewMode,
-        onSelected: (mode) {
-          setState(() => _viewMode = mode);
-          Navigator.pop(context);
-        },
-      ),
+      builder: (_) => const ViewModeSheet(),
     );
   }
 
-  // Фільтр по списках
   Future<void> _openFilterSheet() async {
     await showModalBottomSheet<void>(
       context: context,
@@ -175,14 +60,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) => _ListFilterSheet(
-        lists: _allLists,
-        selectedListId: _selectedListId,
-        onSelected: (listId) {
-          setState(() => _selectedListId = listId);
-          Navigator.pop(context);
-        },
-      ),
+      builder: (_) => const ListFilterSheet(),
     );
   }
 
@@ -192,81 +70,25 @@ class _CalendarScreenState extends State<CalendarScreen> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.1),
-      builder: (_) => AddTaskBottomSheet(
-        lists: _allLists,
-        onSaved: (data) {
-          setState(() {
-            _tasks.add(CalendarTaskItem(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              title: data.title,
-              subtitle: data.subtitle,
-              date: data.dueDate ?? _selectedDay,
-              dueTime: data.dueTime,
-              priority: data.priority,
-              reminderMinutesBefore: data.reminderMinutesBefore,
-              listId: data.listId ??
-                  (_selectedListId == kAllListsId
-                      ? (_allLists.isNotEmpty ? _allLists.first.id : 'inbox')
-                      : _selectedListId),
-            ));
-          });
-        },
-        // Зворотна сумісність
-        onTaskAdded: null,
-      ),
+      builder: (_) => const AddTaskBottomSheet(),
     );
-  }
-
-  Future<void> _openTaskDetailSheet(CalendarTaskItem task) async {
-    final detailData = TaskDetailData(
-      id: task.id,
-      title: task.title,
-      subtitle: task.subtitle,
-      isCompleted: task.isCompleted,
-      dueDate: task.date,
-      dueTime: task.dueTime,
-      listId: task.listId,
-      priority: task.priority,
-      reminderMinutesBefore: task.reminderMinutesBefore,
-    );
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.15),
-      builder: (_) => TaskDetailBottomSheet(
-        task: detailData,
-        lists: _allLists,
-        listName: _listNameFor(task.listId),
-        onSaved: (data) {
-          setState(() {
-            task..title = data.title
-            ..subtitle = data.subtitle
-            ..date = data.dueDate ?? task.date
-            ..dueTime = data.dueTime
-            ..priority = data.priority
-            ..reminderMinutesBefore = data.reminderMinutesBefore
-            ..listId = data.listId ?? task.listId;
-          });
-        },
-        onToggle: () => _toggleTask(task),
-        onDelete: () => _deleteTask(task),
-      ),
-    );
-  }
-
-  String _formatDayTitle(DateTime date, Translations t) {
-    return '${date.day} ${t.calendar.months[date.month - 1]} ${date.year}';
   }
 
   // Build
 
   @override
   Widget build(BuildContext context) {
+    final allLists = ref.watch(projectsProvider).value ?? [];
+
+    final calendarNotes = ref.watch(calendarNotesProvider);
+
+    final selectedProjectId = ref.watch(selectedProjectIdProvider);
+    final showDescription = ref.watch(showDescriptionProvider);
+    final viewMode = ref.watch(calendarViewModeStateProvider);
+
     final colors = AppColors.of(context);
     final t = context.t;
-    final isFilterActive = _selectedListId != kAllListsId;
+    final isFilterActive = selectedProjectId != allProjectsId;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -274,7 +96,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         child: Stack(
           children: [
             // Розмитий логотип — тільки коли немає завдань на цей день
-            if (!_hasTasksForSelectedDay)
+            if (calendarNotes.isEmpty)
               Positioned.fill(
                 bottom: 110,
                 child: Align(
@@ -303,19 +125,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
               children: [
                 // Верхній рядок
                 Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Кнопка режиму перегляду
                       IconButton(
                         icon: Icon(
-                          _viewMode.icon,
+                          viewMode.icon,
                           color: colors.textPrimary,
                           size: 24,
                         ),
-                        tooltip: _viewMode.label(t),
+                        tooltip: viewMode.label(t),
                         onPressed: _openViewModePicker,
                       ),
                       // Фільтр по списку — показує назву активного списку
@@ -336,10 +160,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  _filterLabel(t),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium
+                                  _filterLabel(allLists, selectedProjectId),
+                                  style: Theme.of(context).textTheme.labelMedium
                                       ?.copyWith(color: AppColors.primary),
                                 ),
                                 const SizedBox(width: 4),
@@ -362,19 +184,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           // Перемикач показу опису завдань
                           IconButton(
                             icon: Icon(
-                              _showDescription
+                              showDescription
                                   ? Icons.short_text_rounded
                                   : Icons.subject_rounded,
-                              color: _showDescription
+                              color: showDescription
                                   ? AppColors.primary
                                   : colors.textPrimary,
                               size: 24,
                             ),
-                            tooltip: _showDescription
+                            tooltip: showDescription
                                 ? t.calendar.hideDescription
                                 : t.calendar.showDescription,
-                            onPressed: () => setState(
-                                    () => _showDescription = !_showDescription),
+                            onPressed: () => ref
+                                .read(showDescriptionProvider.notifier)
+                                .toggle(),
                           ),
                           IconButton(
                             icon: Icon(
@@ -396,45 +219,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 // Календар або заголовок дня
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _viewMode == CalendarViewMode.day
-                      ? _DayHeader(
-                    date: _selectedDay,
-                    title: _formatDayTitle(_selectedDay, t),
-                    onPrev: () => setState(() {
-                      _selectedDay = _selectedDay
-                          .subtract(const Duration(days: 1));
-                      _focusedDay = _selectedDay;
-                    }),
-                    onNext: () => setState(() {
-                      _selectedDay =
-                          _selectedDay.add(const Duration(days: 1));
-                      _focusedDay = _selectedDay;
-                    }),
-                  )
-                      : _CalendarCard(
-                    focusedDay: _focusedDay,
-                    selectedDay: _selectedDay,
-                    viewMode: _viewMode,
-                    textTheme: Theme.of(context).textTheme,
-                    hasTasksForDay: _hasTasks,
-                    onDaySelected: (selected, focused) {
-                      setState(() {
-                        _selectedDay = selected;
-                        _focusedDay = focused;
-                      });
-                    },
-                    onPageChanged: (focused) {
-                      setState(() => _focusedDay = focused);
-                    },
-                  ),
+                  child: viewMode == CalendarViewMode.day
+                      ? const DayHeader()
+                      : const CalendarCard(),
                 ),
 
                 const SizedBox(height: 16),
 
                 // Список завдань
                 Expanded(
-                  child: _hasTasksForSelectedDay
-                      ? _buildTaskContent()
+                  child: calendarNotes.isNotEmpty
+                      ? const TaskListView()
                       : const SizedBox.shrink(),
                 ),
               ],
@@ -450,778 +245,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 28),
       ),
-      bottomNavigationBar: _BottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (i) => setState(() => _currentNavIndex = i),
-      ),
+      bottomNavigationBar: const BottomNav(),
     );
-  }
-
-  // Будує список активних + секцію завершених
-  Widget _buildTaskContent() {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-      children: [
-        ..._activeTasks.map(
-              (task) => Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: _SwipableTaskCard(
-              key: ValueKey(task.id),
-              task: task,
-              listName: _listNameFor(task.listId),
-              showDescription: _showDescription,
-              onToggle: () => _toggleTask(task),
-              onDelete: () => _deleteTask(task),
-              onEdit: () => _openTaskDetailSheet(task),
-            ),
-          ),
-        ),
-
-        if (_completedTasks.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          _CompletedSection(
-            isExpanded: _completedExpanded,
-            count: _completedTasks.length,
-            onToggle: () =>
-                setState(() => _completedExpanded = !_completedExpanded),
-            children: _completedTasks
-                .map(
-                  (task) => _SwipableCompletedTile(
-                key: ValueKey(task.id),
-                task: task,
-                listName: _listNameFor(task.listId),
-                showDescription: _showDescription,
-                onToggle: () => _toggleTask(task),
-                onDelete: () => _deleteTask(task),
-                onEdit: () => _openTaskDetailSheet(task),
-              ),
-            )
-                .toList(),
-          ),
-        ],
-      ],
-    );
-  }
-
-  String _listNameFor(String listId) {
-    return _allLists.where((l) => l.id == listId).firstOrNull?.name ?? '';
-  }
-}
-
-// Bottom Sheet: фільтр по списках
-
-class _ListFilterSheet extends StatelessWidget {
-  const _ListFilterSheet({
-    required this.lists,
-    required this.selectedListId,
-    required this.onSelected,
-  });
-
-  final List<TaskList> lists;
-  final String selectedListId;
-  final ValueChanged<String> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(t.calendar.taskCategory, style: textTheme.titleLarge),
-            const SizedBox(height: 16),
-
-            // "Всі списки" — перший елемент
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Text('🗂️', style: TextStyle(fontSize: 20)),
-              title: Text(
-                t.category.all,
-                style: textTheme.titleMedium?.copyWith(
-                  color: selectedListId == kAllListsId
-                      ? AppColors.primary
-                      : colors.textPrimary,
-                ),
-              ),
-              trailing: selectedListId == kAllListsId
-                  ? const Icon(Icons.check, color: AppColors.primary, size: 20)
-                  : null,
-              onTap: () => onSelected(kAllListsId),
-            ),
-
-            if (lists.isNotEmpty) const Divider(),
-
-            // Користувацькі списки
-            ...lists.map(
-                  (list) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading:
-                Text(list.emoji, style: const TextStyle(fontSize: 20)),
-                title: Text(
-                  list.name,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: selectedListId == list.id
-                        ? AppColors.primary
-                        : colors.textPrimary,
-                  ),
-                ),
-                trailing: selectedListId == list.id
-                    ? const Icon(Icons.check,
-                    color: AppColors.primary, size: 20)
-                    : null,
-                onTap: () => onSelected(list.id),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Активне завдання зі свайпом і тапом для редагування
-
-class _SwipableTaskCard extends StatelessWidget {
-  const _SwipableTaskCard({
-    required this.task,
-    required this.listName,
-    required this.showDescription,
-    required this.onToggle,
-    required this.onDelete,
-    required this.onEdit,
-    super.key,
-  });
-
-  final CalendarTaskItem task;
-  final String listName;
-  final bool showDescription;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-
-    return Dismissible(
-      key: ValueKey('cal-task-${task.id}'),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: AppColors.deleteBackground,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Icon(Icons.delete_outline,
-            color: AppColors.error, size: 24),
-      ),
-      confirmDismiss: (_) => _confirmDelete(context),
-      onDismissed: (_) => onDelete(),
-      child: GestureDetector(
-        onTap: onEdit,
-        child: Container(
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: colors.cardBorder),
-          ),
-          child: ListTile(
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-            horizontalTitleGap: 8,
-            leading: SizedBox(
-              width: 24,
-              height: 24,
-              child: Checkbox(
-                value: task.isCompleted,
-                onChanged: (_) => onToggle(),
-                activeColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4)),
-                side: const BorderSide(color: AppColors.primary, width: 1.5),
-              ),
-            ),
-            title: Row(
-              children: [
-                // Індикатор пріоритету
-                if (task.priority != TaskPriority.none) ...[
-                  Icon(Icons.flag,
-                      size: 12, color: task.priority.color),
-                  const SizedBox(width: 4),
-                ],
-                Expanded(
-                  child: Text(task.title, style: textTheme.titleMedium),
-                ),
-              ],
-            ),
-            subtitle: showDescription && task.subtitle.isNotEmpty
-                ? Text(
-              _extractPlainText(task.subtitle),
-              style: textTheme.bodySmall
-                  ?.copyWith(color: colors.textSecondary),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            )
-                : null,
-            trailing: (listName.isNotEmpty || task.dueTime != null)
-                ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (task.dueTime != null)
-                  Text(
-                    '${task.dueTime!.hour.toString().padLeft(2, '0')}:'
-                        '${task.dueTime!.minute.toString().padLeft(2, '0')}',
-                    style: textTheme.bodySmall?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                if (listName.isNotEmpty)
-                  Text(listName, style: textTheme.bodySmall),
-              ],
-            )
-                : null,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Завершене завдання зі свайпом
-
-class _SwipableCompletedTile extends StatelessWidget {
-  const _SwipableCompletedTile({
-    required this.task,
-    required this.listName,
-    required this.showDescription,
-    required this.onToggle,
-    required this.onDelete,
-    required this.onEdit,
-    super.key,
-  });
-
-  final CalendarTaskItem task;
-  final String listName;
-  final bool showDescription;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
-  final VoidCallback onEdit;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-
-    return Dismissible(
-      key: ValueKey('cal-completed-${task.id}'),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        decoration: BoxDecoration(
-          color: AppColors.deleteBackground,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: const Icon(Icons.delete_outline,
-            color: AppColors.error, size: 24),
-      ),
-      confirmDismiss: (_) => _confirmDelete(context),
-      onDismissed: (_) => onDelete(),
-      child: GestureDetector(
-        onTap: onEdit,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: onToggle,
-                    child: Container(
-                      width: 20,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Icon(Icons.check, size: 14, color: colors.surface),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      task.title,
-                      style: textTheme.titleMedium?.copyWith(
-                        decoration: TextDecoration.lineThrough,
-                        color: colors.textSecondary,
-                      ),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      if (task.dueTime != null)
-                        Text(
-                          '${task.dueTime!.hour.toString().padLeft(2, '0')}:'
-                              '${task.dueTime!.minute.toString().
-                                  padLeft(2, '0')}',
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colors.textSecondary,
-                          ),
-                        ),
-                      if (listName.isNotEmpty)
-                        Text(listName, style: textTheme.bodySmall),
-                    ],
-                  ),
-                  if (listName.isNotEmpty)
-                    Text(listName, style: textTheme.bodySmall),
-                ],
-              ),
-              if (showDescription && task.subtitle.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Padding(
-                  padding: const EdgeInsets.only(left: 32),
-                  child: Text(
-                    _extractPlainText(task.subtitle),
-                    style: textTheme.bodySmall
-                        ?.copyWith(color: colors.textSecondary),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Секція "Завершені"
-
-class _CompletedSection extends StatelessWidget {
-  const _CompletedSection({
-    required this.isExpanded,
-    required this.count,
-    required this.onToggle,
-    required this.children,
-  });
-
-  final bool isExpanded;
-  final int count;
-  final VoidCallback onToggle;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colors.cardBorder),
-      ),
-      child: Column(
-        children: [
-          InkWell(
-            onTap: onToggle,
-            borderRadius: BorderRadius.circular(20),
-            child: Padding(
-              padding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              child: Row(
-                children: [
-                  Text(
-                    t.home.completed,
-                    style: textTheme.titleMedium
-                        ?.copyWith(color: colors.textSecondary),
-                  ),
-                  const Spacer(),
-                  Text('$count', style: textTheme.bodySmall),
-                  const SizedBox(width: 4),
-                  AnimatedRotation(
-                    turns: isExpanded ? 0 : -0.5,
-                    duration: const Duration(milliseconds: 200),
-                    child: Icon(Icons.keyboard_arrow_down,
-                        color: colors.textSecondary),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          AnimatedCrossFade(
-            firstChild: Column(children: children),
-            secondChild: const SizedBox.shrink(),
-            crossFadeState: isExpanded
-                ? CrossFadeState.showFirst
-                : CrossFadeState.showSecond,
-            duration: const Duration(milliseconds: 200),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Діалог підтвердження видалення
-
-Future<bool> _confirmDelete(BuildContext context) async {
-  final textTheme = Theme.of(context).textTheme;
-  final result = await showDialog<bool>(
-    context: context,
-    builder: (ctx) {
-      final t = ctx.t;
-      return AlertDialog(
-        shape:
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        actionsAlignment: MainAxisAlignment.center,
-        title: Text(
-          t.home.deleteTask,
-          textAlign: TextAlign.center,
-          style: textTheme.titleLarge,
-        ),
-        content:
-        Text(t.home.deleteTaskMessage, textAlign: TextAlign.center),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(t.common.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style:
-            TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: Text(t.common.delete),
-          ),
-        ],
-      );
-    },
-  );
-  return result ?? false;
-}
-
-// Картка з TableCalendar + позначки завдань
-
-class _CalendarCard extends StatelessWidget {
-  const _CalendarCard({
-    required this.focusedDay,
-    required this.selectedDay,
-    required this.viewMode,
-    required this.textTheme,
-    required this.hasTasksForDay,
-    required this.onDaySelected,
-    required this.onPageChanged,
-  });
-
-  final DateTime focusedDay;
-  final DateTime selectedDay;
-  final CalendarViewMode viewMode;
-  final TextTheme textTheme;
-
-  /// Повертає true якщо є завдання в цей день — для відображення крапки
-  final bool Function(DateTime day) hasTasksForDay;
-
-  final void Function(DateTime, DateTime) onDaySelected;
-  final void Function(DateTime) onPageChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-
-    final dayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-      color: colors.textPrimary,
-      fontWeight: FontWeight.w400,
-    );
-    final selectedDayStyle =
-    (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-      color: AppColors.primary,
-      fontWeight: FontWeight.w700,
-    );
-    final todayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-      color: AppColors.primary,
-      fontWeight: FontWeight.w600,
-    );
-    final dowStyle =
-    (textTheme.labelSmall ?? const TextStyle()).copyWith(
-      color: AppColors.calendarDayOfWeek,
-      fontWeight: FontWeight.w600,
-    );
-    final headerStyle =
-    (textTheme.titleMedium ?? const TextStyle()).copyWith(
-      color: colors.textPrimary,
-    );
-
-    return Container(
-      padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TableCalendar<dynamic>(
-        firstDay: DateTime.utc(2020),
-        lastDay: DateTime.utc(2030, 12, 31),
-        focusedDay: focusedDay,
-        calendarFormat: viewMode.calendarFormat ?? CalendarFormat.month,
-        selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-        onDaySelected: onDaySelected,
-        onPageChanged: onPageChanged,
-
-        eventLoader: (day) => hasTasksForDay(day) ? [true] : [],
-
-        headerStyle: HeaderStyle(
-          formatButtonVisible: false,
-          titleTextStyle: headerStyle,
-          headerPadding:
-          const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-          leftChevronIcon: Icon(Icons.chevron_left,
-              color: colors.textSecondary, size: 20),
-          rightChevronIcon: Icon(Icons.chevron_right,
-              color: colors.textSecondary, size: 20),
-          leftChevronMargin: EdgeInsets.zero,
-          rightChevronMargin: EdgeInsets.zero,
-        ),
-        daysOfWeekStyle: DaysOfWeekStyle(
-          weekdayStyle: dowStyle,
-          weekendStyle: dowStyle,
-        ),
-        daysOfWeekHeight: 24,
-        calendarStyle: CalendarStyle(
-          cellMargin: const EdgeInsets.all(4),
-          selectedDecoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColors.primary, width: 1.5),
-          ),
-          selectedTextStyle: selectedDayStyle,
-          todayDecoration: const BoxDecoration(
-            color: Colors.transparent,
-            shape: BoxShape.circle,
-          ),
-          todayTextStyle: todayStyle,
-          defaultTextStyle: dayStyle,
-          weekendTextStyle: dayStyle,
-          outsideDaysVisible: false,
-
-          // Стиль маркерів (крапок) під днями
-          markerDecoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.7),
-            shape: BoxShape.circle,
-          ),
-          markersMaxCount: 1,
-          markerSize: 5,
-          markerMargin: const EdgeInsets.only(top: 1),
-        ),
-      ),
-    );
-  }
-}
-
-// Заголовок режиму "День"
-
-class _DayHeader extends StatelessWidget {
-  const _DayHeader({
-    required this.date,
-    required this.title,
-    required this.onPrev,
-    required this.onNext,
-  });
-
-  final DateTime date;
-  final String title;
-  final VoidCallback onPrev;
-  final VoidCallback onNext;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: onPrev,
-            child: Icon(Icons.chevron_left,
-                color: colors.textSecondary, size: 20),
-          ),
-          Expanded(
-            child: Text(title,
-                textAlign: TextAlign.center,
-                style: textTheme.titleMedium),
-          ),
-          GestureDetector(
-            onTap: onNext,
-            child: Icon(Icons.chevron_right,
-                color: colors.textSecondary, size: 20),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Bottom Sheet: режим перегляду
-
-class _ViewModeSheet extends StatelessWidget {
-  const _ViewModeSheet({required this.current, required this.onSelected});
-
-  final CalendarViewMode current;
-  final ValueChanged<CalendarViewMode> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colors.divider,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(t.calendar.calendarView, style: textTheme.titleLarge),
-            const SizedBox(height: 16),
-            ...CalendarViewMode.values.map(
-                  (mode) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(
-                  mode.icon,
-                  color: current == mode
-                      ? AppColors.primary
-                      : colors.textSecondary,
-                ),
-                title: Text(
-                  mode.label(t),
-                  style: textTheme.titleMedium?.copyWith(
-                    color: current == mode
-                        ? AppColors.primary
-                        : colors.textSecondary,
-                  ),
-                ),
-                trailing: current == mode
-                    ? const Icon(Icons.check,
-                    color: AppColors.primary, size: 20)
-                    : null,
-                onTap: () => onSelected(mode),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Bottom Navigation Bar
-
-class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.currentIndex, required this.onTap});
-
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.bottomNav,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: colors.textPrimary,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.check_box_outlined),
-            label: t.bottomNav.tasks,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_month),
-            label: t.bottomNav.calendar,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person_outline),
-            label: t.bottomNav.profile,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String _extractPlainText(String jsonOrText) {
-  if (jsonOrText.isEmpty) return '';
-  try {
-    if (jsonOrText.trim().startsWith('[')) {
-      final decoded = jsonDecode(jsonOrText) as List<dynamic>;
-      final doc = quill.Document.fromJson(decoded);
-      return doc.toPlainText().trim(); // Витягуємо чистий текст без стилів
-    }
-    return jsonOrText;
-  } on FormatException {
-    return jsonOrText;
   }
 }

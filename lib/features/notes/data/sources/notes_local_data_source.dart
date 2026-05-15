@@ -11,7 +11,7 @@ class NotesLocalDataSource {
 
   final NotesDao _notesDao;
 
-  Future<void> create(NotesCompanion note) => _notesDao.insertNote(note);
+  Future<NoteModel> create(NotesCompanion note) => _notesDao.insertNote(note);
 
   Future<void> save(NotesCompanion note) => _notesDao.updateNote(note);
 
@@ -25,6 +25,8 @@ class NotesLocalDataSource {
   ) => _notesDao.acknowledgePushed(acknowledgements);
 
   Future<NoteModel?> get(String id) => _notesDao.getNote(id);
+
+  Future<List<NoteModel>> getAll() => _notesDao.getAllNotes();
 
   Future<List<NoteModel>> getPending() => _notesDao.getPending();
 

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:frontend/features/notes/domain/entities/encrypted_project.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 
@@ -22,10 +23,16 @@ extension ProjectToEncrypted on Project {
 }
 
 extension EncryptedToProject on EncryptedProject {
-  Project toProject({required String content}) => Project(
+  Project toProject({
+    required String title,
+    required String emoji,
+    required Color color,
+  }) => Project(
     id: id,
 
-    content: content,
+    title: title,
+    emoji: emoji,
+    color: color,
 
     localVersion: localVersion,
     lastSyncedVersion: lastSyncedVersion,

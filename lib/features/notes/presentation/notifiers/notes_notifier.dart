@@ -1,0 +1,86 @@
+import 'package:frontend/features/notes/data/secure_notes_service.dart';
+import 'package:frontend/features/notes/domain/entities/note.dart';
+import 'package:frontend/features/notes/domain/models/note_creation_payload.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'notes_notifier.g.dart';
+
+@riverpod
+class NotesNotifier extends _$NotesNotifier {
+  @override
+  Future<List<Note>> build() async {
+    final service = ref.watch(notesServiceProvider);
+
+    final result = await service.getAllNotes();
+    return result.fold(
+      (success) => success,
+      (failure) => throw failure,
+    );
+  }
+
+  Future<void> createNote(NoteCreationPayload payload) async {
+    final currentNotes = state.value ?? [];
+
+    final service = ref.read(notesServiceProvider);
+
+    final result = await service.createNote(payload);
+
+    result.fold(
+      (note) => state = AsyncData([...currentNotes, note]),
+      (failure) => throw failure,
+    );
+  }
+
+  Future<void> toggleNote(Note note) {
+    return saveNote(note.copyWith(isCompleted: !note.isCompleted));
+  }
+
+  Future<void> saveNote(Note updatedNote) async {
+    final previousState = state;
+    final currentNotes = state.value ?? [];
+
+    final index = currentNotes.indexWhere((n) => n.id == updatedNote.id);
+
+    if (index >= 0) {
+      final newList = List<Note>.from(currentNotes);
+      newList[index] = updatedNote;
+      state = AsyncData(newList);
+    } else {
+      state = AsyncData([...currentNotes, updatedNote]);
+    }
+
+    final service = ref.read(notesServiceProvider);
+
+    final result = await service.saveNote(updatedNote);
+
+    return result.fold(
+      (_) {},
+      (failure) {
+        state = previousState;
+      },
+    );
+  }
+
+  Future<void> deleteNote(Note note) async {
+    final previousState = state;
+    final currentNotes = state.value ?? [];
+
+    final index = currentNotes.indexWhere((n) => n.id == note.id);
+
+    if (index >= 0) {
+      final newList = List<Note>.from(currentNotes)..removeAt(index);
+      state = AsyncData(newList);
+    }
+
+    final service = ref.read(notesServiceProvider);
+
+    final result = await service.deleteNote(note);
+
+    return result.fold(
+      (_) {},
+      (failure) {
+        state = previousState;
+      },
+    );
+  }
+}
