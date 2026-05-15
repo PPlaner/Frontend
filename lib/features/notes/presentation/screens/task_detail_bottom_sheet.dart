@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -54,16 +53,10 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
       return;
     }
 
-    _readOnlyController = QuillController.basic();
-
-    try {
-      final decoded = jsonDecode(_task.subtitle) as List<dynamic>;
-      _readOnlyController!.document = Document.fromJson(decoded);
-    } on FormatException {
-      _readOnlyController!.document = Document.fromJson([
-        {'insert': '${_task.subtitle}\n'},
-      ]);
-    }
+    _readOnlyController = QuillController(
+      document: Document.fromDelta(_task.content.toDelta()),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
 
     oldController?.dispose();
   }

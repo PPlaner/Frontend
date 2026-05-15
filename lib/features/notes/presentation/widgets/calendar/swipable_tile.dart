@@ -92,7 +92,7 @@ class SwipableTaskCard extends ConsumerWidget {
             ),
             subtitle: showDescription && note.subtitle.isNotEmpty
                 ? Text(
-                    extractPlainText(note.subtitle),
+                    note.subtitle,
                     style: textTheme.bodySmall?.copyWith(
                       color: colors.textSecondary,
                     ),

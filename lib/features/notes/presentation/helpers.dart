@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -35,13 +32,12 @@ Future<bool> confirmDeletion(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         actionsAlignment: MainAxisAlignment.center,
         title: Text(
-          // context.t.home.deleteTask,
           title,
           textAlign: TextAlign.center,
           style: textTheme.titleLarge,
         ),
         content: Text(
-          message /*t.home.deleteTaskMessage*/,
+          message,
           textAlign: TextAlign.center,
         ),
         actions: [
@@ -59,18 +55,4 @@ Future<bool> confirmDeletion(
     },
   );
   return result ?? false;
-}
-
-String extractPlainText(String jsonOrText) {
-  if (jsonOrText.isEmpty) return '';
-  try {
-    if (jsonOrText.trim().startsWith('[')) {
-      final decoded = jsonDecode(jsonOrText) as List<dynamic>;
-      final doc = quill.Document.fromJson(decoded);
-      return doc.toPlainText().trim();
-    }
-    return jsonOrText;
-  } on FormatException {
-    return jsonOrText;
-  }
 }

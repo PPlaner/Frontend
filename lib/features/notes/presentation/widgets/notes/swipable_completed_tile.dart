@@ -96,7 +96,7 @@ class SwipableCompletedTile extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 32),
                   child: Text(
-                    extractPlainText(note.subtitle),
+                    note.subtitle,
                     style: textTheme.bodySmall?.copyWith(
                       color: colors.textSecondary,
                     ),

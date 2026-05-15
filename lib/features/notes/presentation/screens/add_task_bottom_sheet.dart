@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
@@ -54,18 +53,12 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
     final init = widget.initialData;
 
     _titleController = TextEditingController(text: init?.title ?? '');
-    _quillController = QuillController.basic();
-
-    if (init != null && init.subtitle.isNotEmpty) {
-      try {
-        final decoded = jsonDecode(init.subtitle) as List<dynamic>;
-        _quillController.document = Document.fromJson(decoded);
-      } on FormatException {
-        _quillController.document = Document.fromJson([
-          {'insert': '${init.subtitle}\n'},
-        ]);
-      }
-    }
+    _quillController = QuillController(
+      document: init != null
+          ? Document.fromDelta(init.content.toDelta())
+          : Document(),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
 
     _dueDate = init?.dueDate;
     _dueTime = init?.dueTime;
