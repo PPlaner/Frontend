@@ -41,7 +41,7 @@ final class VaultUnlockProvider
   }
 }
 
-String _$vaultUnlockHash() => r'db8f29e72772682880d36f83c01b5f4e1b7b4189';
+String _$vaultUnlockHash() => r'fc281f9ae005c2db0d5d389a46e6a77bb0d23338';
 
 abstract class _$VaultUnlock extends $Notifier<VaultUnlockData> {
   VaultUnlockData build();

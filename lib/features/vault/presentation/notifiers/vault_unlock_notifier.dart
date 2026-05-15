@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:frontend/core/sync/sync_orchestrator.dart';
 import 'package:frontend/features/vault/data/secure_vault_service.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
 import 'package:frontend/features/vault/domain/failures/vault_failure.dart';
@@ -48,6 +51,8 @@ class VaultUnlock extends _$VaultUnlock {
 
     if (!ref.mounted) return;
 
+    unawaited(ref.read(syncOrchestratorProvider.notifier).performSync());
+
     result.fold(
       (success) => state = state.copyWith(isUnlocking: false),
       (failure) => state = state.copyWith(isUnlocking: false, failure: failure),
@@ -64,6 +69,8 @@ class VaultUnlock extends _$VaultUnlock {
         .unlock(KeyType.recoveryPhrase, secret.join());
 
     if (!ref.mounted) return;
+
+    unawaited(ref.read(syncOrchestratorProvider.notifier).performSync());
 
     result.fold(
       (success) => state = state.copyWith(isUnlocking: false),

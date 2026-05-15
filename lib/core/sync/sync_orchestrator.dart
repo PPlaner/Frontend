@@ -97,9 +97,9 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         }
       }
 
-      // if (responseData.containsKey('nextCursor')) {
-      //   await syncStorage.saveSyncCursor(responseData['nextCursor'] as int);
-      // }
+      if (responseData.containsKey('nextCursor')) {
+        await syncStorage.saveSyncCursor(responseData['nextCursor'] as int);
+      }
 
       state = const SyncSuccess();
     } catch (e, st) {

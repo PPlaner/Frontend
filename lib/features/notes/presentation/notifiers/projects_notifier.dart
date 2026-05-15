@@ -1,3 +1,5 @@
+import 'package:frontend/core/sync/sync_orchestrator.dart';
+import 'package:frontend/core/sync/sync_state.dart';
 import 'package:frontend/features/notes/data/secure_notes_service.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/domain/models/project_creation_payload.dart';
@@ -9,8 +11,16 @@ part 'projects_notifier.g.dart';
 class ProjectsNotifier extends _$ProjectsNotifier {
   @override
   Future<List<Project>> build() async {
+    ref.listen(syncOrchestratorProvider, (previous, next) {
+      if (next is SyncSuccess) {
+        ref.invalidateSelf();
+      }
+    });
+
     final service = ref.watch(notesServiceProvider);
+
     final result = await service.getAllProjects();
+
     return result.fold(
       (projects) => projects,
       (failure) => throw failure,
