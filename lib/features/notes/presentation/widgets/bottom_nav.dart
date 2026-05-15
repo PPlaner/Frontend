@@ -42,6 +42,7 @@ class BottomNav extends ConsumerWidget {
               }
               const NotesRoute().go(context);
             case 1:
+              ref.read(selectedProjectIdProvider.notifier).set(allProjectsId);
               const NotesCalendarRoute().go(context);
             case 2:
               // const ProfileRoute().go(context);

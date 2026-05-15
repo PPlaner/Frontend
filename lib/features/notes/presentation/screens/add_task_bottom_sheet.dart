@@ -60,7 +60,13 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       selection: const TextSelection.collapsed(offset: 0),
     );
 
-    _dueDate = init?.dueDate;
+    if (init?.dueDate != null) {
+      _dueDate = init!.dueDate;
+    } else {
+      final now = DateTime.now();
+      _dueDate = DateTime(now.year, now.month, now.day);
+    }
+
     _dueTime = init?.dueTime;
     _projectId = init?.projectId;
     _priority = init?.priority ?? TaskPriority.none;
