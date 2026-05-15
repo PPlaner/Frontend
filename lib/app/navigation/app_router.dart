@@ -43,7 +43,7 @@ GoRouter appRouter(Ref ref) {
           return const UnlockVaultRoute().location;
         case VaultUnlocked():
           if (isGoingToSetup || isGoingToUnlock || isGoingToWelcome) {
-            return const NotesCalendarRoute().location;
+            return const NotesRoute().location;
           }
         case VaultError():
           return null;
