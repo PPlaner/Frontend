@@ -31,7 +31,7 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
 
       final dio = ref.read(dioProvider);
       final syncStorage = ref.read(syncStorageProvider);
-      final currentCursor = syncStorage.getSyncCursor();
+      final currentCursor = syncStorage.getSyncCursor() ?? 0;
 
       final pushPayload = {
         'cursor': currentCursor,
@@ -97,9 +97,9 @@ class SyncOrchestrator extends _$SyncOrchestrator with DataSourceRunner {
         }
       }
 
-      if (responseData.containsKey('next_cursor')) {
-        await syncStorage.saveSyncCursor(responseData['next_cursor'] as String);
-      }
+      // if (responseData.containsKey('nextCursor')) {
+      //   await syncStorage.saveSyncCursor(responseData['nextCursor'] as int);
+      // }
 
       state = const SyncSuccess();
     } catch (e, st) {

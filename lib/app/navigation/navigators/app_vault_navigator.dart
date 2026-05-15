@@ -10,6 +10,6 @@ class AppVaultNavigator implements VaultNavigator {
 
   @override
   void onAuthSelected() {
-    ref.read(appRouterProvider).go(const LoginRoute().location);
+    ref.read(appRouterProvider).go(const AuthRoute(Route).location);
   }
 }

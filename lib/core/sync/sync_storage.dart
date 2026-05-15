@@ -10,9 +10,8 @@ class SyncStorage {
   final SharedPreferences _prefs;
   static const String _cursorKey = 'global_sync_cursor';
 
-  String? getSyncCursor() => _prefs.getString(_cursorKey);
-  Future<void> saveSyncCursor(String cursor) =>
-      _prefs.setString(_cursorKey, cursor);
+  int? getSyncCursor() => _prefs.getInt(_cursorKey);
+  Future<void> saveSyncCursor(int cursor) => _prefs.setInt(_cursorKey, cursor);
 }
 
 @Riverpod(keepAlive: true)

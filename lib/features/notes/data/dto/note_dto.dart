@@ -16,9 +16,9 @@ sealed class NoteDto with _$NoteDto {
 
     required int version,
 
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    DateTime? deletedAt,
+    @DateTimeUtcConverter() required DateTime createdAt,
+    @DateTimeUtcConverter() required DateTime updatedAt,
+    @DateTimeUtcConverter() DateTime? deletedAt,
 
     String? projectId,
   }) = _NoteDto;

@@ -58,6 +58,7 @@ class UnifiedVaultRepository with DataSourceRunner implements VaultRepository {
         if (syncResult case Failure(error: final e)) {
           switch (e) {
             case VaultCoreFailure(core: NetworkFailure()):
+            case VaultCoreFailure(core: ApiFailure()):
               break;
             default:
               return Failure(e);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
@@ -45,7 +46,7 @@ class BottomNav extends ConsumerWidget {
               ref.read(selectedProjectIdProvider.notifier).set(allProjectsId);
               const NotesCalendarRoute().go(context);
             case 2:
-              // const ProfileRoute().go(context);
+              const AuthRoute(source: 'inApp').go(context);
               break;
           }
         },

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -8,6 +9,7 @@ import 'package:frontend/core/domain/result.dart';
 import 'package:frontend/core/session/crypto_session.dart';
 import 'package:frontend/core/session/session_exceptions.dart';
 import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/sync/sync_orchestrator.dart';
 import 'package:frontend/core/utils/logger.dart';
 import 'package:frontend/features/notes/data/unified_notes_repository.dart';
 import 'package:frontend/features/notes/domain/entities/encrypted_note.dart';
@@ -32,13 +34,16 @@ class SecureNotesService implements NotesService {
     required EncryptionService encryption,
     required CryptoSession cryptoSession,
     required NotesRepository repository,
+    required SyncOrchestrator sync,
   }) : _encryption = encryption,
        _cryptoSession = cryptoSession,
-       _repository = repository;
+       _repository = repository,
+       _sync = sync;
 
   final EncryptionService _encryption;
   final CryptoSession _cryptoSession;
   final NotesRepository _repository;
+  final SyncOrchestrator _sync;
 
   @override
   Future<Result<Note, NotesFailure>> createNote(NoteCreationPayload payload) {
@@ -74,6 +79,8 @@ class SecureNotesService implements NotesService {
 
       final note = await _decryptNote(encryptedNote, masterKey);
 
+      unawaited(_sync.performSync());
+
       return Success(note);
     });
   }
@@ -107,6 +114,8 @@ class SecureNotesService implements NotesService {
         encryptedTitle: encryptedTitle,
         encryptedContent: encryptedContent,
       );
+
+      unawaited(_sync.performSync());
 
       return _repository.saveNote(encryptedNote);
     });
@@ -341,4 +350,5 @@ NotesService notesService(Ref ref) => SecureNotesService(
   encryption: ref.watch(encryptionServiceProvider),
   cryptoSession: ref.watch(cryptoSessionProvider),
   repository: ref.watch(notesRepositoryProvider),
+  sync: ref.watch(syncOrchestratorProvider.notifier),
 );

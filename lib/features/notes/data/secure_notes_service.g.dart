@@ -48,4 +48,4 @@ final class NotesServiceProvider
   }
 }
 
-String _$notesServiceHash() => r'01d1cc798ba7cad67f97a97c0eb2e3ce6ca434d5';
+String _$notesServiceHash() => r'bdedb8e9270bcc4246642443fac8a59114462d2c';
