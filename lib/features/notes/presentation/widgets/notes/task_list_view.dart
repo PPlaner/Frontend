@@ -4,6 +4,8 @@ import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/active_note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/completed_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_secion.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/swipable_completed_tile.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/swipable_task_card.dart';
@@ -30,14 +32,16 @@ class TaskListView extends ConsumerWidget {
         ...activeTasks.map(
           (task) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: SwipableTaskCard(
+            child: ActiveNoteCard(
               key: ValueKey(task.id),
               note: task,
               onTap: () => showModalBottomSheet<void>(
                 context: context,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
-                barrierColor: context.colorScheme.shadow.withValues(alpha: 0.1),
+                barrierColor: context.colorScheme.shadow.withValues(
+                  alpha: 0.1,
+                ),
                 builder: (_) => TaskDetailBottomSheet(
                   note: task,
                 ),
@@ -51,7 +55,7 @@ class TaskListView extends ConsumerWidget {
           CompletedSection(
             children: completedTasks
                 .map(
-                  (task) => SwipableCompletedTile(
+                  (task) => CompletedNoteCard(
                     key: ValueKey(task.id),
                     note: task,
                     onTap: () => showModalBottomSheet<void>(

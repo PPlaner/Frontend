@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
@@ -7,13 +8,17 @@ import 'package:frontend/features/notes/presentation/notifiers/providers/calenda
 import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/calendar/swipable_completed_tile.dart';
 import 'package:frontend/features/notes/presentation/widgets/calendar/swipable_tile.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/active_note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/completed_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_secion.dart';
+import 'package:frontend/i18n/strings.g.dart';
 
 class TaskListView extends ConsumerWidget {
   const TaskListView({super.key});
 
   String _listNameFor(List<Project> allProjects, String projectId) {
-    return allProjects.where((p) => p.id == projectId).firstOrNull?.title ?? '';
+    return allProjects.where((p) => p.id == projectId).firstOrNull?.title ??
+        t.home.inbox;
   }
 
   @override
@@ -26,22 +31,24 @@ class TaskListView extends ConsumerWidget {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
       children: [
         ...activeNotes.map(
-          (note) => Padding(
+          (task) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
-            child: SwipableTaskCard(
-              note: note,
-              listName: _listNameFor(
+            child: ActiveNoteCard(
+              key: ValueKey(task.id),
+              note: task,
+              projectName: _listNameFor(
                 allProjects,
-                note.projectId ?? inboxProjectId,
+                task.projectId ?? inboxProjectId,
               ),
-              key: ValueKey(note.id),
               onTap: () => showModalBottomSheet<void>(
                 context: context,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
-                barrierColor: Colors.black.withValues(alpha: 0.15),
+                barrierColor: context.colorScheme.shadow.withValues(
+                  alpha: 0.1,
+                ),
                 builder: (_) => TaskDetailBottomSheet(
-                  note: note,
+                  note: task,
                 ),
               ),
             ),
@@ -53,10 +60,10 @@ class TaskListView extends ConsumerWidget {
           CompletedSection(
             children: completedNotes
                 .map(
-                  (note) => SwipableCompletedTile(
+                  (note) => CompletedNoteCard(
                     key: ValueKey(note.id),
                     note: note,
-                    listName: _listNameFor(
+                    projectName: _listNameFor(
                       allProjects,
                       note.projectId ?? inboxProjectId,
                     ),
