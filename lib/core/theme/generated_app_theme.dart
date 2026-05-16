@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/custom_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// The [AppTheme] defines light and dark themes for the app.
@@ -46,7 +47,7 @@ abstract final class AppTheme {
   );
 
   // The FlexColorScheme defined light mode ThemeData.
-  static ThemeData light = FlexThemeData.light(
+  static ThemeData lightBase = FlexThemeData.light(
     // User defined custom colors made with FlexSchemeColor() API.
     colors: _colorsLight,
     textTheme: _buildTextTheme(),
@@ -69,7 +70,7 @@ abstract final class AppTheme {
   );
 
   // The FlexColorScheme defined dark mode ThemeData.
-  static ThemeData dark = FlexThemeData.dark(
+  static ThemeData darkBase = FlexThemeData.dark(
     // User defined custom colors made with FlexSchemeColor() API.
     colors: _colorsLight.toDark(),
     textTheme: _buildTextTheme(),
@@ -90,6 +91,24 @@ abstract final class AppTheme {
     // Direct ThemeData properties.
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
     cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
+  );
+
+  static ThemeData get light => lightBase.copyWith(
+    extensions: [
+      CustomColors(
+        background: lightBase.colorScheme.surfaceContainer,
+        containerColor: lightBase.colorScheme.surface,
+      ),
+    ],
+  );
+
+  static ThemeData get dark => darkBase.copyWith(
+    extensions: [
+      CustomColors(
+        background: darkBase.colorScheme.surfaceContainer,
+        containerColor: darkBase.colorScheme.surfaceContainerHigh,
+      ),
+    ],
   );
 
   static TextTheme _buildTextTheme() => GoogleFonts.interTextTheme().copyWith(
