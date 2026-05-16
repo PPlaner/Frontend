@@ -5,6 +5,7 @@ import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart'
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
+import 'package:frontend/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:frontend/i18n/strings.g.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,7 +16,7 @@ class BottomNav extends ConsumerWidget {
     final location = GoRouterState.of(context).uri.path;
 
     if (location.startsWith('/notes/calendar')) return 1;
-    // if (location.startsWith('/profile')) return 2;
+    if (location.startsWith('/profile')) return 2;
     return 0;
   }
 
@@ -46,8 +47,7 @@ class BottomNav extends ConsumerWidget {
               ref.read(selectedProjectIdProvider.notifier).set(allProjectsId);
               const NotesCalendarRoute().go(context);
             case 2:
-              const AuthRoute(source: 'inApp').go(context);
-              break;
+              const ProfileRoute().go(context);
           }
         },
         backgroundColor: Colors.transparent,
