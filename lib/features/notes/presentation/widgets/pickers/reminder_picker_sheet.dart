@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/helpers.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -24,8 +24,6 @@ class ReminderPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
     final t = context.t;
 
     return SafeArea(
@@ -40,13 +38,13 @@ class ReminderPickerSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colors.divider,
+                  color: context.theme.dividerColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            Text(t.task.chooseReminder, style: textTheme.titleLarge),
+            Text(t.task.chooseReminder, style: context.textTheme.titleLarge),
             const SizedBox(height: 8),
             ..._options.map(
               (opt) {
@@ -61,22 +59,22 @@ class ReminderPickerSheet extends StatelessWidget {
                         ? Icons.notifications_off_outlined
                         : Icons.notifications_outlined,
                     color: isSelected
-                        ? AppColors.primary
-                        : colors.textSecondary,
+                        ? context.colorScheme.primary
+                        : context.theme.hintColor,
                     size: 22,
                   ),
                   title: Text(
                     label,
-                    style: textTheme.titleMedium?.copyWith(
+                    style: context.textTheme.titleMedium?.copyWith(
                       color: isSelected
-                          ? AppColors.primary
-                          : colors.textPrimary,
+                          ? context.colorScheme.primary
+                          : context.colorScheme.onSurface,
                     ),
                   ),
                   trailing: isSelected
-                      ? const Icon(
+                      ? Icon(
                           Icons.check,
-                          color: AppColors.primary,
+                          color: context.colorScheme.primary,
                           size: 20,
                         )
                       : null,

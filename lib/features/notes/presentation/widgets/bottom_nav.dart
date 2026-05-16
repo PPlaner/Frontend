@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
-import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/navigation/notes_routes.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
@@ -22,12 +21,11 @@ class BottomNav extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = AppColors.of(context);
     final currentIndex = _calculateSelectedIndex(context);
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.bottomNav,
+        color: context.colorScheme.surfaceDim,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: BottomNavigationBar(
@@ -54,8 +52,8 @@ class BottomNav extends ConsumerWidget {
         elevation: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: colors.textPrimary,
+        selectedItemColor: context.colorScheme.primary,
+        unselectedItemColor: context.colorScheme.onSurface,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.check_box_outlined),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/task_priority.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -15,8 +15,6 @@ class PriorityPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
     final t = context.t;
 
     return SafeArea(
@@ -31,13 +29,13 @@ class PriorityPickerSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colors.divider,
+                  color: context.theme.dividerColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            Text(t.task.choosePriority, style: textTheme.titleLarge),
+            Text(t.task.choosePriority, style: context.textTheme.titleLarge),
             const SizedBox(height: 8),
             ...TaskPriority.values.map(
               (p) => ListTile(
@@ -45,22 +43,22 @@ class PriorityPickerSheet extends StatelessWidget {
                 leading: Icon(
                   Icons.flag,
                   color: p == TaskPriority.none
-                      ? colors.textSecondary
+                      ? context.theme.hintColor
                       : p.color,
                   size: 22,
                 ),
                 title: Text(
                   p.label(t),
-                  style: textTheme.titleMedium?.copyWith(
+                  style: context.textTheme.titleMedium?.copyWith(
                     color: current == p
-                        ? AppColors.primary
-                        : colors.textPrimary,
+                        ? context.colorScheme.primary
+                        : context.colorScheme.onSurface,
                   ),
                 ),
                 trailing: current == p
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
-                        color: AppColors.primary,
+                        color: context.colorScheme.primary,
                         size: 20,
                       )
                     : null,

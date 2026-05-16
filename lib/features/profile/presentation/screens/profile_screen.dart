@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/storage/cookie_jar.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/theme/theme_provider.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:frontend/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:frontend/i18n/strings.g.dart';
@@ -63,7 +67,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onAppearanceTap: _openAppearance,
                 onTimezoneTap: _openTimezone,
                 onWidgetsTap: _openWidgets,
-                onLogout: () {},
+                onLogout: () {
+                  ref.read(cookieJarProvider).deleteAll();
+                  ref.read(sessionControllerProvider).setAuthToken(null);
+                },
               ),
       ),
       bottomNavigationBar: const BottomNav(),
@@ -169,7 +176,7 @@ class _LocalView extends StatelessWidget {
         _ProfileHeader(
           name: t.profile.name,
           email: t.profile.email,
-          onTap: () {},
+          onTap: () => const AuthRoute(source: 'inApp').push<void>(context),
         ),
         const SizedBox(height: 12),
         _SettingsCard(
@@ -249,8 +256,8 @@ class _ProfileHeader extends StatelessWidget {
             Container(
               width: 64,
               height: 64,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
+              decoration: BoxDecoration(
+                color: context.colorScheme.primary,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -335,7 +342,7 @@ class _SettingsTile extends StatelessWidget {
                 color: colors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.primary, size: 20),
+              child: Icon(icon, color: context.colorScheme.primary, size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -452,9 +459,9 @@ class _LanguageSheet extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 title: Text(lang.label, style: textTheme.titleMedium),
                 trailing: current == lang
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
-                        color: AppColors.primary,
+                        color: context.colorScheme.primary,
                         size: 20,
                       )
                     : null,
@@ -526,15 +533,15 @@ class _AppearanceSheet extends ConsumerWidget {
                 leading: Icon(
                   opt.icon,
                   color: currentMode == opt.mode
-                      ? AppColors.primary
+                      ? context.colorScheme.primary
                       : colors.textSecondary,
                   size: 22,
                 ),
                 title: Text(opt.label, style: textTheme.titleMedium),
                 trailing: currentMode == opt.mode
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
-                        color: AppColors.primary,
+                        color: context.colorScheme.primary,
                         size: 20,
                       )
                     : null,
@@ -640,7 +647,7 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
             FilledButton(
               onPressed: () => Navigator.pop(context, _selected),
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: context.colorScheme.primary,
                 foregroundColor: colors.surface,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
@@ -710,11 +717,11 @@ class _WidgetsSheetState extends State<_WidgetsSheet> {
                 ),
                 value: entry.value.enabled,
 
-                activeThumbColor: AppColors.primary,
+                activeThumbColor: context.colorScheme.primary,
                 activeTrackColor: colors.surface,
                 trackOutlineColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return AppColors.primary;
+                    return context.colorScheme.primary;
                   }
                   return null;
                 }),

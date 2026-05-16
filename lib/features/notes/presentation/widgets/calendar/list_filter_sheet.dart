@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
@@ -14,8 +14,6 @@ class ListFilterSheet extends ConsumerWidget {
     final lists = ref.watch(projectsProvider).value ?? [];
     final selectedProjectId = ref.watch(selectedProjectIdProvider);
 
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
     final t = context.t;
 
     return SafeArea(
@@ -30,13 +28,13 @@ class ListFilterSheet extends ConsumerWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colors.divider,
+                  color: context.theme.dividerColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            Text(t.calendar.taskCategory, style: textTheme.titleLarge),
+            Text(t.calendar.taskCategory, style: context.textTheme.titleLarge),
             const SizedBox(height: 16),
 
             // "Всі списки" — перший елемент
@@ -45,14 +43,18 @@ class ListFilterSheet extends ConsumerWidget {
               leading: const Text('🗂️', style: TextStyle(fontSize: 20)),
               title: Text(
                 t.category.all,
-                style: textTheme.titleMedium?.copyWith(
+                style: context.textTheme.titleMedium?.copyWith(
                   color: selectedProjectId == allProjectsId
-                      ? AppColors.primary
-                      : colors.textPrimary,
+                      ? context.colorScheme.primary
+                      : context.colorScheme.onSurface,
                 ),
               ),
               trailing: selectedProjectId == allProjectsId
-                  ? const Icon(Icons.check, color: AppColors.primary, size: 20)
+                  ? Icon(
+                      Icons.check,
+                      color: context.colorScheme.primary,
+                      size: 20,
+                    )
                   : null,
               onTap: () => ref
                   .read(selectedProjectIdProvider.notifier)
@@ -68,16 +70,16 @@ class ListFilterSheet extends ConsumerWidget {
                 leading: Text(list.emoji, style: const TextStyle(fontSize: 20)),
                 title: Text(
                   list.title,
-                  style: textTheme.titleMedium?.copyWith(
+                  style: context.textTheme.titleMedium?.copyWith(
                     color: selectedProjectId == list.id
-                        ? AppColors.primary
-                        : colors.textPrimary,
+                        ? context.colorScheme.primary
+                        : context.colorScheme.onSurface,
                   ),
                 ),
                 trailing: selectedProjectId == list.id
-                    ? const Icon(
+                    ? Icon(
                         Icons.check,
-                        color: AppColors.primary,
+                        color: context.colorScheme.primary,
                         size: 20,
                       )
                     : null,

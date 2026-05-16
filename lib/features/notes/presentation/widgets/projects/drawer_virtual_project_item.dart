@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/widgets/projects/create_project_sheet.dart';
@@ -66,12 +66,12 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
                 Icon(
                   Icons.edit_outlined,
                   size: 20,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: context.colorScheme.onSurface,
                 ),
                 const SizedBox(width: 12),
                 Text(
                   t.home.editList,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: context.textTheme.titleMedium,
                 ),
               ],
             ),
@@ -87,9 +87,6 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isSelected = ref.watch(selectedProjectIdProvider) == id;
-
-    final colors = AppColors.of(context);
-    final textTheme = Theme.of(context).textTheme;
 
     return Material(
       color: Colors.transparent,
@@ -113,8 +110,8 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: isSelected ? color : colors.textPrimary,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: isSelected ? color : context.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
@@ -123,8 +120,8 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   '$count',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.textSecondary,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.theme.hintColor,
                   ),
                 ),
               ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -12,13 +12,10 @@ class DayHeader extends ConsumerWidget {
     final selectedDate = ref.watch(calendarSelectedDateProvider);
     final title = _formatDayTitle(selectedDate, context.t);
 
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: context.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -34,7 +31,7 @@ class DayHeader extends ConsumerWidget {
             },
             child: Icon(
               Icons.chevron_left,
-              color: colors.textSecondary,
+              color: context.theme.hintColor,
               size: 20,
             ),
           ),
@@ -42,7 +39,7 @@ class DayHeader extends ConsumerWidget {
             child: Text(
               title,
               textAlign: TextAlign.center,
-              style: textTheme.titleMedium,
+              style: context.textTheme.titleMedium,
             ),
           ),
           GestureDetector(
@@ -56,7 +53,7 @@ class DayHeader extends ConsumerWidget {
             },
             child: Icon(
               Icons.chevron_right,
-              color: colors.textSecondary,
+              color: context.theme.hintColor,
               size: 20,
             ),
           ),

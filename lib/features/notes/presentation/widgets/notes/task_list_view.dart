@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
@@ -20,12 +21,10 @@ class TaskListView extends ConsumerWidget {
     final activeTasks = ref.watch(activeNotesProvider);
     final completedTasks = ref.watch(completedNotesProvider);
 
-    final textTheme = Theme.of(context).textTheme;
-
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
       children: [
-        if (title != null) Text(title!, style: textTheme.displayLarge),
+        if (title != null) Text(title!, style: context.textTheme.displayLarge),
         if (title != null) const SizedBox(height: 16),
 
         ...activeTasks.map(
@@ -38,7 +37,7 @@ class TaskListView extends ConsumerWidget {
                 context: context,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
-                barrierColor: Colors.black.withValues(alpha: 0.1),
+                barrierColor: context.colorScheme.shadow.withValues(alpha: 0.1),
                 builder: (_) => TaskDetailBottomSheet(
                   note: task,
                 ),
@@ -59,7 +58,9 @@ class TaskListView extends ConsumerWidget {
                       context: context,
                       isScrollControlled: true,
                       backgroundColor: Colors.transparent,
-                      barrierColor: Colors.black.withValues(alpha: 0.1),
+                      barrierColor: context.colorScheme.shadow.withValues(
+                        alpha: 0.1,
+                      ),
                       builder: (_) => TaskDetailBottomSheet(
                         note: task,
                       ),

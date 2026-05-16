@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
@@ -148,7 +148,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           colorScheme: Theme.of(ctx).colorScheme.copyWith(
-            primary: AppColors.primary,
+            primary: context.colorScheme.primary,
           ),
         ),
         child: child!,
@@ -166,7 +166,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
       builder: (ctx, child) => Theme(
         data: Theme.of(ctx).copyWith(
           colorScheme: Theme.of(ctx).colorScheme.copyWith(
-            primary: AppColors.primary,
+            primary: context.colorScheme.primary,
           ),
         ),
         child: child!,
@@ -184,7 +184,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
 
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.of(context).surface,
+      backgroundColor: context.colorScheme.surfaceContainer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -202,7 +202,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   Future<void> _pickPriority() async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.of(context).surface,
+      backgroundColor: context.colorScheme.surfaceContainer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -219,7 +219,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   Future<void> _pickReminder() async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.of(context).surface,
+      backgroundColor: context.colorScheme.surfaceContainer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -258,13 +258,11 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   Widget build(BuildContext context) {
     _projects = ref.read(projectsProvider).value;
 
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
     final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.background,
+        color: context.colorScheme.surfaceContainer,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -279,7 +277,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: colors.divider,
+                color: context.theme.dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -292,7 +290,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   onTap: _onCancel,
                   child: Icon(
                     Icons.cancel_outlined,
-                    color: colors.textSecondary,
+                    color: context.theme.hintColor,
                     size: 24,
                   ),
                 ),
@@ -300,14 +298,14 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                   child: Text(
                     widget.isEditing ? t.home.editTask : t.home.newTask,
                     textAlign: TextAlign.center,
-                    style: textTheme.headlineMedium,
+                    style: context.textTheme.headlineMedium,
                   ),
                 ),
                 GestureDetector(
                   onTap: _onConfirm,
-                  child: const Icon(
+                  child: Icon(
                     Icons.check,
-                    color: AppColors.primary,
+                    color: context.colorScheme.primary,
                     size: 24,
                   ),
                 ),
@@ -320,21 +318,21 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
             Container(
               height: 51,
               decoration: BoxDecoration(
-                color: colors.surface,
+                color: context.colorScheme.surfaceBright,
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
               child: TextField(
                 controller: _titleController,
                 focusNode: _titleFocus,
-                style: textTheme.bodyLarge,
+                style: context.textTheme.bodyLarge,
                 decoration: InputDecoration(
                   hintText: t.home.whatToDo,
-                  hintStyle: textTheme.bodyLarge?.copyWith(
-                    color: colors.textSecondary,
+                  hintStyle: context.textTheme.bodyLarge?.copyWith(
+                    color: context.theme.hintColor,
                   ),
                   filled: true,
-                  fillColor: colors.surface,
+                  fillColor: context.colorScheme.surfaceBright,
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -351,7 +349,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
             // Деталі + мета-іконки
             Container(
               decoration: BoxDecoration(
-                color: colors.surface,
+                color: context.colorScheme.surfaceBright,
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -379,7 +377,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                                   fontFamily: fontFamily,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: colors.textSecondary,
+                                  color: context.theme.hintColor,
                                   height: 1.5,
                                 ),
                                 HorizontalSpacing.zero,
@@ -392,7 +390,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                                   fontFamily: fontFamily,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: colors.textPrimary,
+                                  color: context.colorScheme.onSurface,
                                   height: 1.5,
                                 ),
                                 HorizontalSpacing.zero,
@@ -407,7 +405,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
                     ),
                   ),
 
-                  Divider(height: 16, color: colors.divider),
+                  Divider(height: 16, color: context.theme.dividerColor),
 
                   // Мета-іконки з активними значеннями
                   Center(
@@ -482,7 +480,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
             // Quill Toolbar
             Container(
               decoration: BoxDecoration(
-                color: colors.surface,
+                color: context.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: QuillSimpleToolbar(

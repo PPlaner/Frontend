@@ -26,7 +26,8 @@ class SessionManager extends _$SessionManager
   }
 
   @override
-  void setAuthToken(String token) => state = state.copyWith(accessToken: token);
+  void setAuthToken(String? token) =>
+      state = state.copyWith(accessToken: token);
 
   @override
   void setMasterKey(Uint8List key) => state = state.copyWith(masterKey: key);

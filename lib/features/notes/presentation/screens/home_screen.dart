@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
@@ -95,10 +95,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     final selectedProjectTitle = ref.watch(selectedProjectTitleProvider);
     final showDescription = ref.watch(showDescriptionProvider);
 
-    final colors = AppColors.of(context);
-
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: context.customColors.background,
       body: Stack(
         children: [
           // Основний контент
@@ -106,18 +104,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             children: [
               AppBar(
                 leading: IconButton(
-                  icon: Icon(Icons.menu, color: colors.textPrimary),
+                  icon: const Icon(Icons.menu),
                   onPressed: _openDrawer,
                 ),
                 actions: [
                   IconButton(
                     icon: Icon(
                       showDescription
-                          ? Icons.short_text_rounded
-                          : Icons.subject_rounded,
+                          ? Icons.subject_rounded
+                          : Icons.short_text_rounded,
                       color: showDescription
-                          ? AppColors.primary
-                          : colors.textPrimary,
+                          ? context.colorScheme.onSurface
+                          : context.colorScheme.primary,
                     ),
                     tooltip: showDescription
                         ? context.t.calendar.hideDescription
@@ -161,8 +159,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 duration: const Duration(milliseconds: 180),
                 child: FloatingActionButton(
                   onPressed: _isDrawerOpen ? null : _openAddTask,
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: colors.surface,
+                  backgroundColor: context.colorScheme.primary,
+                  foregroundColor: context.colorScheme.surface,
                   elevation: 4,
                   shape: const CircleBorder(),
                   child: const Icon(Icons.add, size: 28),
@@ -191,7 +189,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               builder: (_, _) => GestureDetector(
                 onTap: _closeDrawer,
                 child: Container(
-                  color: Colors.black.withValues(
+                  color: context.colorScheme.shadow.withValues(
                     alpha: 0.35 * _drawerAnimation.value,
                   ),
                 ),

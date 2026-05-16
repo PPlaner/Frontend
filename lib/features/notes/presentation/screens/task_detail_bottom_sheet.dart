@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
 import 'package:frontend/features/notes/domain/task_priority.dart';
 import 'package:frontend/features/notes/presentation/helpers.dart';
@@ -67,8 +67,13 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.15),
-      builder: (_) => AddTaskBottomSheet(
-        initialData: _task,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: AddTaskBottomSheet(
+          initialData: _task,
+        ),
       ),
     );
 
@@ -113,21 +118,14 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
 
     final listName = ref.watch(selectedProjectTitleProvider);
 
-    final colors = AppColors.of(context);
-    final textTheme = Theme.of(context).textTheme;
     final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.background,
+        color: context.colorScheme.surfaceContainer,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: EdgeInsets.fromLTRB(
-        16,
-        0,
-        16,
-        MediaQuery.of(context).padding.bottom + 16,
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: SafeArea(
         top: false,
         child: Column(
@@ -141,7 +139,7 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colors.divider,
+                  color: context.theme.dividerColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -155,26 +153,26 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 GestureDetector(
                   onTap: () =>
                       ref.read(notesProvider.notifier).toggleNote(widget.note),
-                  // setState(() {
-                  //   _task = _task.copyWith(isCompleted: !_task.isCompleted);
-                  // });
-                  // widget.onToggle();
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
                       color: _task.isCompleted
-                          ? AppColors.primary
+                          ? context.colorScheme.primary
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: AppColors.primary,
+                        color: context.colorScheme.primary,
                         width: 1.5,
                       ),
                     ),
                     child: _task.isCompleted
-                        ? Icon(Icons.check, size: 16, color: colors.surface)
+                        ? Icon(
+                            Icons.check,
+                            size: 16,
+                            color: context.colorScheme.surface,
+                          )
                         : null,
                   ),
                 ),
@@ -184,13 +182,13 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 Expanded(
                   child: Text(
                     _task.title,
-                    style: textTheme.titleLarge?.copyWith(
+                    style: context.textTheme.titleLarge?.copyWith(
                       decoration: _task.isCompleted
                           ? TextDecoration.lineThrough
                           : null,
                       color: _task.isCompleted
-                          ? colors.textSecondary
-                          : colors.textPrimary,
+                          ? context.theme.hintColor
+                          : context.colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -198,9 +196,9 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 // Кнопка редагувати
                 IconButton(
                   onPressed: _openEditSheet,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.edit_outlined,
-                    color: AppColors.primary,
+                    color: context.colorScheme.primary,
                     size: 22,
                   ),
                   tooltip: t.home.editTask,
@@ -210,9 +208,9 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 // Кнопка видалити
                 IconButton(
                   onPressed: _confirmAndDelete,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.delete_outline,
-                    color: AppColors.error,
+                    color: context.colorScheme.error,
                     size: 22,
                   ),
                   tooltip: t.home.deleteTask,
@@ -222,7 +220,7 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
             ),
 
             const SizedBox(height: 12),
-            Divider(color: colors.divider, height: 1),
+            Divider(color: context.theme.dividerColor, height: 1),
             const SizedBox(height: 16),
 
             // Деталі (опис)
@@ -236,8 +234,8 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                       showCursor: false,
                       customStyles: DefaultStyles(
                         paragraph: DefaultTextBlockStyle(
-                          textTheme.bodyLarge!.copyWith(
-                            color: colors.textPrimary,
+                          context.textTheme.bodyLarge!.copyWith(
+                            color: context.colorScheme.surface,
                             height: 1.5,
                           ),
                           HorizontalSpacing.zero,
@@ -259,8 +257,8 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 icon: Icons.calendar_today_outlined,
                 child: Text(
                   formatDateTime(_task.dueDate!, _task.dueTime, t),
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: colors.textPrimary,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -273,8 +271,8 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 icon: Icons.folder_outlined,
                 child: Text(
                   listName,
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: colors.textPrimary,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -288,7 +286,7 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 iconColor: _task.priority.color,
                 child: Text(
                   _task.priority.label(t),
-                  style: textTheme.bodyLarge?.copyWith(
+                  style: context.textTheme.bodyLarge?.copyWith(
                     color: _task.priority.color,
                   ),
                 ),
@@ -302,8 +300,8 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
                 icon: Icons.notifications_outlined,
                 child: Text(
                   reminderLabel(_task.reminderMinutesBefore!, t),
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: colors.textPrimary,
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: context.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -333,15 +331,10 @@ class _DetailSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          size: 18,
-          color: iconColor ?? colors.textSecondary,
-        ),
+        Icon(icon, size: 18, color: iconColor ?? context.theme.hintColor),
         const SizedBox(width: 12),
         Expanded(child: child),
       ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
 import 'package:frontend/features/notes/domain/task_priority.dart';
 import 'package:frontend/features/notes/presentation/helpers.dart';
@@ -22,9 +22,6 @@ class SwipableTaskCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final showDescription = ref.watch(showDescriptionProvider);
 
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-
     return Dismissible(
       key: ValueKey('dismissible-${note.id}'),
       direction: DismissDirection.endToStart,
@@ -32,12 +29,12 @@ class SwipableTaskCard extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: AppColors.deleteBackground,
+          color: context.colorScheme.onError,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Icon(
+        child: Icon(
           Icons.delete_outline,
-          color: AppColors.error,
+          color: context.colorScheme.error,
           size: 24,
         ),
       ),
@@ -51,9 +48,11 @@ class SwipableTaskCard extends ConsumerWidget {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            color: colors.surface,
+            color: context.isLight
+                ? context.colorScheme.surface
+                : context.colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: colors.cardBorder),
+            border: Border.all(color: context.colorScheme.outlineVariant),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -67,13 +66,13 @@ class SwipableTaskCard extends ConsumerWidget {
                     value: note.isCompleted,
                     onChanged: (_) =>
                         ref.read(notesProvider.notifier).toggleNote(note),
-                    activeColor: AppColors.primary,
+                    activeColor: context.colorScheme.primary,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                     ),
-                    side: const BorderSide(
-                      color: AppColors.primary,
+                    side: BorderSide(
+                      color: context.colorScheme.primary,
                       width: 1.5,
                     ),
                   ),
@@ -101,7 +100,7 @@ class SwipableTaskCard extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               note.title,
-                              style: textTheme.titleMedium,
+                              style: context.textTheme.titleMedium,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -112,8 +111,8 @@ class SwipableTaskCard extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           note.subtitle,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colors.textSecondary,
+                          style: context.textTheme.bodySmall?.copyWith(
+                            color: context.theme.hintColor,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -128,10 +127,10 @@ class SwipableTaskCard extends ConsumerWidget {
                 // Час/дата — як на сторінці календаря
                 Text(
                   note.timeLabel(context.t),
-                  style: textTheme.bodySmall?.copyWith(
+                  style: context.textTheme.bodySmall?.copyWith(
                     color: note.dueTime != null
-                        ? AppColors.primary
-                        : colors.textSecondary,
+                        ? context.colorScheme.primary
+                        : context.theme.hintColor,
                     fontWeight: note.dueTime != null
                         ? FontWeight.w600
                         : FontWeight.w400,

@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/features/notes/domain/calendar_view_mode.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
@@ -45,7 +45,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Future<void> _openViewModePicker() async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.of(context).surface,
+      backgroundColor: context.colorScheme.surfaceContainer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -56,7 +56,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Future<void> _openFilterSheet() async {
     await showModalBottomSheet<void>(
       context: context,
-      backgroundColor: AppColors.of(context).surface,
+      backgroundColor: context.colorScheme.surfaceContainer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -91,12 +91,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final showDescription = ref.watch(showDescriptionProvider);
     final viewMode = ref.watch(calendarViewModeStateProvider);
 
-    final colors = AppColors.of(context);
     final t = context.t;
     final isFilterActive = selectedProjectId != allProjectsId;
 
     return Scaffold(
-      backgroundColor: colors.background,
+      backgroundColor: context.colorScheme.surfaceContainer,
       body: SafeArea(
         child: Stack(
           children: [
@@ -141,7 +140,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       IconButton(
                         icon: Icon(
                           viewMode.icon,
-                          color: colors.textPrimary,
+                          color: context.colorScheme.onSurface,
                           size: 24,
                         ),
                         tooltip: viewMode.label(t),
@@ -157,9 +156,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.12),
+                              color: context.colorScheme.primary.withValues(
+                                alpha: 0.12,
+                              ),
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.primary),
+                              border: Border.all(
+                                color: context.colorScheme.primary,
+                              ),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -167,13 +170,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 Text(
                                   _filterLabel(allLists, selectedProjectId),
                                   style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(color: AppColors.primary),
+                                      ?.copyWith(
+                                        color: context.colorScheme.primary,
+                                      ),
                                 ),
                                 const SizedBox(width: 4),
-                                const Icon(
+                                Icon(
                                   Icons.close,
                                   size: 14,
-                                  color: AppColors.primary,
+                                  color: context.colorScheme.primary,
                                 ),
                               ],
                             ),
@@ -193,8 +198,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                   ? Icons.short_text_rounded
                                   : Icons.subject_rounded,
                               color: showDescription
-                                  ? AppColors.primary
-                                  : colors.textPrimary,
+                                  ? context.colorScheme.primary
+                                  : context.colorScheme.onSurface,
                               size: 24,
                             ),
                             tooltip: showDescription
@@ -208,8 +213,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                             icon: Icon(
                               Icons.filter_alt_outlined,
                               color: isFilterActive
-                                  ? AppColors.primary
-                                  : colors.textPrimary,
+                                  ? context.colorScheme.primary
+                                  : context.colorScheme.onSurface,
                               size: 24,
                             ),
                             tooltip: t.calendar.filter,
@@ -244,8 +249,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddTaskSheet,
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.of(context).surface,
+        backgroundColor: context.colorScheme.primary,
+        foregroundColor: context.colorScheme.surface,
         elevation: 4,
         shape: const CircleBorder(),
         child: const Icon(Icons.add, size: 28),

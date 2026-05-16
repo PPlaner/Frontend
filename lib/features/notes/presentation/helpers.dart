@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 String reminderLabel(int minutes, Translations t) {
@@ -23,7 +23,6 @@ Future<bool> confirmDeletion(
   String title,
   String message,
 ) async {
-  final textTheme = Theme.of(context).textTheme;
   final result = await showDialog<bool>(
     context: context,
     builder: (ctx) {
@@ -34,7 +33,7 @@ Future<bool> confirmDeletion(
         title: Text(
           title,
           textAlign: TextAlign.center,
-          style: textTheme.titleLarge,
+          style: context.textTheme.titleLarge,
         ),
         content: Text(
           message,
@@ -47,7 +46,9 @@ Future<bool> confirmDeletion(
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            style: TextButton.styleFrom(
+              foregroundColor: context.colorScheme.error,
+            ),
             child: Text(t.common.delete),
           ),
         ],

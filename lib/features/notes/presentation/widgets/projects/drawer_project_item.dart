@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/presentation/helpers.dart';
@@ -76,12 +76,12 @@ class DrawerProjectItem extends ConsumerWidget {
               Icon(
                 Icons.edit_outlined,
                 size: 20,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: context.colorScheme.onSurface,
               ),
               const SizedBox(width: 12),
               Text(
                 t.home.editList,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: context.textTheme.titleMedium,
               ),
             ],
           ),
@@ -90,17 +90,20 @@ class DrawerProjectItem extends ConsumerWidget {
           value: 'delete',
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.delete_outline,
                 size: 20,
-                color: AppColors.error,
+                color: context.colorScheme.error,
               ),
               const SizedBox(width: 12),
               Text(
                 t.home.deleteList,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: AppColors.error),
+                style:
+                    Theme.of(
+                      context,
+                    ).textTheme.titleMedium?.copyWith(
+                      color: context.colorScheme.error,
+                    ),
               ),
             ],
           ),
@@ -117,9 +120,6 @@ class DrawerProjectItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isSelected = ref.watch(selectedProjectIdProvider) == project.id;
-
-    final colors = AppColors.of(context);
-    final textTheme = Theme.of(context).textTheme;
 
     return Material(
       color: Colors.transparent,
@@ -144,8 +144,10 @@ class DrawerProjectItem extends ConsumerWidget {
               Expanded(
                 child: Text(
                   project.title,
-                  style: textTheme.titleMedium?.copyWith(
-                    color: isSelected ? project.color : colors.textPrimary,
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: isSelected
+                        ? project.color
+                        : context.colorScheme.onSurface,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   ),
                 ),
@@ -154,8 +156,8 @@ class DrawerProjectItem extends ConsumerWidget {
                 const SizedBox(width: 8),
                 Text(
                   '$count',
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colors.textSecondary,
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: context.theme.hintColor,
                   ),
                 ),
               ],

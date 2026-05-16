@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/calendar_view_mode.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
 import 'package:frontend/features/notes/presentation/notifiers/notes_notifier.dart';
-import 'package:frontend/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -23,34 +21,30 @@ class CalendarCard extends ConsumerWidget {
     final focusedDay = ref.watch(calendarFocusedDateProvider);
     final viewMode = ref.watch(calendarViewModeStateProvider);
 
-    final colors = AppColors.of(context);
     final textTheme = context.textTheme;
 
-    final dayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-      color: colors.textPrimary,
-      fontWeight: FontWeight.w400,
-    );
+    final dayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith();
     final selectedDayStyle = (textTheme.bodyMedium ?? const TextStyle())
         .copyWith(
-          color: AppColors.primary,
+          color: context.colorScheme.primary,
           fontWeight: FontWeight.w700,
         );
     final todayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith(
-      color: AppColors.primary,
+      color: context.colorScheme.primary,
       fontWeight: FontWeight.w600,
     );
     final dowStyle = (textTheme.labelSmall ?? const TextStyle()).copyWith(
-      color: AppColors.calendarDayOfWeek,
+      color: context.theme.hintColor,
       fontWeight: FontWeight.w600,
     );
     final headerStyle = (textTheme.titleMedium ?? const TextStyle()).copyWith(
-      color: colors.textPrimary,
+      color: context.colorScheme.onSurface,
     );
 
     return Container(
       padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: context.colorScheme.surfaceBright,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -84,12 +78,12 @@ class CalendarCard extends ConsumerWidget {
           ),
           leftChevronIcon: Icon(
             Icons.chevron_left,
-            color: colors.textSecondary,
+            color: context.theme.hintColor,
             size: 20,
           ),
           rightChevronIcon: Icon(
             Icons.chevron_right,
-            color: colors.textSecondary,
+            color: context.theme.hintColor,
             size: 20,
           ),
           leftChevronMargin: EdgeInsets.zero,
@@ -103,9 +97,9 @@ class CalendarCard extends ConsumerWidget {
         calendarStyle: CalendarStyle(
           cellMargin: const EdgeInsets.all(4),
           selectedDecoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
+            color: context.colorScheme.primary.withValues(alpha: 0.12),
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.primary, width: 1.5),
+            border: Border.all(color: context.colorScheme.primary, width: 1.5),
           ),
           selectedTextStyle: selectedDayStyle,
           todayDecoration: const BoxDecoration(
@@ -119,7 +113,7 @@ class CalendarCard extends ConsumerWidget {
 
           // Стиль маркерів (крапок) під днями
           markerDecoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.7),
+            color: context.colorScheme.primary.withValues(alpha: 0.7),
             shape: BoxShape.circle,
           ),
           markersMaxCount: 1,

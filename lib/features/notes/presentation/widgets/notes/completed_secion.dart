@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
@@ -16,14 +16,13 @@ class CompletedSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isExpanded = ref.watch(completedExpnadedProvider);
 
-    final textTheme = Theme.of(context).textTheme;
-    final colors = AppColors.of(context);
-
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: context.isLight
+            ? context.colorScheme.surface
+            : context.colorScheme.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: colors.cardBorder),
+        border: Border.all(color: context.colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
@@ -36,14 +35,17 @@ class CompletedSection extends ConsumerWidget {
                 children: [
                   Text(
                     context.t.home.completed,
-                    style: textTheme.titleMedium?.copyWith(
-                      color: colors.textSecondary,
+                    style: context.textTheme.titleMedium?.copyWith(
+                      color: context.theme.hintColor,
                     ),
                   ),
 
                   const Spacer(),
 
-                  Text('${children.length}', style: textTheme.bodySmall),
+                  Text(
+                    '${children.length}',
+                    style: context.textTheme.bodySmall,
+                  ),
 
                   const SizedBox(width: 6),
 
@@ -52,13 +54,14 @@ class CompletedSection extends ConsumerWidget {
                     duration: const Duration(milliseconds: 200),
                     child: Icon(
                       Icons.keyboard_arrow_down,
-                      color: colors.textSecondary,
+                      color: context.theme.hintColor,
                     ),
                   ),
                 ],
               ),
             ),
           ),
+
           AnimatedCrossFade(
             firstChild: Column(children: children),
             secondChild: const SizedBox.shrink(),

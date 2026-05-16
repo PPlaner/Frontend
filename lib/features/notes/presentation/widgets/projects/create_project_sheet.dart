@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/domain/entities/task_list_model.dart';
 import 'package:frontend/features/notes/domain/models/project_creation_payload.dart';
@@ -41,13 +41,25 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
     _nameController = TextEditingController(text: initial?.title ?? '');
 
-    _selectedColor = initial?.color ?? AppColors.primary;
     _selectedEmoji = initial?.emoji ?? '📋';
 
     if (!_colorOnly) {
       WidgetsBinding.instance.addPostFrameCallback(
         (_) => _nameFocus.requestFocus(),
       );
+    }
+  }
+
+  bool _isColorInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isColorInitialized) {
+      _selectedColor =
+          widget.initialProject?.color ?? context.colorScheme.primary;
+      _isColorInitialized = true;
     }
   }
 
@@ -95,13 +107,13 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
   @override
   Widget build(BuildContext context) {
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    final colors = AppColors.of(context);
+    // final colors = AppColors.of(context);
     final textTheme = Theme.of(context).textTheme;
     final t = context.t;
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.background,
+        color: context.colorScheme.surfaceContainer,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: EdgeInsets.fromLTRB(16, 0, 16, keyboardHeight + 16),
@@ -118,7 +130,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: colors.divider,
+                    color: context.theme.dividerColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -131,7 +143,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                     onTap: () => Navigator.of(context).pop(),
                     child: Icon(
                       Icons.cancel_outlined,
-                      color: colors.textSecondary,
+                      color: context.theme.hintColor,
                       size: 24,
                     ),
                   ),
@@ -146,9 +158,9 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                   ),
                   GestureDetector(
                     onTap: _confirm,
-                    child: const Icon(
+                    child: Icon(
                       Icons.check,
-                      color: AppColors.primary,
+                      color: context.colorScheme.primary,
                       size: 24,
                     ),
                   ),
@@ -161,7 +173,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 Container(
                   height: 51,
                   decoration: BoxDecoration(
-                    color: colors.surface,
+                    color: context.colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   padding: const EdgeInsets.symmetric(
@@ -183,7 +195,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                           decoration: InputDecoration(
                             hintText: t.home.listName,
                             hintStyle: textTheme.bodyLarge?.copyWith(
-                              color: colors.textSecondary,
+                              color: context.theme.hintColor,
                             ),
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -191,7 +203,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
                             filled: true,
-                            fillColor: colors.surface,
+                            fillColor: context.colorScheme.surface,
                           ),
                         ),
                       ),
@@ -205,7 +217,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: colors.surface,
+                  color: context.colorScheme.surface,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -219,20 +231,24 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                       children: [
                         GestureDetector(
                           onTap: () => setState(
-                            () => _selectedColor = AppColors.primary,
+                            () => _selectedColor = context.colorScheme.primary,
                           ),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 150),
                             width: 32,
                             height: 32,
                             decoration: BoxDecoration(
-                              color: colors.surface,
+                              color: context.colorScheme.surface,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: _selectedColor == AppColors.primary
-                                    ? colors.textPrimary
-                                    : colors.divider,
-                                width: _selectedColor == AppColors.primary
+                                color:
+                                    _selectedColor ==
+                                        context.colorScheme.primary
+                                    ? context.colorScheme.onSurface
+                                    : context.theme.dividerColor,
+                                width:
+                                    _selectedColor ==
+                                        context.colorScheme.primary
                                     ? 1.5
                                     : 1.0,
                               ),
@@ -240,9 +256,10 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                             child: Icon(
                               Icons.format_color_reset_outlined,
                               size: 18,
-                              color: _selectedColor == AppColors.primary
-                                  ? colors.textPrimary
-                                  : colors.textSecondary,
+                              color:
+                                  _selectedColor == context.colorScheme.primary
+                                  ? context.colorScheme.onSurface
+                                  : context.theme.hintColor,
                             ),
                           ),
                         ),
@@ -259,7 +276,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                                 shape: BoxShape.circle,
                                 border: isSelected
                                     ? Border.all(
-                                        color: colors.textPrimary,
+                                        color: context.colorScheme.primary,
                                         width: 1.5,
                                       )
                                     : null,
@@ -280,7 +297,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: colors.surface,
+                    color: context.colorScheme.surface,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
@@ -302,7 +319,7 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? _selectedColor.withValues(alpha: 0.15)
-                                    : colors.background,
+                                    : context.colorScheme.surfaceContainer,
                                 borderRadius: BorderRadius.circular(10),
                                 border: isSelected
                                     ? Border.all(

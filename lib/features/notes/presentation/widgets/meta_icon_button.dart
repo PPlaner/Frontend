@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 
 class MetaIconButton extends StatelessWidget {
   const MetaIconButton({
@@ -22,8 +22,8 @@ class MetaIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveColor = isActive
-        ? (activeColor ?? AppColors.primary)
-        : AppColors.primary;
+        ? (activeColor ?? context.colorScheme.primary)
+        : context.colorScheme.primary;
 
     if (label == null) {
       return GestureDetector(
