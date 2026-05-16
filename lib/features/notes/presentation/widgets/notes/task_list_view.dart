@@ -7,8 +7,6 @@ import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_
 import 'package:frontend/features/notes/presentation/widgets/notes/active_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_secion.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/swipable_completed_tile.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/swipable_task_card.dart';
 
 class TaskListView extends ConsumerWidget {
   const TaskListView({
