@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/features/notes/domain/entities/note.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/swipable_note_wrapper.dart';
+
+class ActiveNoteCard extends ConsumerWidget {
+  const ActiveNoteCard({
+    required this.note,
+    required this.onTap,
+    this.projectName,
+    super.key,
+  });
+
+  final Note note;
+  final VoidCallback onTap;
+  final String? projectName;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SwipableNoteWrapper(
+      note: note,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color: context.customColors.containerColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: context.colorScheme.outlineVariant),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: NoteCard(note: note, projectName: projectName),
+          ),
+        ),
+      ),
+    );
+  }
+}
