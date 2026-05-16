@@ -6,8 +6,8 @@ import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/active_note_card.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/completed_note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/active_note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/completed_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_secion.dart';
 import 'package:frontend/i18n/strings.g.dart';
 

@@ -6,8 +6,8 @@ import 'package:frontend/features/notes/presentation/helpers.dart';
 import 'package:frontend/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
-class SwipableNoteWrapper extends ConsumerWidget {
-  const SwipableNoteWrapper({
+class SwipableCardWrapper extends ConsumerWidget {
+  const SwipableCardWrapper({
     required this.note,
     required this.child,
     super.key,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/note_card.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/swipable_note_wrapper.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/swipable_card_wrapper.dart';
 
 class CompletedNoteCard extends ConsumerWidget {
   const CompletedNoteCard({
@@ -18,7 +18,7 @@ class CompletedNoteCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SwipableNoteWrapper(
+    return SwipableCardWrapper(
       note: note,
       child: GestureDetector(
         onTap: onTap,

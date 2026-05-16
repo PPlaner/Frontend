@@ -4,8 +4,8 @@ import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/active_note_card.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/completed_note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/active_note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/completed_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_secion.dart';
 
 class TaskListView extends ConsumerWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/note_card.dart';
-import 'package:frontend/features/notes/presentation/widgets/notes/swipable_note_wrapper.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/note_card.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/card/swipable_card_wrapper.dart';
 
 class ActiveNoteCard extends ConsumerWidget {
   const ActiveNoteCard({
@@ -19,7 +19,7 @@ class ActiveNoteCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SwipableNoteWrapper(
+    return SwipableCardWrapper(
       note: note,
       child: GestureDetector(
         onTap: onTap,
