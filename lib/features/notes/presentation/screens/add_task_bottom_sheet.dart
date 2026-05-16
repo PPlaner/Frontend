@@ -74,7 +74,11 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
 
     if (!widget.isEditing) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _titleFocus.requestFocus();
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (mounted) {
+            _titleFocus.requestFocus();
+          }
+        });
       });
     }
   }
@@ -254,7 +258,6 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   Widget build(BuildContext context) {
     _projects = ref.read(projectsProvider).value;
 
-    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
     final textTheme = Theme.of(context).textTheme;
     final colors = AppColors.of(context);
     final t = context.t;
@@ -264,7 +267,7 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
         color: colors.background,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      padding: EdgeInsets.fromLTRB(16, 0, 16, keyboardHeight + 16),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: SafeArea(
         top: false,
         child: Column(

@@ -75,7 +75,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent,
-      builder: (_) => const AddTaskBottomSheet(),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: const AddTaskBottomSheet(),
+      ),
     ).whenComplete(() {
       setState(() => _isBottomSheetOpen = false);
     });
