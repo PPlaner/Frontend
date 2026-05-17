@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/features/notes/presentation/widgets/bottom_sheet_drag_handle.dart';
 
 class BaseBottomSheetLayout extends StatelessWidget {
   const BaseBottomSheetLayout({
@@ -37,7 +36,7 @@ class BaseBottomSheetLayout extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const BottomSheetDragHandle(),
+              const _BottomSheetDragHandle(),
               const SizedBox(height: 16),
 
               if (header != null) ...[
@@ -53,6 +52,24 @@ class BaseBottomSheetLayout extends StatelessWidget {
               ...children,
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BottomSheetDragHandle extends StatelessWidget {
+  const _BottomSheetDragHandle();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        width: 40,
+        height: 4,
+        decoration: BoxDecoration(
+          color: context.theme.dividerColor,
+          borderRadius: BorderRadius.circular(2),
         ),
       ),
     );
