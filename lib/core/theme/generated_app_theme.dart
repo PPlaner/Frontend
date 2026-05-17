@@ -7,8 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 /// The [AppTheme] defines light and dark themes for the app.
 ///
 /// Theme setup for FlexColorScheme package v8.
-/// Use same major flex_color_scheme package version. If you use a
-/// lower minor version, some properties may not be supported.
+/// Use same major flex_color_scheme package version. If you use a lower minor version, some properties may not be supported.
 /// In that case, remove them after copying this theme to your
 /// app or upgrade the package to version 8.4.0.
 ///
@@ -97,6 +96,7 @@ abstract final class AppTheme {
     extensions: [
       CustomColors(
         background: lightBase.colorScheme.surfaceContainer,
+        onBackground: lightBase.colorScheme.surface,
         containerColor: lightBase.colorScheme.surface,
       ),
     ],
@@ -106,6 +106,7 @@ abstract final class AppTheme {
     extensions: [
       CustomColors(
         background: darkBase.colorScheme.surfaceContainer,
+        onBackground: darkBase.colorScheme.surfaceContainerHigh,
         containerColor: darkBase.colorScheme.surfaceContainerHigh,
       ),
     ],
