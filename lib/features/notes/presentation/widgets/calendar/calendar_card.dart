@@ -15,7 +15,7 @@ class CalendarCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notes = ref.watch(notesProvider).value ?? [];
+    final notes = ref.watch(notesProvider).value ?? {};
 
     final selectedDay = ref.watch(calendarSelectedDateProvider);
     final focusedDay = ref.watch(calendarFocusedDateProvider);
@@ -67,7 +67,8 @@ class CalendarCard extends ConsumerWidget {
         onPageChanged: (date) =>
             ref.read(calendarFocusedDateProvider.notifier).setDate(date),
 
-        eventLoader: (day) => hasTasksForDay(day, notes) ? [true] : [],
+        eventLoader: (day) =>
+            hasTasksForDay(day, notes.values.toList()) ? [true] : [],
 
         headerStyle: HeaderStyle(
           formatButtonVisible: false,

@@ -13,7 +13,7 @@ part of 'notes_notifier.dart';
 final notesProvider = NotesNotifierProvider._();
 
 final class NotesNotifierProvider
-    extends $AsyncNotifierProvider<NotesNotifier, List<Note>> {
+    extends $AsyncNotifierProvider<NotesNotifier, Map<String, Note>> {
   NotesNotifierProvider._()
     : super(
         from: null,
@@ -33,19 +33,20 @@ final class NotesNotifierProvider
   NotesNotifier create() => NotesNotifier();
 }
 
-String _$notesNotifierHash() => r'cf488b2678aed2720b6f5652d0450009859527df';
+String _$notesNotifierHash() => r'6bd4069267c995dd70ac86ccafcef0e216279fee';
 
-abstract class _$NotesNotifier extends $AsyncNotifier<List<Note>> {
-  FutureOr<List<Note>> build();
+abstract class _$NotesNotifier extends $AsyncNotifier<Map<String, Note>> {
+  FutureOr<Map<String, Note>> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Note>>, List<Note>>;
+    final ref =
+        this.ref as $Ref<AsyncValue<Map<String, Note>>, Map<String, Note>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Note>>, List<Note>>,
-              AsyncValue<List<Note>>,
+              AnyNotifier<AsyncValue<Map<String, Note>>, Map<String, Note>>,
+              AsyncValue<Map<String, Note>>,
               Object?,
               Object?
             >;

@@ -48,7 +48,7 @@ final class CalendarNotesProvider
   }
 }
 
-String _$calendarNotesHash() => r'edea18dbc38416051db4c6ea2a5262cbf2c2e297';
+String _$calendarNotesHash() => r'68b004693fd4f9c807a25bf2c512d4636442415b';
 
 @ProviderFor(activeCalendarNotes)
 final activeCalendarNotesProvider = ActiveCalendarNotesProvider._();

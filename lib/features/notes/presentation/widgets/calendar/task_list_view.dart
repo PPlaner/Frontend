@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
-import 'package:frontend/features/notes/presentation/screens/task_detail_bottom_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/card/active_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/card/completed_note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/completed_secion.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/note_details_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class TaskListView extends ConsumerWidget {
@@ -38,14 +38,8 @@ class TaskListView extends ConsumerWidget {
                 allProjects,
                 task.projectId ?? inboxProjectId,
               ),
-              onTap: () => showModalBottomSheet<void>(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                barrierColor: context.colorScheme.shadow.withValues(
-                  alpha: 0.1,
-                ),
-                builder: (_) => TaskDetailBottomSheet(
+              onTap: () => context.showAppBottomSheet<void>(
+                child: NoteDetailsSheet(
                   note: task,
                 ),
               ),
@@ -55,28 +49,25 @@ class TaskListView extends ConsumerWidget {
 
         if (completedNotes.isNotEmpty) ...[
           const SizedBox(height: 4),
+
           CompletedSection(
-            children: completedNotes
-                .map(
-                  (note) => CompletedNoteCard(
-                    key: ValueKey(note.id),
-                    note: note,
-                    projectName: _listNameFor(
-                      allProjects,
-                      note.projectId ?? inboxProjectId,
-                    ),
-                    onTap: () => showModalBottomSheet<void>(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      barrierColor: Colors.black.withValues(alpha: 0.15),
-                      builder: (_) => TaskDetailBottomSheet(
-                        note: note,
-                      ),
+            children: [
+              ...completedNotes.map(
+                (note) => CompletedNoteCard(
+                  key: ValueKey(note.id),
+                  note: note,
+                  projectName: _listNameFor(
+                    allProjects,
+                    note.projectId ?? inboxProjectId,
+                  ),
+                  onTap: () => context.showAppBottomSheet<void>(
+                    child: NoteDetailsSheet(
+                      note: note,
                     ),
                   ),
-                )
-                .toList(),
+                ),
+              ),
+            ],
           ),
         ],
       ],

@@ -8,6 +8,7 @@ class BaseBottomSheetLayout extends StatelessWidget {
     this.header,
     this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 16),
     this.padForKeyboard = false,
+    this.showDivider = false,
     super.key,
   });
 
@@ -15,6 +16,7 @@ class BaseBottomSheetLayout extends StatelessWidget {
   final Widget? header;
   final EdgeInsets padding;
   final bool padForKeyboard;
+  final bool showDivider;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,15 @@ class BaseBottomSheetLayout extends StatelessWidget {
               const BottomSheetDragHandle(),
               const SizedBox(height: 16),
 
-              if (header != null) ...[header!, const SizedBox(height: 8)],
+              if (header != null) ...[
+                header!,
+                const SizedBox(height: 8),
+              ],
+
+              if (showDivider) ...[
+                Divider(color: context.theme.dividerColor, height: 1),
+                const SizedBox(height: 12),
+              ],
 
               ...children,
             ],

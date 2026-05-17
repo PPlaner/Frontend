@@ -8,14 +8,12 @@ part 'filtered_notes_provider.g.dart';
 
 @riverpod
 List<Note> projectNotes(Ref ref) {
-  final allNotesAsync = ref.watch(notesProvider);
+  final allNotes = ref.watch(notesProvider).value ?? {};
   final selectedProjectId = ref.watch(selectedProjectIdProvider);
-
-  final allNotes = allNotesAsync.value ?? [];
 
   if (selectedProjectId == todayProjectId) {
     final now = DateTime.now();
-    return allNotes.where((note) {
+    return allNotes.values.where((note) {
       if (note.dueDate == null) return false;
 
       return note.dueDate!.year == now.year &&
@@ -25,10 +23,12 @@ List<Note> projectNotes(Ref ref) {
   }
 
   if (selectedProjectId == inboxProjectId) {
-    return allNotes
+    return allNotes.values
         .where((note) => note.dueDate != null || note.dueTime != null)
         .toList();
   }
 
-  return allNotes.where((note) => note.projectId == selectedProjectId).toList();
+  return allNotes.values
+      .where((note) => note.projectId == selectedProjectId)
+      .toList();
 }

@@ -9,17 +9,15 @@ part 'calendar_notes_provider.g.dart';
 
 @riverpod
 List<Note> calendarNotes(Ref ref) {
-  final allNotesAsync = ref.watch(notesProvider);
+  final allNotes = ref.watch(notesProvider).value ?? {};
   final selectedProjectId = ref.watch(selectedProjectIdProvider);
   final selectedDate = ref.watch(calendarSelectedDateProvider);
 
-  final allNotes = allNotesAsync.value ?? [];
-
-  return allNotes.where((note) {
+  return allNotes.values.where((note) {
     final isSameDate = isSameDay(note.dueDate, selectedDate);
     final matchesProject =
         selectedProjectId == allProjectsId ||
-        note.projectId == selectedProjectId;
+        selectedProjectId == note.projectId;
 
     return isSameDate && matchesProject;
   }).toList();
