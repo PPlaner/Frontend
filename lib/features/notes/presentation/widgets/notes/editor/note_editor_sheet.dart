@@ -16,7 +16,7 @@ import 'package:frontend/features/notes/presentation/notifiers/notes_notifier.da
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/widgets/base_bottom_sheet_layout.dart';
-import 'package:frontend/features/notes/presentation/widgets/meta_icon_button.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/editor/meta_icon_button.dart';
 import 'package:frontend/features/notes/presentation/widgets/pickers/priority_picker_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/pickers/project_picker_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/pickers/reminder_picker_sheet.dart';
