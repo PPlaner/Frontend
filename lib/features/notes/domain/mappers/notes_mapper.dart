@@ -52,7 +52,11 @@ extension EncryptedToNote on EncryptedNote {
 
     projectId: projectId,
 
-    isCompleted: isCompleted,
     dueDate: dueDate,
+    dueTime: dueTime,
+    reminderMinutesBefore: reminderMinutesBefore,
+
+    priority: priority,
+    isCompleted: isCompleted,
   );
 }
