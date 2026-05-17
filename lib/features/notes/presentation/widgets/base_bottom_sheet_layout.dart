@@ -5,14 +5,14 @@ import 'package:frontend/features/notes/presentation/widgets/bottom_sheet_drag_h
 class BaseBottomSheetLayout extends StatelessWidget {
   const BaseBottomSheetLayout({
     required this.children,
-    this.title,
+    this.header,
     this.padding = const EdgeInsets.fromLTRB(16, 12, 16, 16),
     this.padForKeyboard = false,
     super.key,
   });
 
   final List<Widget> children;
-  final Widget? title;
+  final Widget? header;
   final EdgeInsets padding;
   final bool padForKeyboard;
 
@@ -38,7 +38,7 @@ class BaseBottomSheetLayout extends StatelessWidget {
               const BottomSheetDragHandle(),
               const SizedBox(height: 16),
 
-              if (title != null) ...[title!, const SizedBox(height: 8)],
+              if (header != null) ...[header!, const SizedBox(height: 8)],
 
               ...children,
             ],

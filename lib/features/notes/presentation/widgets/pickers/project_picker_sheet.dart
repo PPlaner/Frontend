@@ -20,7 +20,7 @@ class ProjectPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseBottomSheetLayout(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
-      title: Text(
+      header: Text(
         context.t.task.chooseList,
         style: context.textTheme.titleLarge,
       ),
