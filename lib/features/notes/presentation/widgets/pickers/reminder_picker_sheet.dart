@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/helpers.dart';
+import 'package:frontend/features/notes/presentation/widgets/base_bottom_sheet_layout.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class ReminderPickerSheet extends StatelessWidget {
@@ -24,68 +25,67 @@ class ReminderPickerSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = context.t;
+    return BaseBottomSheetLayout(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+      title: Text(
+        context.t.task.chooseReminder,
+        style: context.textTheme.titleLarge,
+      ),
+      children: [
+        ..._options.map(
+          (opt) => _ReminderTile(
+            option: opt,
+            isSelected: opt == current,
+            onTap: () => onSelected(opt),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.theme.dividerColor,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(t.task.chooseReminder, style: context.textTheme.titleLarge),
-            const SizedBox(height: 8),
-            ..._options.map(
-              (opt) {
-                final isSelected = opt == current;
-                final label = opt == null
-                    ? t.task.noReminder
-                    : reminderLabel(opt, t);
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(
-                    opt == null
-                        ? Icons.notifications_off_outlined
-                        : Icons.notifications_outlined,
-                    color: isSelected
-                        ? context.colorScheme.primary
-                        : context.theme.hintColor,
-                    size: 22,
-                  ),
-                  title: Text(
-                    label,
-                    style: context.textTheme.titleMedium?.copyWith(
-                      color: isSelected
-                          ? context.colorScheme.primary
-                          : context.colorScheme.onSurface,
-                    ),
-                  ),
-                  trailing: isSelected
-                      ? Icon(
-                          Icons.check,
-                          color: context.colorScheme.primary,
-                          size: 20,
-                        )
-                      : null,
-                  onTap: () => onSelected(opt),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
+class _ReminderTile extends StatelessWidget {
+  const _ReminderTile({
+    required this.option,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final int? option;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(
+        option == null
+            ? Icons.notifications_off_outlined
+            : Icons.notifications_outlined,
+        color: isSelected
+            ? context.colorScheme.primary
+            : context.theme.hintColor,
+        size: 22,
+      ),
+      title: Text(
+        option == null
+            ? context.t.task.noReminder
+            : reminderLabel(option!, context.t),
+        style: context.textTheme.titleMedium?.copyWith(
+          color: isSelected
+              ? context.colorScheme.primary
+              : context.colorScheme.onSurface,
         ),
       ),
+      trailing: isSelected
+          ? Icon(
+              Icons.check,
+              size: 20,
+              color: context.colorScheme.primary,
+            )
+          : null,
+      onTap: onTap,
     );
   }
 }
