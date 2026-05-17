@@ -9,7 +9,6 @@ import 'package:frontend/features/notes/domain/task_priority.dart';
 import 'package:frontend/features/notes/presentation/helpers.dart';
 import 'package:frontend/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
-import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
 

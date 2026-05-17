@@ -7,7 +7,6 @@ import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
-import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/empty_state_view.dart';

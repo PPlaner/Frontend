@@ -10,7 +10,6 @@ import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/calendar_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
-import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:frontend/features/notes/presentation/widgets/calendar/calendar_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/calendar/day_header.dart';
