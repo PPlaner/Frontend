@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 String reminderLabel(int minutes, Translations t) {
@@ -15,7 +16,12 @@ String formatDateTime(DateTime date, TimeOfDay? time, Translations t) {
   if (time == null) return dateStr;
   final h = time.hour.toString().padLeft(2, '0');
   final m = time.minute.toString().padLeft(2, '0');
-  return '$dateStr  $h:$m';
+  return '$dateStr $h:$m';
+}
+
+String? projectName(List<Project> projects, String? projectId) {
+  if (projectId == null) return null;
+  return projects.where((p) => p.id == projectId).firstOrNull?.title;
 }
 
 Future<bool> confirmDeletion(

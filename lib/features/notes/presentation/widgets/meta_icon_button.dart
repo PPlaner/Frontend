@@ -45,15 +45,19 @@ class MetaIconButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14, color: effectiveColor),
+
             const SizedBox(width: 4),
+
             Text(
               label!,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: effectiveColor,
               ),
             ),
+
             if (onClear != null) ...[
               const SizedBox(width: 4),
+
               GestureDetector(
                 onTap: onClear,
                 child: Icon(Icons.close, size: 12, color: effectiveColor),
