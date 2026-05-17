@@ -17,6 +17,7 @@ import 'package:frontend/features/notes/presentation/widgets/calendar/day_header
 import 'package:frontend/features/notes/presentation/widgets/calendar/list_filter_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/calendar/task_list_view.dart';
 import 'package:frontend/features/notes/presentation/widgets/calendar/view_mode_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -74,7 +75,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: const AddTaskBottomSheet(),
+        child: const NoteEditorSheet(),
       ),
     );
   }

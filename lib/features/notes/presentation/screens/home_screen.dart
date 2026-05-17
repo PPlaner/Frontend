@@ -3,11 +3,13 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/filtered_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/empty_state_view.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/task_list_view.dart';
 import 'package:frontend/features/notes/presentation/widgets/projects/projects_drawer.dart';
@@ -70,20 +72,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   Future<void> _openAddTask() async {
     setState(() => _isBottomSheetOpen = true);
 
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: const AddTaskBottomSheet(),
-      ),
-    ).whenComplete(() {
-      setState(() => _isBottomSheetOpen = false);
-    });
+    await context
+        .showAppBottomSheet<void>(
+          child: const NoteEditorSheet(),
+        )
+        .whenComplete(() => setState(() => _isBottomSheetOpen = false));
   }
 
   // Build

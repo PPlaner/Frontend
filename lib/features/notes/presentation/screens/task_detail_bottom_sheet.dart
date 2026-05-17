@@ -10,6 +10,7 @@ import 'package:frontend/features/notes/presentation/helpers.dart';
 import 'package:frontend/features/notes/presentation/notifiers/notes_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/screens/add_task_bottom_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/notes/editor/note_editor_sheet.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class TaskDetailBottomSheet extends ConsumerStatefulWidget {
@@ -71,8 +72,8 @@ class _TaskDetailBottomSheetState extends ConsumerState<TaskDetailBottomSheet> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: AddTaskBottomSheet(
-          initialData: _task,
+        child: NoteEditorSheet(
+          existingNote: _task,
         ),
       ),
     );
