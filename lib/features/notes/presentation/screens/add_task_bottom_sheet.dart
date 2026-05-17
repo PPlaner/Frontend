@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
@@ -182,13 +183,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   Future<void> _pickList() async {
     if (_projects == null) return;
 
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.colorScheme.surfaceContainer,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => ProjectPickerSheet(
+    await context.showAppBottomSheet<void>(
+      child: ProjectPickerSheet(
         projects: _projects!,
         selectedProjectId: _projectId,
         onSelected: (id) {
@@ -200,13 +196,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   }
 
   Future<void> _pickPriority() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.colorScheme.surfaceContainer,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => PriorityPickerSheet(
+    await context.showAppBottomSheet<void>(
+      child: PriorityPickerSheet(
         current: _priority,
         onSelected: (p) {
           setState(() => _priority = p);
@@ -217,13 +208,8 @@ class _AddTaskBottomSheetState extends ConsumerState<AddTaskBottomSheet> {
   }
 
   Future<void> _pickReminder() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.colorScheme.surfaceContainer,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => ReminderPickerSheet(
+    await context.showAppBottomSheet<void>(
+      child: ReminderPickerSheet(
         current: _reminderMinutesBefore,
         onSelected: (minutes) {
           setState(() => _reminderMinutesBefore = minutes);
