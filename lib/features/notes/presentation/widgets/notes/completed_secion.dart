@@ -18,9 +18,7 @@ class CompletedSection extends ConsumerWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: context.isLight
-            ? context.colorScheme.surface
-            : context.colorScheme.surfaceContainerHigh,
+        color: context.customColors.containerColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: context.colorScheme.outlineVariant),
       ),

@@ -13,3 +13,7 @@ extension ThemeBuildContextEntension on BuildContext {
   Color get containerColor =>
       isLight ? colorScheme.surfaceContainer : colorScheme.surfaceContainerHigh;
 }
+
+extension EmptyTextStyleExtenions on TextStyle? {
+  TextStyle get orEmpty => this ?? const TextStyle();
+}

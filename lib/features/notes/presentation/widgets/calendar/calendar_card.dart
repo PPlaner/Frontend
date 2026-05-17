@@ -23,28 +23,24 @@ class CalendarCard extends ConsumerWidget {
 
     final textTheme = context.textTheme;
 
-    final dayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith();
-    final selectedDayStyle = (textTheme.bodyMedium ?? const TextStyle())
-        .copyWith(
-          color: context.colorScheme.primary,
-          fontWeight: FontWeight.w700,
-        );
-    final todayStyle = (textTheme.bodyMedium ?? const TextStyle()).copyWith(
+    final dayStyle = textTheme.bodyMedium.orEmpty;
+    final selectedDayStyle = textTheme.bodyMedium.orEmpty.copyWith(
       color: context.colorScheme.primary,
-      fontWeight: FontWeight.w600,
     );
-    final dowStyle = (textTheme.labelSmall ?? const TextStyle()).copyWith(
+    final todayStyle = textTheme.bodyMedium.orEmpty.copyWith(
+      color: context.colorScheme.primary,
+    );
+    final dowStyle = textTheme.labelSmall.orEmpty.copyWith(
       color: context.theme.hintColor,
-      fontWeight: FontWeight.w600,
     );
-    final headerStyle = (textTheme.titleMedium ?? const TextStyle()).copyWith(
+    final headerStyle = textTheme.titleMedium.orEmpty.copyWith(
       color: context.colorScheme.onSurface,
     );
 
     return Container(
       padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
       decoration: BoxDecoration(
-        color: context.colorScheme.surfaceBright,
+        color: context.customColors.containerColor,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -66,10 +62,8 @@ class CalendarCard extends ConsumerWidget {
         },
         onPageChanged: (date) =>
             ref.read(calendarFocusedDateProvider.notifier).setDate(date),
-
         eventLoader: (day) =>
             hasTasksForDay(day, notes.values.toList()) ? [true] : [],
-
         headerStyle: HeaderStyle(
           formatButtonVisible: false,
           titleTextStyle: headerStyle,
@@ -111,8 +105,6 @@ class CalendarCard extends ConsumerWidget {
           defaultTextStyle: dayStyle,
           weekendTextStyle: dayStyle,
           outsideDaysVisible: false,
-
-          // Стиль маркерів (крапок) під днями
           markerDecoration: BoxDecoration(
             color: context.colorScheme.primary.withValues(alpha: 0.7),
             shape: BoxShape.circle,
