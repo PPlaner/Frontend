@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
@@ -9,6 +10,7 @@ import 'package:frontend/features/notes/presentation/helpers.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/widgets/projects/create_project_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/projects/project_item.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class DrawerProjectItem extends ConsumerWidget {
@@ -21,16 +23,13 @@ class DrawerProjectItem extends ConsumerWidget {
   final Project project;
   final int? count;
 
-  Future<void> _openEditList(BuildContext context) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => CreateProjectSheet(initialProject: project),
+  Future<void> _openEditProject(BuildContext context) async {
+    await context.showAppBottomSheet<void>(
+      child: CreateProjectSheet(initialProject: project),
     );
   }
 
-  Future<void> _deleteList(BuildContext context, WidgetRef ref) async {
+  Future<void> _deleteProject(BuildContext context, WidgetRef ref) async {
     final confirmed = await confirmDeletion(
       context,
       context.t.home.deleteListTitle,
@@ -47,7 +46,6 @@ class DrawerProjectItem extends ConsumerWidget {
   }
 
   Future<void> _showContextMenu(BuildContext context, WidgetRef ref) async {
-    final t = context.t;
     final renderBox = context.findRenderObject()! as RenderBox;
     final overlay =
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
@@ -78,14 +76,17 @@ class DrawerProjectItem extends ConsumerWidget {
                 size: 20,
                 color: context.colorScheme.onSurface,
               ),
+
               const SizedBox(width: 12),
+
               Text(
-                t.home.editList,
+                context.t.home.editList,
                 style: context.textTheme.titleMedium,
               ),
             ],
           ),
         ),
+
         PopupMenuItem<String>(
           value: 'delete',
           child: Row(
@@ -95,15 +96,14 @@ class DrawerProjectItem extends ConsumerWidget {
                 size: 20,
                 color: context.colorScheme.error,
               ),
+
               const SizedBox(width: 12),
+
               Text(
-                t.home.deleteList,
-                style:
-                    Theme.of(
-                      context,
-                    ).textTheme.titleMedium?.copyWith(
-                      color: context.colorScheme.error,
-                    ),
+                context.t.home.deleteList,
+                style: context.textTheme.titleMedium?.copyWith(
+                  color: context.colorScheme.error,
+                ),
               ),
             ],
           ),
@@ -112,59 +112,21 @@ class DrawerProjectItem extends ConsumerWidget {
     ).then((value) {
       if (!context.mounted) return;
 
-      if (value == 'edit') unawaited(_openEditList(context));
-      if (value == 'delete') unawaited(_deleteList(context, ref));
+      if (value == 'edit') unawaited(_openEditProject(context));
+      if (value == 'delete') unawaited(_deleteProject(context, ref));
     });
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = ref.watch(selectedProjectIdProvider) == project.id;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () =>
-            ref.read(selectedProjectIdProvider.notifier).set(project.id),
-        onLongPress: () => _showContextMenu(context, ref),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? project.color.withValues(alpha: 0.12)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            children: [
-              Text(project.emoji, style: const TextStyle(fontSize: 20)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  project.title,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    color: isSelected
-                        ? project.color
-                        : context.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  ),
-                ),
-              ),
-              if (count != null) ...[
-                const SizedBox(width: 8),
-                Text(
-                  '$count',
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.theme.hintColor,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
+    return ProjectItem(
+      title: project.title,
+      emoji: project.emoji,
+      color: project.color,
+      onTap: () => ref.read(selectedProjectIdProvider.notifier).set(project.id),
+      onLongPress: () => _showContextMenu(context, ref),
+      isSelected: ref.watch(selectedProjectIdProvider) == project.id,
+      count: count,
     );
   }
 }

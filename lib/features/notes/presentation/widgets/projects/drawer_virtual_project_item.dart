@@ -2,10 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/widgets/projects/create_project_sheet.dart';
+import 'package:frontend/features/notes/presentation/widgets/projects/project_item.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class DrawerVirtualProjectItem extends ConsumerWidget {
@@ -27,16 +29,12 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
   Future<void> _openEditList(BuildContext context) async {
     final isInbox = id == inboxProjectId;
 
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => CreateProjectSheet(colorOnly: isInbox),
+    await context.showAppBottomSheet<void>(
+      child: CreateProjectSheet(colorOnly: isInbox),
     );
   }
 
   Future<void> _showContextMenu(BuildContext context, WidgetRef ref) async {
-    final t = context.t;
     final renderBox = context.findRenderObject()! as RenderBox;
     final overlay =
         Navigator.of(context).overlay!.context.findRenderObject()! as RenderBox;
@@ -68,9 +66,11 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
                   size: 20,
                   color: context.colorScheme.onSurface,
                 ),
+
                 const SizedBox(width: 12),
+
                 Text(
-                  t.home.editList,
+                  context.t.home.editList,
                   style: context.textTheme.titleMedium,
                 ),
               ],
@@ -80,55 +80,20 @@ class DrawerVirtualProjectItem extends ConsumerWidget {
     ).then((value) {
       if (!context.mounted) return;
 
-      unawaited(_openEditList(context));
+      if (value == 'edit') unawaited(_openEditList(context));
     });
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = ref.watch(selectedProjectIdProvider) == id;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => ref.read(selectedProjectIdProvider.notifier).set(id),
-        onLongPress: () => _showContextMenu(context, ref),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? color.withValues(alpha: 0.12)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            children: [
-              Text(emoji, style: const TextStyle(fontSize: 20)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: context.textTheme.titleMedium?.copyWith(
-                    color: isSelected ? color : context.colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  ),
-                ),
-              ),
-              if (count != null) ...[
-                const SizedBox(width: 8),
-                Text(
-                  '$count',
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: context.theme.hintColor,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
+    return ProjectItem(
+      title: title,
+      emoji: emoji,
+      color: color,
+      onTap: () => ref.read(selectedProjectIdProvider.notifier).set(id),
+      onLongPress: () =>
+          id == todayProjectId ? null : _showContextMenu(context, ref),
+      isSelected: ref.watch(selectedProjectIdProvider) == id,
     );
   }
 }

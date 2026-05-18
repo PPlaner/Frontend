@@ -215,7 +215,7 @@ class _TitleTextField extends StatelessWidget {
       controller: textController,
       style: context.textTheme.bodyLarge,
       decoration: InputDecoration(
-        hintText: t.home.whatToDo,
+        hintText: context.t.home.whatToDo,
         hintStyle: context.textTheme.bodyLarge?.copyWith(
           color: context.theme.hintColor,
         ),
@@ -284,7 +284,7 @@ class _QuillEditorField extends StatelessWidget {
           return QuillEditor.basic(
             controller: quillController,
             config: QuillEditorConfig(
-              placeholder: t.home.addDetails,
+              placeholder: context.t.home.addDetails,
               customStyles: DefaultStyles(
                 placeHolder: DefaultTextBlockStyle(
                   TextStyle(

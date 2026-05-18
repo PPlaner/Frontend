@@ -14,8 +14,6 @@ import 'package:frontend/features/notes/presentation/widgets/notes/task_list_vie
 import 'package:frontend/features/notes/presentation/widgets/projects/projects_drawer.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
-// HomeScreen
-
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -26,11 +24,10 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with SingleTickerProviderStateMixin {
   bool _isBottomSheetOpen = false;
+  bool _isDrawerOpen = false;
 
-  // Анімація drawer
   late AnimationController _drawerController;
   late Animation<double> _drawerAnimation;
-  bool _isDrawerOpen = false;
 
   @override
   void initState() {
@@ -53,20 +50,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     super.dispose();
   }
 
-  // Drawer
-
   Future<void> _openDrawer() async {
     setState(() => _isDrawerOpen = true);
     await _drawerController.forward();
   }
 
   Future<void> _closeDrawer() async {
-    await _drawerController.reverse().then((_) {
-      setState(() => _isDrawerOpen = false);
-    });
+    await _drawerController.reverse().whenComplete(
+      () => setState(() => _isDrawerOpen = false),
+    );
   }
-
-  // Bottom Sheets
 
   Future<void> _openAddTask() async {
     setState(() => _isBottomSheetOpen = true);
@@ -77,8 +70,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
         )
         .whenComplete(() => setState(() => _isBottomSheetOpen = false));
   }
-
-  // Build
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +82,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       backgroundColor: context.customColors.background,
       body: Stack(
         children: [
-          // Основний контент
           Column(
             children: [
               AppBar(
@@ -121,6 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 elevation: 0,
                 scrolledUnderElevation: 0,
               ),
+
               Expanded(
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
@@ -138,7 +129,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ],
           ),
 
-          // FAB
           Positioned(
             right: 16,
             bottom: 16,
@@ -161,7 +151,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ),
           ),
 
-          // Blur overlay коли bottom sheet відкритий
           if (_isBottomSheetOpen)
             Positioned.fill(
               child: IgnorePointer(
@@ -174,7 +163,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
 
-          // Drawer overlay — затемнення
           if (_isDrawerOpen)
             AnimatedBuilder(
               animation: _drawerAnimation,
@@ -188,7 +176,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
               ),
             ),
 
-          // Drawer panel
           if (_isDrawerOpen)
             AnimatedBuilder(
               animation: _drawerAnimation,

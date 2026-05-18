@@ -35,6 +35,7 @@ class DayHeader extends ConsumerWidget {
               size: 20,
             ),
           ),
+
           Expanded(
             child: Text(
               title,
@@ -42,6 +43,7 @@ class DayHeader extends ConsumerWidget {
               style: context.textTheme.titleMedium,
             ),
           ),
+
           GestureDetector(
             onTap: () {
               ref

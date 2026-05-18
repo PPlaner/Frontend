@@ -7,6 +7,7 @@ import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/domain/entities/task_list_model.dart';
 import 'package:frontend/features/notes/domain/models/project_creation_payload.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
+import 'package:frontend/features/notes/presentation/widgets/base_bottom_sheet_layout.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class CreateProjectSheet extends ConsumerStatefulWidget {
@@ -106,244 +107,226 @@ class _CreateListSheetState extends ConsumerState<CreateProjectSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    // final colors = AppColors.of(context);
-    final textTheme = Theme.of(context).textTheme;
-    final t = context.t;
+    final borderStyle = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(20),
+      borderSide: BorderSide.none,
+    );
 
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colorScheme.surfaceContainer,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+    return BaseBottomSheetLayout(
+      padForKeyboard: true,
+      header: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Icon(
+              Icons.cancel_outlined,
+              color: context.theme.hintColor,
+              size: 24,
+            ),
+          ),
+
+          Expanded(
+            child: Text(
+              _colorOnly
+                  ? context.t.home.listColor
+                  : _isEditing
+                  ? context.t.home.editList
+                  : context.t.home.addList,
+              textAlign: TextAlign.center,
+              style: context.textTheme.headlineMedium,
+            ),
+          ),
+
+          GestureDetector(
+            onTap: _confirm,
+            child: Icon(
+              Icons.check,
+              color: context.colorScheme.primary,
+              size: 24,
+            ),
+          ),
+        ],
       ),
-      padding: EdgeInsets.fromLTRB(16, 0, 16, keyboardHeight + 16),
-      child: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 12),
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: context.theme.dividerColor,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+      children: [
+        if (!_colorOnly) ...[
+          TextField(
+            controller: _nameController,
+            style: context.textTheme.bodyLarge,
+            decoration: InputDecoration(
+              prefixIcon: Padding(
+                padding: const EdgeInsets.only(left: 16, right: 10),
+                child: Text(
+                  _selectedEmoji,
+                  style: const TextStyle(fontSize: 18),
                 ),
               ),
-              const SizedBox(height: 16),
+              prefixIconConstraints: const BoxConstraints(),
 
-              Row(
+              hintText: context.t.home.whatToDo,
+              hintStyle: context.textTheme.bodyLarge?.copyWith(
+                color: context.theme.hintColor,
+              ),
+
+              filled: true,
+              fillColor: context.colorScheme.surfaceBright,
+
+              border: borderStyle,
+              enabledBorder: borderStyle,
+              focusedBorder: borderStyle,
+
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              isDense: true,
+            ),
+            textInputAction: TextInputAction.next,
+            onSubmitted: (_) => FocusScope.of(context).nextFocus(),
+          ),
+
+          const SizedBox(height: 16),
+        ],
+
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: context.customColors.containerColor,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Text(
+                  context.t.home.listColor,
+                  style: context.textTheme.titleMedium,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
                 children: [
                   GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Icon(
-                      Icons.cancel_outlined,
-                      color: context.theme.hintColor,
-                      size: 24,
+                    onTap: () => setState(
+                      () => _selectedColor = context.colorScheme.primary,
+                    ),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 150),
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: context.colorScheme.surface,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _selectedColor == context.colorScheme.primary
+                              ? context.colorScheme.onSurface
+                              : context.theme.dividerColor,
+                          width: _selectedColor == context.colorScheme.primary
+                              ? 1.5
+                              : 1.0,
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.format_color_reset_outlined,
+                        size: 18,
+                        color: _selectedColor == context.colorScheme.primary
+                            ? context.colorScheme.onSurface
+                            : context.theme.hintColor,
+                      ),
                     ),
                   ),
-                  Expanded(
-                    child: Text(
-                      _colorOnly
-                          ? t.home.listColor
-                          : (_isEditing ? t.home.editList : t.home.addList),
-                      textAlign: TextAlign.center,
-                      style: textTheme.headlineMedium,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: _confirm,
-                    child: Icon(
-                      Icons.check,
-                      color: context.colorScheme.primary,
-                      size: 24,
-                    ),
-                  ),
+
+                  ...kListColors.map((color) {
+                    final isSelected = _selectedColor == color;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedColor = color),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 150),
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                          border: isSelected
+                              ? Border.all(
+                                  color: context.colorScheme.primary,
+                                  width: 1.5,
+                                )
+                              : null,
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
-
-              const SizedBox(height: 20),
-
-              if (!_colorOnly)
-                Container(
-                  height: 51,
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 15,
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        _selectedEmoji,
-                        style: const TextStyle(fontSize: 18),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: TextField(
-                          controller: _nameController,
-                          focusNode: _nameFocus,
-                          style: textTheme.bodyLarge,
-                          decoration: InputDecoration(
-                            hintText: t.home.listName,
-                            hintStyle: textTheme.bodyLarge?.copyWith(
-                              color: context.theme.hintColor,
-                            ),
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.zero,
-                            filled: true,
-                            fillColor: context.colorScheme.surface,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-              if (!_colorOnly) const SizedBox(height: 16),
-
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(t.home.listColor, style: textTheme.titleMedium),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: [
-                        GestureDetector(
-                          onTap: () => setState(
-                            () => _selectedColor = context.colorScheme.primary,
-                          ),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 150),
-                            width: 32,
-                            height: 32,
-                            decoration: BoxDecoration(
-                              color: context.colorScheme.surface,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color:
-                                    _selectedColor ==
-                                        context.colorScheme.primary
-                                    ? context.colorScheme.onSurface
-                                    : context.theme.dividerColor,
-                                width:
-                                    _selectedColor ==
-                                        context.colorScheme.primary
-                                    ? 1.5
-                                    : 1.0,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.format_color_reset_outlined,
-                              size: 18,
-                              color:
-                                  _selectedColor == context.colorScheme.primary
-                                  ? context.colorScheme.onSurface
-                                  : context.theme.hintColor,
-                            ),
-                          ),
-                        ),
-                        ...kListColors.map((color) {
-                          final isSelected = _selectedColor == color;
-                          return GestureDetector(
-                            onTap: () => setState(() => _selectedColor = color),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              width: 32,
-                              height: 32,
-                              decoration: BoxDecoration(
-                                color: color,
-                                shape: BoxShape.circle,
-                                border: isSelected
-                                    ? Border.all(
-                                        color: context.colorScheme.primary,
-                                        width: 1.5,
-                                      )
-                                    : null,
-                              ),
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              if (!_colorOnly)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: context.colorScheme.surface,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(t.home.listIcon, style: textTheme.titleMedium),
-                      const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: kListEmojis.map((emoji) {
-                          final isSelected = _selectedEmoji == emoji;
-                          return GestureDetector(
-                            onTap: () => setState(() => _selectedEmoji = emoji),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? _selectedColor.withValues(alpha: 0.15)
-                                    : context.colorScheme.surfaceContainer,
-                                borderRadius: BorderRadius.circular(10),
-                                border: isSelected
-                                    ? Border.all(
-                                        color: _selectedColor,
-                                        width: 1.5,
-                                      )
-                                    : null,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                emoji,
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
             ],
           ),
         ),
-      ),
+
+        const SizedBox(height: 12),
+
+        if (!_colorOnly)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: context.customColors.containerColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: Text(
+                    context.t.home.listIcon,
+                    style: context.textTheme.titleMedium,
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    ...kListEmojis.map((emoji) {
+                      final isSelected = _selectedEmoji == emoji;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedEmoji = emoji),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? _selectedColor.withValues(alpha: 0.15)
+                                : context.colorScheme.surfaceContainer,
+                            borderRadius: BorderRadius.circular(10),
+                            border: isSelected
+                                ? Border.all(
+                                    color: _selectedColor,
+                                    width: 1.5,
+                                  )
+                                : null,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            emoji,
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/notifiers/projects_notifier.dart';
@@ -13,9 +14,7 @@ class ProjectsDrawer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lists = ref.watch(projectsProvider).value ?? [];
-
-    final t = context.t;
+    final projects = ref.watch(projectsProvider).value ?? [];
 
     return Container(
       decoration: BoxDecoration(
@@ -37,12 +36,13 @@ class ProjectsDrawer extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               child: Text(t.home.myLists, style: context.textTheme.titleLarge),
             ),
+
             const SizedBox(height: 8),
 
             DrawerVirtualProjectItem(
               id: todayProjectId,
               count: null,
-              title: t.home.today,
+              title: context.t.home.today,
               emoji: '📅',
               color: context.colorScheme.primary,
             ),
@@ -50,7 +50,7 @@ class ProjectsDrawer extends ConsumerWidget {
             DrawerVirtualProjectItem(
               id: inboxProjectId,
               count: null,
-              title: t.home.inbox,
+              title: context.t.home.inbox,
               emoji: '📥',
               color: context.colorScheme.primary,
             ),
@@ -63,29 +63,28 @@ class ProjectsDrawer extends ConsumerWidget {
             Expanded(
               child: ListView.builder(
                 padding: EdgeInsets.zero,
-                itemCount: lists.length,
+                itemCount: projects.length,
                 itemBuilder: (_, i) {
-                  return DrawerProjectItem(project: lists[i], count: null);
+                  return DrawerProjectItem(project: projects[i], count: null);
                 },
               ),
             ),
 
             const SizedBox(height: 8),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Divider(height: 1, color: context.theme.dividerColor),
             ),
+
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
               child: TextButton.icon(
-                onPressed: () => showModalBottomSheet<void>(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  builder: (_) => const CreateProjectSheet(),
+                onPressed: () => context.showAppBottomSheet<void>(
+                  child: const CreateProjectSheet(),
                 ),
                 icon: const Icon(Icons.add_box_outlined, size: 20),
-                label: Text(t.home.addList),
+                label: Text(context.t.home.addList),
                 style: TextButton.styleFrom(
                   foregroundColor: context.colorScheme.primary,
                   textStyle: context.textTheme.titleMedium?.copyWith(

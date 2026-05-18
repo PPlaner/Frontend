@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/core/constants/app_sizes.dart' as sizes;
 import 'package:frontend/core/utils/app_assets.dart';
 
 class EmptyStateView extends StatelessWidget {
@@ -21,15 +22,11 @@ class EmptyStateView extends StatelessWidget {
           child: Center(
             child: Opacity(
               opacity: 0.45,
-              child: SizedBox(
-                width: 168,
-                height: 159,
-                child: Image.asset(
-                  AppAssets.logo,
-                  height: 159,
-                  width: 168,
-                  fit: BoxFit.contain,
-                ),
+              child: Image.asset(
+                AppAssets.logo,
+                height: sizes.largeImageHeight,
+                width: sizes.largeImageWidth,
+                fit: BoxFit.contain,
               ),
             ),
           ),

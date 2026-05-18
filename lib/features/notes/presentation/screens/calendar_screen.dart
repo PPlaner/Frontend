@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/constants/app_sizes.dart' as sizes;
+import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/utils/app_assets.dart';
 import 'package:frontend/features/notes/domain/calendar_view_mode.dart';
@@ -20,9 +22,7 @@ import 'package:frontend/features/notes/presentation/widgets/notes/editor/note_e
 import 'package:frontend/i18n/strings.g.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
-  const CalendarScreen({
-    super.key,
-  });
+  const CalendarScreen({super.key});
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -43,43 +43,22 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Future<void> _openViewModePicker() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.colorScheme.surfaceContainer,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => const ViewModeSheet(),
+    await context.showAppBottomSheet<void>(
+      child: const ViewModeSheet(),
     );
   }
 
   Future<void> _openFilterSheet() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: context.colorScheme.surfaceContainer,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => const ListFilterSheet(),
+    await context.showAppBottomSheet<void>(
+      child: const ListFilterSheet(),
     );
   }
 
   Future<void> _openAddTaskSheet() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.1),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: const NoteEditorSheet(),
-      ),
+    await context.showAppBottomSheet<void>(
+      child: const NoteEditorSheet(),
     );
   }
-
-  // Build
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +70,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final showDescription = ref.watch(showDescriptionProvider);
     final viewMode = ref.watch(calendarViewModeStateProvider);
 
-    final t = context.t;
     final isFilterActive = selectedProjectId != allProjectsId;
 
     return Scaffold(
@@ -99,7 +77,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Розмитий логотип — тільки коли немає завдань на цей день
             if (calendarNotes.isEmpty)
               Positioned.fill(
                 bottom: 110,
@@ -114,8 +91,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         children: [
                           Image.asset(
                             AppAssets.logo,
-                            height: 159,
-                            width: 168,
+                            height: sizes.largeImageHeight,
+                            width: sizes.largeImageWidth,
                             fit: BoxFit.contain,
                           ),
                         ],
@@ -127,7 +104,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
             Column(
               children: [
-                // Верхній рядок
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
@@ -136,7 +112,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Кнопка режиму перегляду
                       IconButton(
                         icon: Icon(
                           viewMode.icon,
@@ -146,7 +121,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         tooltip: viewMode.label(t),
                         onPressed: _openViewModePicker,
                       ),
-                      // Фільтр по списку — показує назву активного списку
+
                       if (isFilterActive)
                         GestureDetector(
                           onTap: _openFilterSheet,
@@ -187,28 +162,26 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                       else
                         const SizedBox.shrink(),
 
-                      // Права частина — вигляд списку + фільтр
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Перемикач показу опису завдань
                           IconButton(
                             icon: Icon(
                               showDescription
-                                  ? Icons.short_text_rounded
-                                  : Icons.subject_rounded,
+                                  ? Icons.subject_rounded
+                                  : Icons.short_text_rounded,
                               color: showDescription
-                                  ? context.colorScheme.primary
-                                  : context.colorScheme.onSurface,
-                              size: 24,
+                                  ? context.colorScheme.onSurface
+                                  : context.colorScheme.primary,
                             ),
                             tooltip: showDescription
-                                ? t.calendar.hideDescription
-                                : t.calendar.showDescription,
-                            onPressed: () => ref
+                                ? context.t.calendar.hideDescription
+                                : context.t.calendar.showDescription,
+                            onPressed: ref
                                 .read(showDescriptionProvider.notifier)
-                                .toggle(),
+                                .toggle,
                           ),
+
                           IconButton(
                             icon: Icon(
                               Icons.filter_alt_outlined,
@@ -217,7 +190,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                   : context.colorScheme.onSurface,
                               size: 24,
                             ),
-                            tooltip: t.calendar.filter,
+                            tooltip: context.t.calendar.filter,
                             onPressed: _openFilterSheet,
                           ),
                         ],
@@ -226,7 +199,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                   ),
                 ),
 
-                // Календар або заголовок дня
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: viewMode == CalendarViewMode.day
@@ -236,7 +208,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
                 const SizedBox(height: 16),
 
-                // Список завдань
                 Expanded(
                   child: calendarNotes.isNotEmpty
                       ? const TaskListView()
