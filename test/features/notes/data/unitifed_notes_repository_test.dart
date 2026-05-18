@@ -32,7 +32,9 @@ void main() {
   group('UnifiedNotesRepository - applyRemoteNotes (Sync Engine)', () {
     test('creates note locally if it does not exist', () async {
       when(() => mockNotesLocal.get(any())).thenAnswer((_) async => null);
-      when(() => mockNotesLocal.create(any())).thenAnswer((_) async {});
+      when(
+        () => mockNotesLocal.create(any()),
+      ).thenAnswer((_) async => NotesFixtures.buildNoteModel());
 
       final remoteDto = NotesFixtures.buildNoteDto(id: 'new_server_note');
 

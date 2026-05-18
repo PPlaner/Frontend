@@ -112,6 +112,23 @@ class NotesFixtures {
     );
   }
 
+  static ProjectModel buildProjectModel({
+    String? id,
+    int? localVersion,
+    int? lastSyncedVersion,
+    SyncStatus? syncStatus,
+  }) {
+    return ProjectModel(
+      id: id ?? 'project_1',
+      encryptedContent: defaultBytes,
+      localVersion: localVersion ?? 1,
+      lastSyncedVersion: lastSyncedVersion ?? 0,
+      syncStatus: syncStatus ?? SyncStatus.synced,
+      createdAt: defaultDate,
+      updatedAt: defaultDate,
+    );
+  }
+
   // --- Dto builders ---
 
   static NoteDto buildNoteDto({

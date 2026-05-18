@@ -70,7 +70,7 @@ void main() {
     test(
       'Happy Path: Complete sync workflow succeeds and saves cursor',
       () async {
-        when(() => mockSyncStorage.getSyncCursor()).thenReturn('cursor_1');
+        when(() => mockSyncStorage.getSyncCursor()).thenReturn(1);
         when(
           () => mockSyncStorage.saveSyncCursor(any()),
         ).thenAnswer((_) async {});
@@ -85,7 +85,7 @@ void main() {
         final mockResponse = Response<Map<String, dynamic>>(
           requestOptions: RequestOptions(path: endpoints.sync),
           data: {
-            'next_cursor': 'cursor_2',
+            'next_cursor': 2,
             'changes': {
               'high_priority': [
                 {'id': '1'},
@@ -96,6 +96,7 @@ void main() {
             },
           },
         );
+
         when(
           () => mockDio.post<Map<String, dynamic>>(
             endpoints.sync,
@@ -133,7 +134,7 @@ void main() {
           () => delegateLow.acknowledgePush(any()),
           () => delegateLow.applyRemoteChanges(any()),
 
-          () => mockSyncStorage.saveSyncCursor('cursor_2'),
+          () => mockSyncStorage.saveSyncCursor(2),
         ]);
 
         expect(getState(), isA<SyncSuccess>());
@@ -143,10 +144,10 @@ void main() {
     test(
       'Short-circuit: Aborts and emits SyncError if getLocalChanges fails',
       () async {
-        when(() => mockSyncStorage.getSyncCursor()).thenReturn('cursor_1');
+        when(() => mockSyncStorage.getSyncCursor()).thenReturn(1);
 
         when(() => delegateHigh.getLocalChanges()).thenAnswer(
-          (_) async => const Failure(CoreFailure.storage('DB Error')),
+          (_) async => const Failure(StorageFailure('DB Error')),
         );
 
         await getOrchestrator().performSync();
@@ -161,7 +162,7 @@ void main() {
     test(
       'Short-circuit: Aborts and emits SyncError if network request fails',
       () async {
-        when(() => mockSyncStorage.getSyncCursor()).thenReturn('cursor_1');
+        when(() => mockSyncStorage.getSyncCursor()).thenReturn(1);
         when(
           () => delegateHigh.getLocalChanges(),
         ).thenAnswer((_) async => const Success([]));
@@ -190,7 +191,7 @@ void main() {
     test(
       'Short-circuit: Aborts and emits SyncError if applying remote changes fails',
       () async {
-        when(() => mockSyncStorage.getSyncCursor()).thenReturn('cursor_1');
+        when(() => mockSyncStorage.getSyncCursor()).thenReturn(1);
         when(
           () => delegateHigh.getLocalChanges(),
         ).thenAnswer((_) async => const Success([]));
@@ -201,7 +202,7 @@ void main() {
         final mockResponse = Response<Map<String, dynamic>>(
           requestOptions: RequestOptions(path: endpoints.sync),
           data: {
-            'next_cursor': 'cursor_2',
+            'next_cursor': 2,
             'changes': {'high_priority': []},
           },
         );
@@ -218,7 +219,7 @@ void main() {
         ).thenAnswer((_) async => const Success(null));
 
         when(() => delegateHigh.applyRemoteChanges(any())).thenAnswer(
-          (_) async => const Failure(CoreFailure.storage('Parse Error')),
+          (_) async => const Failure(StorageFailure('Parse Error')),
         );
 
         await getOrchestrator().performSync();

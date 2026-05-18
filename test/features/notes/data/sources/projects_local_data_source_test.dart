@@ -21,7 +21,9 @@ void main() {
 
   group('ProjectsLocalDataSource', () {
     test('create delegates to ProjectsDao.insertProject', () async {
-      when(() => mockDao.insertProject(any())).thenAnswer((_) async {});
+      when(
+        () => mockDao.insertProject(any()),
+      ).thenAnswer((_) async => NotesFixtures.buildProjectModel());
 
       final companion = NotesFixtures.buildProjectCompanion();
       await dataSource.create(companion);
