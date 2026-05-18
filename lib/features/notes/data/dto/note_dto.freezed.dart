@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$NoteDto {
 
- String get id;@Uint8ListConverter() Uint8List get encryptedTitle;@Uint8ListConverter() Uint8List get encryptedContent; int get version; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt; String? get projectId;
+ String get id;@Uint8ListConverter() Uint8List get encryptedTitle;@Uint8ListConverter() Uint8List get encryptedContent; int get version;@DateTimeUtcConverter() DateTime get createdAt;@DateTimeUtcConverter() DateTime get updatedAt;@DateTimeUtcConverter() DateTime? get deletedAt; String? get projectId;
 /// Create a copy of NoteDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $NoteDtoCopyWith<$Res>  {
   factory $NoteDtoCopyWith(NoteDto value, $Res Function(NoteDto) _then) = _$NoteDtoCopyWithImpl;
 @useResult
 $Res call({
- String id,@Uint8ListConverter() Uint8List encryptedTitle,@Uint8ListConverter() Uint8List encryptedContent, int version, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt, String? projectId
+ String id,@Uint8ListConverter() Uint8List encryptedTitle,@Uint8ListConverter() Uint8List encryptedContent, int version,@DateTimeUtcConverter() DateTime createdAt,@DateTimeUtcConverter() DateTime updatedAt,@DateTimeUtcConverter() DateTime? deletedAt, String? projectId
 });
 
 
@@ -157,7 +157,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedTitle, @Uint8ListConverter()  Uint8List encryptedContent,  int version,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt,  String? projectId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedTitle, @Uint8ListConverter()  Uint8List encryptedContent,  int version, @DateTimeUtcConverter()  DateTime createdAt, @DateTimeUtcConverter()  DateTime updatedAt, @DateTimeUtcConverter()  DateTime? deletedAt,  String? projectId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NoteDto() when $default != null:
 return $default(_that.id,_that.encryptedTitle,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.projectId);case _:
@@ -178,7 +178,7 @@ return $default(_that.id,_that.encryptedTitle,_that.encryptedContent,_that.versi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedTitle, @Uint8ListConverter()  Uint8List encryptedContent,  int version,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt,  String? projectId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedTitle, @Uint8ListConverter()  Uint8List encryptedContent,  int version, @DateTimeUtcConverter()  DateTime createdAt, @DateTimeUtcConverter()  DateTime updatedAt, @DateTimeUtcConverter()  DateTime? deletedAt,  String? projectId)  $default,) {final _that = this;
 switch (_that) {
 case _NoteDto():
 return $default(_that.id,_that.encryptedTitle,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.projectId);}
@@ -195,7 +195,7 @@ return $default(_that.id,_that.encryptedTitle,_that.encryptedContent,_that.versi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @Uint8ListConverter()  Uint8List encryptedTitle, @Uint8ListConverter()  Uint8List encryptedContent,  int version,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt,  String? projectId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @Uint8ListConverter()  Uint8List encryptedTitle, @Uint8ListConverter()  Uint8List encryptedContent,  int version, @DateTimeUtcConverter()  DateTime createdAt, @DateTimeUtcConverter()  DateTime updatedAt, @DateTimeUtcConverter()  DateTime? deletedAt,  String? projectId)?  $default,) {final _that = this;
 switch (_that) {
 case _NoteDto() when $default != null:
 return $default(_that.id,_that.encryptedTitle,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.projectId);case _:
@@ -210,16 +210,16 @@ return $default(_that.id,_that.encryptedTitle,_that.encryptedContent,_that.versi
 @JsonSerializable()
 
 class _NoteDto implements NoteDto {
-  const _NoteDto({required this.id, @Uint8ListConverter() required this.encryptedTitle, @Uint8ListConverter() required this.encryptedContent, required this.version, required this.createdAt, required this.updatedAt, this.deletedAt, this.projectId});
+  const _NoteDto({required this.id, @Uint8ListConverter() required this.encryptedTitle, @Uint8ListConverter() required this.encryptedContent, required this.version, @DateTimeUtcConverter() required this.createdAt, @DateTimeUtcConverter() required this.updatedAt, @DateTimeUtcConverter() this.deletedAt, this.projectId});
   factory _NoteDto.fromJson(Map<String, dynamic> json) => _$NoteDtoFromJson(json);
 
 @override final  String id;
 @override@Uint8ListConverter() final  Uint8List encryptedTitle;
 @override@Uint8ListConverter() final  Uint8List encryptedContent;
 @override final  int version;
-@override final  DateTime createdAt;
-@override final  DateTime updatedAt;
-@override final  DateTime? deletedAt;
+@override@DateTimeUtcConverter() final  DateTime createdAt;
+@override@DateTimeUtcConverter() final  DateTime updatedAt;
+@override@DateTimeUtcConverter() final  DateTime? deletedAt;
 @override final  String? projectId;
 
 /// Create a copy of NoteDto
@@ -255,7 +255,7 @@ abstract mixin class _$NoteDtoCopyWith<$Res> implements $NoteDtoCopyWith<$Res> {
   factory _$NoteDtoCopyWith(_NoteDto value, $Res Function(_NoteDto) _then) = __$NoteDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@Uint8ListConverter() Uint8List encryptedTitle,@Uint8ListConverter() Uint8List encryptedContent, int version, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt, String? projectId
+ String id,@Uint8ListConverter() Uint8List encryptedTitle,@Uint8ListConverter() Uint8List encryptedContent, int version,@DateTimeUtcConverter() DateTime createdAt,@DateTimeUtcConverter() DateTime updatedAt,@DateTimeUtcConverter() DateTime? deletedAt, String? projectId
 });
 
 

@@ -11,28 +11,12 @@ part 'auth_routes.g.dart';
 @TypedGoRoute<AuthRoute>(
   path: '/auth',
   routes: [
-    TypedGoRoute<LoginRoute>(path: 'login'),
     TypedGoRoute<RegisterRoute>(path: 'register'),
     TypedGoRoute<EmailVerificationRoute>(path: 'email-verification'),
   ],
 )
 class AuthRoute extends GoRouteData with $AuthRoute {
-  const AuthRoute();
-
-  @override
-  String? redirect(BuildContext context, GoRouterState state) {
-    final path = state.uri.path;
-
-    if (path == '/auth' || path == '/auth/') {
-      return const LoginRoute().location;
-    }
-
-    return null;
-  }
-}
-
-class LoginRoute extends GoRouteData with $LoginRoute {
-  const LoginRoute({this.source = 'onboarding'});
+  const AuthRoute({this.source = 'onboarding'});
 
   final String source;
 

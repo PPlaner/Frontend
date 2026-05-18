@@ -15,11 +15,9 @@ sealed class ProjectDto with _$ProjectDto {
 
     required int version,
 
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    DateTime? deletedAt,
-
-    String? projectId,
+    @DateTimeUtcConverter() required DateTime createdAt,
+    @DateTimeUtcConverter() required DateTime updatedAt,
+    @DateTimeUtcConverter() DateTime? deletedAt,
   }) = _ProjectDto;
 
   factory ProjectDto.fromJson(Map<String, dynamic> json) =>

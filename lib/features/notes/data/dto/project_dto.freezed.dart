@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProjectDto {
 
- String get id;@Uint8ListConverter() Uint8List get encryptedContent; int get version; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt; String? get projectId;
+ String get id;@Uint8ListConverter() Uint8List get encryptedContent; int get version;@DateTimeUtcConverter() DateTime get createdAt;@DateTimeUtcConverter() DateTime get updatedAt;@DateTimeUtcConverter() DateTime? get deletedAt;
 /// Create a copy of ProjectDto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProjectDtoCopyWith<ProjectDto> get copyWith => _$ProjectDtoCopyWithImpl<Project
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectDto&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.encryptedContent, encryptedContent)&&(identical(other.version, version) || other.version == version)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.projectId, projectId) || other.projectId == projectId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProjectDto&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.encryptedContent, encryptedContent)&&(identical(other.version, version) || other.version == version)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(encryptedContent),version,createdAt,updatedAt,deletedAt,projectId);
+int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(encryptedContent),version,createdAt,updatedAt,deletedAt);
 
 @override
 String toString() {
-  return 'ProjectDto(id: $id, encryptedContent: $encryptedContent, version: $version, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, projectId: $projectId)';
+  return 'ProjectDto(id: $id, encryptedContent: $encryptedContent, version: $version, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProjectDtoCopyWith<$Res>  {
   factory $ProjectDtoCopyWith(ProjectDto value, $Res Function(ProjectDto) _then) = _$ProjectDtoCopyWithImpl;
 @useResult
 $Res call({
- String id,@Uint8ListConverter() Uint8List encryptedContent, int version, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt, String? projectId
+ String id,@Uint8ListConverter() Uint8List encryptedContent, int version,@DateTimeUtcConverter() DateTime createdAt,@DateTimeUtcConverter() DateTime updatedAt,@DateTimeUtcConverter() DateTime? deletedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$ProjectDtoCopyWithImpl<$Res>
 
 /// Create a copy of ProjectDto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? encryptedContent = null,Object? version = null,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,Object? projectId = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? encryptedContent = null,Object? version = null,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,encryptedContent: null == encryptedContent ? _self.encryptedContent : encryptedContent // ignore: cast_nullable_to_non_nullable
@@ -73,8 +73,7 @@ as Uint8List,version: null == version ? _self.version : version // ignore: cast_
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as String?,
+as DateTime?,
   ));
 }
 
@@ -156,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedContent,  int version,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt,  String? projectId)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedContent,  int version, @DateTimeUtcConverter()  DateTime createdAt, @DateTimeUtcConverter()  DateTime updatedAt, @DateTimeUtcConverter()  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProjectDto() when $default != null:
-return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.projectId);case _:
+return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return orElse();
 
 }
@@ -177,10 +176,10 @@ return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedContent,  int version,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt,  String? projectId)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @Uint8ListConverter()  Uint8List encryptedContent,  int version, @DateTimeUtcConverter()  DateTime createdAt, @DateTimeUtcConverter()  DateTime updatedAt, @DateTimeUtcConverter()  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ProjectDto():
-return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.projectId);}
+return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -194,10 +193,10 @@ return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @Uint8ListConverter()  Uint8List encryptedContent,  int version,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt,  String? projectId)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @Uint8ListConverter()  Uint8List encryptedContent,  int version, @DateTimeUtcConverter()  DateTime createdAt, @DateTimeUtcConverter()  DateTime updatedAt, @DateTimeUtcConverter()  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ProjectDto() when $default != null:
-return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt,_that.projectId);case _:
+return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return null;
 
 }
@@ -209,16 +208,15 @@ return $default(_that.id,_that.encryptedContent,_that.version,_that.createdAt,_t
 @JsonSerializable()
 
 class _ProjectDto implements ProjectDto {
-  const _ProjectDto({required this.id, @Uint8ListConverter() required this.encryptedContent, required this.version, required this.createdAt, required this.updatedAt, this.deletedAt, this.projectId});
+  const _ProjectDto({required this.id, @Uint8ListConverter() required this.encryptedContent, required this.version, @DateTimeUtcConverter() required this.createdAt, @DateTimeUtcConverter() required this.updatedAt, @DateTimeUtcConverter() this.deletedAt});
   factory _ProjectDto.fromJson(Map<String, dynamic> json) => _$ProjectDtoFromJson(json);
 
 @override final  String id;
 @override@Uint8ListConverter() final  Uint8List encryptedContent;
 @override final  int version;
-@override final  DateTime createdAt;
-@override final  DateTime updatedAt;
-@override final  DateTime? deletedAt;
-@override final  String? projectId;
+@override@DateTimeUtcConverter() final  DateTime createdAt;
+@override@DateTimeUtcConverter() final  DateTime updatedAt;
+@override@DateTimeUtcConverter() final  DateTime? deletedAt;
 
 /// Create a copy of ProjectDto
 /// with the given fields replaced by the non-null parameter values.
@@ -233,16 +231,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectDto&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.encryptedContent, encryptedContent)&&(identical(other.version, version) || other.version == version)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt)&&(identical(other.projectId, projectId) || other.projectId == projectId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProjectDto&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.encryptedContent, encryptedContent)&&(identical(other.version, version) || other.version == version)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(encryptedContent),version,createdAt,updatedAt,deletedAt,projectId);
+int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(encryptedContent),version,createdAt,updatedAt,deletedAt);
 
 @override
 String toString() {
-  return 'ProjectDto(id: $id, encryptedContent: $encryptedContent, version: $version, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt, projectId: $projectId)';
+  return 'ProjectDto(id: $id, encryptedContent: $encryptedContent, version: $version, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -253,7 +251,7 @@ abstract mixin class _$ProjectDtoCopyWith<$Res> implements $ProjectDtoCopyWith<$
   factory _$ProjectDtoCopyWith(_ProjectDto value, $Res Function(_ProjectDto) _then) = __$ProjectDtoCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@Uint8ListConverter() Uint8List encryptedContent, int version, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt, String? projectId
+ String id,@Uint8ListConverter() Uint8List encryptedContent, int version,@DateTimeUtcConverter() DateTime createdAt,@DateTimeUtcConverter() DateTime updatedAt,@DateTimeUtcConverter() DateTime? deletedAt
 });
 
 
@@ -270,7 +268,7 @@ class __$ProjectDtoCopyWithImpl<$Res>
 
 /// Create a copy of ProjectDto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? encryptedContent = null,Object? version = null,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,Object? projectId = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? encryptedContent = null,Object? version = null,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_ProjectDto(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,encryptedContent: null == encryptedContent ? _self.encryptedContent : encryptedContent // ignore: cast_nullable_to_non_nullable
@@ -278,8 +276,7 @@ as Uint8List,version: null == version ? _self.version : version // ignore: cast_
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,deletedAt: freezed == deletedAt ? _self.deletedAt : deletedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,projectId: freezed == projectId ? _self.projectId : projectId // ignore: cast_nullable_to_non_nullable
-as String?,
+as DateTime?,
   ));
 }
 

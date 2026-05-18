@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/utils/navigation_helper.dart';
 
 class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -16,7 +16,7 @@ class BackAppBar extends StatelessWidget implements PreferredSizeWidget {
       scrolledUnderElevation: 0,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-        color: AppColors.primary,
+        color: context.colorScheme.primary,
         onPressed: context.safePop,
       ),
     );

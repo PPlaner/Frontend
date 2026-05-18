@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/app/database/database_provider.dart';
 import 'package:frontend/core/constants/app_sizes.dart' as sizes;
+import 'package:frontend/core/sync/sync_storage.dart';
 import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
 import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
@@ -32,6 +33,7 @@ class _SetupMethodScreenState extends ConsumerState<SetupMethodScreen> {
         unawaited(const SetupPatternRoute().push<void>(context));
       case 'nuke':
         await ref.read(appDatabaseProvider).resetDatabase();
+        await ref.read(syncStorageProvider).saveSyncCursor(0);
         ref.invalidate(vaultProvider);
       default:
     }

@@ -15,11 +15,12 @@ _NoteDto _$NoteDtoFromJson(Map<String, dynamic> json) => _NoteDto(
     json['encryptedContent'] as String,
   ),
   version: (json['version'] as num).toInt(),
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: DateTime.parse(json['updatedAt'] as String),
-  deletedAt: json['deletedAt'] == null
-      ? null
-      : DateTime.parse(json['deletedAt'] as String),
+  createdAt: const DateTimeUtcConverter().fromJson(json['createdAt'] as String),
+  updatedAt: const DateTimeUtcConverter().fromJson(json['updatedAt'] as String),
+  deletedAt: _$JsonConverterFromJson<String, DateTime>(
+    json['deletedAt'],
+    const DateTimeUtcConverter().fromJson,
+  ),
   projectId: json['projectId'] as String?,
 );
 
@@ -30,8 +31,21 @@ Map<String, dynamic> _$NoteDtoToJson(_NoteDto instance) => <String, dynamic>{
     instance.encryptedContent,
   ),
   'version': instance.version,
-  'createdAt': instance.createdAt.toIso8601String(),
-  'updatedAt': instance.updatedAt.toIso8601String(),
-  'deletedAt': instance.deletedAt?.toIso8601String(),
+  'createdAt': const DateTimeUtcConverter().toJson(instance.createdAt),
+  'updatedAt': const DateTimeUtcConverter().toJson(instance.updatedAt),
+  'deletedAt': _$JsonConverterToJson<String, DateTime>(
+    instance.deletedAt,
+    const DateTimeUtcConverter().toJson,
+  ),
   'projectId': instance.projectId,
 };
+
+Value? _$JsonConverterFromJson<Json, Value>(
+  Object? json,
+  Value? Function(Json json) fromJson,
+) => json == null ? null : fromJson(json as Json);
+
+Json? _$JsonConverterToJson<Json, Value>(
+  Value? value,
+  Json? Function(Value value) toJson,
+) => value == null ? null : toJson(value);

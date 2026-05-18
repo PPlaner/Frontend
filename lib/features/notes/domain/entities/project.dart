@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:frontend/core/sync/sync_status.dart';
 
@@ -8,7 +9,9 @@ sealed class Project with _$Project {
   const factory Project({
     required String id,
 
-    required String content,
+    required String title,
+    required String emoji,
+    required Color color,
 
     required int localVersion,
     required int lastSyncedVersion,

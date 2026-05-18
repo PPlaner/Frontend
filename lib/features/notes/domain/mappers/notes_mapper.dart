@@ -1,8 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:frontend/features/notes/domain/entities/encrypted_note.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
+import 'package:frontend/features/notes/domain/task_priority.dart';
 
 extension NoteToEncrypted on Note {
   EncryptedNote toEncrypted({
@@ -26,7 +28,16 @@ extension NoteToEncrypted on Note {
 }
 
 extension EncryptedToNote on EncryptedNote {
-  Note toNote({required String title, required Document content}) => Note(
+  Note toNote({
+    required String title,
+    required Document content,
+    required bool isCompleted,
+    required TaskPriority priority,
+
+    DateTime? dueDate,
+    TimeOfDay? dueTime,
+    int? reminderMinutesBefore,
+  }) => Note(
     id: id,
     title: title,
     content: content,
@@ -40,5 +51,12 @@ extension EncryptedToNote on EncryptedNote {
     deletedAt: deletedAt,
 
     projectId: projectId,
+
+    dueDate: dueDate,
+    dueTime: dueTime,
+    reminderMinutesBefore: reminderMinutesBefore,
+
+    priority: priority,
+    isCompleted: isCompleted,
   );
 }

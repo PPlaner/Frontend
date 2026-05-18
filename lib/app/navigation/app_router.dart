@@ -1,6 +1,7 @@
 import 'package:frontend/app/presentation/app_routes.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/notes/presentation/navigation/notes_routes.dart';
+import 'package:frontend/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:frontend/features/vault/domain/vault_state.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_unlock_routes.dart';
@@ -21,6 +22,7 @@ GoRouter appRouter(Ref ref) {
       $setupVaultRoute,
       $unlockVaultRoute,
       $notesRoute,
+      $profileRoute,
     ],
     redirect: (context, state) {
       final vaultState = ref.read(vaultProvider);

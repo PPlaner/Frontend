@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class PersonalizationScreen extends StatelessWidget {
@@ -39,7 +40,7 @@ class PersonalizationScreen extends StatelessWidget {
                       child: FilledButton(
                         onPressed: () => Navigator.of(ctx).pop(false),
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
+                          backgroundColor: context.colorScheme.primary,
                           foregroundColor: dialogColors.surface,
                           minimumSize: const Size(double.infinity, 46),
                           shape: RoundedRectangleBorder(
@@ -63,7 +64,6 @@ class PersonalizationScreen extends StatelessWidget {
                           foregroundColor: AppColors.error,
                           side: const BorderSide(
                             color: AppColors.error,
-                            width: 1,
                           ),
                           minimumSize: const Size(double.infinity, 46),
                           shape: RoundedRectangleBorder(
@@ -321,7 +321,7 @@ class _BottomNav extends StatelessWidget {
         elevation: 0,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedItemColor: AppColors.primary,
+        selectedItemColor: context.colorScheme.primary,
         unselectedItemColor: colors.textPrimary,
         items: [
           BottomNavigationBarItem(

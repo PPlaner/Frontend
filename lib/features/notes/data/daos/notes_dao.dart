@@ -11,7 +11,8 @@ part 'notes_dao.g.dart';
 class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
   NotesDao(super.attachedDatabase);
 
-  Future<void> insertNote(NotesCompanion note) => into(notes).insert(note);
+  Future<NoteModel> insertNote(NotesCompanion note) =>
+      into(notes).insertReturning(note);
 
   Future<void> updateNote(NotesCompanion note) => update(notes).replace(note);
 
@@ -54,6 +55,8 @@ class NotesDao extends DatabaseAccessor<AppDatabase> with _$NotesDaoMixin {
 
   Future<NoteModel?> getNote(String id) =>
       (select(notes)..where((tbl) => tbl.id.equals(id))).getSingleOrNull();
+
+  Future<List<NoteModel>> getAllNotes() => select(notes).get();
 
   Future<List<NoteModel>> getPending() =>
       (select(notes)..where(

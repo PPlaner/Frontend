@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:frontend/core/crypto/crypto.dart';
@@ -6,32 +8,98 @@ import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
 import 'package:frontend/core/session/crypto_session.dart';
 import 'package:frontend/core/session/session_exceptions.dart';
+import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/sync/sync_orchestrator.dart';
 import 'package:frontend/core/utils/logger.dart';
+import 'package:frontend/features/notes/data/unified_notes_repository.dart';
+import 'package:frontend/features/notes/domain/entities/encrypted_note.dart';
+import 'package:frontend/features/notes/domain/entities/encrypted_project.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
+import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/domain/failures/notes_failure.dart';
 import 'package:frontend/features/notes/domain/mappers/notes_mapper.dart';
+import 'package:frontend/features/notes/domain/mappers/projects_mapper.dart';
+import 'package:frontend/features/notes/domain/models/note_creation_payload.dart';
+import 'package:frontend/features/notes/domain/models/note_payload.dart';
+import 'package:frontend/features/notes/domain/models/project_creation_payload.dart';
+import 'package:frontend/features/notes/domain/models/project_payload.dart';
 import 'package:frontend/features/notes/domain/notes_repository.dart';
 import 'package:frontend/features/notes/domain/notes_service.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'secure_notes_service.g.dart';
 
 class SecureNotesService implements NotesService {
   SecureNotesService({
     required EncryptionService encryption,
     required CryptoSession cryptoSession,
     required NotesRepository repository,
+    required SyncOrchestrator sync,
   }) : _encryption = encryption,
        _cryptoSession = cryptoSession,
-       _repository = repository;
+       _repository = repository,
+       _sync = sync;
 
   final EncryptionService _encryption;
   final CryptoSession _cryptoSession;
   final NotesRepository _repository;
+  final SyncOrchestrator _sync;
+
+  @override
+  Future<Result<Note, NotesFailure>> createNote(NoteCreationPayload payload) {
+    return _guard(() async {
+      final masterKey = _cryptoSession.masterKey;
+
+      final p = NotePayload(
+        quillData: payload.content.toDelta().toJson(),
+        dueDate: payload.dueDate,
+        dueTime: payload.dueTime,
+        priority: payload.priority,
+        reminderMinutesBefore: payload.reminderMinutesBefore,
+      );
+
+      final plainContent = jsonEncode(p.toJson());
+
+      final encryptedTitle = await _encryption.encryptString(
+        payload.title,
+        masterKey,
+      );
+      final encryptedContent = await _encryption.encryptString(
+        plainContent,
+        masterKey,
+      );
+
+      final result = await _repository.createNote(
+        encryptedTitle,
+        encryptedContent,
+        payload.projectId,
+      );
+      if (result case Failure(error: final e)) return Failure(e);
+      final encryptedNote = result.unwrap;
+
+      final note = await _decryptNote(encryptedNote, masterKey);
+
+      unawaited(_sync.performSync());
+
+      return Success(note);
+    });
+  }
 
   @override
   Future<Result<void, NotesFailure>> saveNote(Note note) async {
     return _guard(() async {
       final masterKey = _cryptoSession.masterKey;
 
-      final plainContent = jsonEncode(note.content.toDelta().toJson());
+      final payload = NotePayload(
+        quillData: note.content.toDelta().toJson(),
+        isCompleted: note.isCompleted,
+        dueDate: note.dueDate,
+        dueTime: note.dueTime,
+        priority: note.priority,
+        reminderMinutesBefore: note.reminderMinutesBefore,
+      );
+
+      final plainContent = jsonEncode(payload.toJson());
 
       final encryptedTitle = await _encryption.encryptString(
         note.title,
@@ -46,6 +114,8 @@ class SecureNotesService implements NotesService {
         encryptedTitle: encryptedTitle,
         encryptedContent: encryptedContent,
       );
+
+      unawaited(_sync.performSync());
 
       return _repository.saveNote(encryptedNote);
     });
@@ -65,23 +135,198 @@ class SecureNotesService implements NotesService {
         return const Failure(IdNotFound());
       }
 
-      final title = await _encryption.decryptString(
-        encryptedNote.encryptedTitle,
-        masterKey,
-      );
-      final plainContent = await _encryption.decryptString(
-        encryptedNote.encryptedContent,
-        masterKey,
-      );
-
-      final content = Document.fromJson(
-        jsonDecode(plainContent) as List<dynamic>,
-      );
-
-      final note = encryptedNote.toNote(title: title, content: content);
+      final note = await _decryptNote(encryptedNote, masterKey);
 
       return Success(note);
     });
+  }
+
+  @override
+  Future<Result<List<Note>, NotesFailure>> getAllNotes() async {
+    return _guard(() async {
+      final masterKey = _cryptoSession.masterKey;
+
+      final encryptedNoteResult = await _repository.getAllNotes();
+      if (encryptedNoteResult case Failure(error: final e)) return Failure(e);
+
+      final encryptedNotes = encryptedNoteResult.unwrap;
+
+      if (encryptedNotes.isEmpty) return const Success([]);
+
+      final notes = await Future.wait(
+        encryptedNotes.map((e) => _decryptNote(e, masterKey)),
+      );
+
+      return Success(notes);
+    });
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> deleteNote(Note note) {
+    return _guard(() async {
+      return _repository.deleteNote(note.id);
+    });
+  }
+
+  Future<Note> _decryptNote(
+    EncryptedNote encryptedNote,
+    Uint8List masterKey,
+  ) async {
+    final title = await _encryption.decryptString(
+      encryptedNote.encryptedTitle,
+      masterKey,
+    );
+    final plainContent = await _encryption.decryptString(
+      encryptedNote.encryptedContent,
+      masterKey,
+    );
+
+    final notePayload = NotePayload.fromJson(
+      jsonDecode(plainContent) as Map<String, dynamic>,
+    );
+
+    final note = encryptedNote.toNote(
+      title: title,
+      content: Document.fromJson(notePayload.quillData),
+      isCompleted: notePayload.isCompleted,
+      priority: notePayload.priority,
+      dueDate: notePayload.dueDate,
+      dueTime: notePayload.dueTime,
+      reminderMinutesBefore: notePayload.reminderMinutesBefore,
+    );
+
+    return note;
+  }
+
+  @override
+  Future<Result<Project, NotesFailure>> createProject(
+    ProjectCreationPayload payload,
+  ) {
+    return _guard(() async {
+      final masterKey = _cryptoSession.masterKey;
+
+      final p = ProjectPayload(
+        title: payload.title,
+        emoji: payload.emoji,
+        colorValue: payload.color,
+      );
+
+      final plainContent = jsonEncode(p.toJson());
+
+      final encryptedContent = await _encryption.encryptString(
+        plainContent,
+        masterKey,
+      );
+
+      final result = await _repository.createProject(
+        encryptedContent,
+      );
+      if (result case Failure(error: final e)) return Failure(e);
+      final encryptedProject = result.unwrap;
+
+      final note = await _decryptProject(encryptedProject, masterKey);
+
+      return Success(note);
+    });
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> saveProject(Project project) {
+    return _guard(() async {
+      final masterKey = _cryptoSession.masterKey;
+
+      final payload = ProjectPayload(
+        title: project.title,
+        emoji: project.emoji,
+        colorValue: project.color,
+      );
+
+      final plainContent = jsonEncode(payload.toJson());
+
+      final encryptedContent = await _encryption.encryptString(
+        plainContent,
+        masterKey,
+      );
+
+      final encryptedProject = project.toEncrypted(
+        encryptedContent: encryptedContent,
+      );
+
+      return _repository.saveProject(encryptedProject);
+    });
+  }
+
+  @override
+  Future<Result<Project?, NotesFailure>> getProject(String id) {
+    return _guard(() async {
+      final masterKey = _cryptoSession.masterKey;
+
+      final encryptedProjectResult = await _repository.getProject(id);
+      if (encryptedProjectResult case Failure(error: final e)) {
+        return Failure(e);
+      }
+
+      final encryptedProject = encryptedProjectResult.unwrap;
+
+      if (encryptedProject == null) {
+        return const Failure(IdNotFound());
+      }
+
+      final note = await _decryptProject(encryptedProject, masterKey);
+
+      return Success(note);
+    });
+  }
+
+  @override
+  Future<Result<List<Project>, NotesFailure>> getAllProjects() {
+    return _guard(() async {
+      final masterKey = _cryptoSession.masterKey;
+
+      final encryptedProjectsResult = await _repository.getAllProjects();
+      if (encryptedProjectsResult case Failure(error: final e)) {
+        return Failure(e);
+      }
+
+      final encryptedProjects = encryptedProjectsResult.unwrap;
+
+      if (encryptedProjects.isEmpty) return const Success([]);
+
+      final projects = await Future.wait(
+        encryptedProjects.map((e) => _decryptProject(e, masterKey)),
+      );
+
+      return Success(projects);
+    });
+  }
+
+  @override
+  Future<Result<void, NotesFailure>> deleteProject(Project project) {
+    return _guard(() async {
+      return _repository.deleteProject(project.id);
+    });
+  }
+
+  Future<Project> _decryptProject(
+    EncryptedProject encryptedProject,
+    Uint8List masterKey,
+  ) async {
+    final plainContent = await _encryption.decryptString(
+      encryptedProject.encryptedContent,
+      masterKey,
+    );
+
+    final projectPayload = ProjectPayload.fromJson(
+      jsonDecode(plainContent) as Map<String, dynamic>,
+    );
+
+    final project = encryptedProject.toProject(
+      title: projectPayload.title,
+      emoji: projectPayload.emoji,
+      color: projectPayload.colorValue,
+    );
+
+    return project;
   }
 
   Future<Result<T, NotesFailure>> _guard<T>(
@@ -99,3 +344,11 @@ class SecureNotesService implements NotesService {
     }
   }
 }
+
+@riverpod
+NotesService notesService(Ref ref) => SecureNotesService(
+  encryption: ref.watch(encryptionServiceProvider),
+  cryptoSession: ref.watch(cryptoSessionProvider),
+  repository: ref.watch(notesRepositoryProvider),
+  sync: ref.watch(syncOrchestratorProvider.notifier),
+);

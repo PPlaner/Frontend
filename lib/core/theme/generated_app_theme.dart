@@ -1,22 +1,9 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend/core/theme/custom_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// The [AppTheme] defines light and dark themes for the app.
-///
-/// Theme setup for FlexColorScheme package v8.
-/// Use same major flex_color_scheme package version. If you use a
-/// lower minor version, some properties may not be supported.
-/// In that case, remove them after copying this theme to your
-/// app or upgrade the package to version 8.4.0.
-///
-/// Use it in a [MaterialApp] like this:
-///
-/// MaterialApp(
-///   theme: AppTheme.light,
-///   darkTheme: AppTheme.dark,
-/// );
 abstract final class AppTheme {
   static const _colorsLight = FlexSchemeColor(
     primary: Color(0xFF8BA88E),
@@ -45,15 +32,11 @@ abstract final class AppTheme {
     errorContainer: Color(0xFF93000A),
   );
 
-  // The FlexColorScheme defined light mode ThemeData.
-  static ThemeData light = FlexThemeData.light(
-    // User defined custom colors made with FlexSchemeColor() API.
+  static ThemeData get lightBase => FlexThemeData.light(
     colors: _colorsLight,
-    textTheme: _buildTextTheme(),
-    // Input color modifiers.
+    textTheme: textTheme,
     usedColors: 1,
     useMaterial3ErrorColors: true,
-    // Component theme configurations for light mode.
     subThemesData: const FlexSubThemesData(
       interactionEffects: true,
       tintedDisabledControls: true,
@@ -63,20 +46,15 @@ abstract final class AppTheme {
       alignedDropdown: true,
       navigationRailUseIndicator: true,
     ),
-    // Direct ThemeData properties.
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
     cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
   );
 
-  // The FlexColorScheme defined dark mode ThemeData.
-  static ThemeData dark = FlexThemeData.dark(
-    // User defined custom colors made with FlexSchemeColor() API.
+  static ThemeData get darkBase => FlexThemeData.dark(
     colors: _colorsLight.toDark(),
-    textTheme: _buildTextTheme(),
-    // Input color modifiers.
+    textTheme: textTheme,
     usedColors: 1,
     useMaterial3ErrorColors: true,
-    // Component theme configurations for dark mode.
     subThemesData: const FlexSubThemesData(
       interactionEffects: true,
       tintedDisabledControls: true,
@@ -87,12 +65,33 @@ abstract final class AppTheme {
       alignedDropdown: true,
       navigationRailUseIndicator: true,
     ),
-    // Direct ThemeData properties.
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
     cupertinoOverrideTheme: const CupertinoThemeData(applyThemeToAll: true),
   );
 
-  static TextTheme _buildTextTheme() => GoogleFonts.interTextTheme().copyWith(
+  static ThemeData get light => lightBase.copyWith(
+    extensions: [
+      CustomColors(
+        background: lightBase.colorScheme.surfaceContainer,
+        onBackground: lightBase.colorScheme.surface,
+        containerColor: lightBase.colorScheme.surface,
+      ),
+    ],
+  );
+
+  static ThemeData get dark => darkBase.copyWith(
+    extensions: [
+      CustomColors(
+        background: darkBase.colorScheme.surfaceContainer,
+        onBackground: darkBase.colorScheme.surfaceContainerHigh,
+        containerColor: darkBase.colorScheme.surfaceContainerHigh,
+      ),
+    ],
+  );
+
+  // static TextTheme get textTheme => GoogleFonts.interTextTheme();
+
+  static TextTheme get textTheme => GoogleFonts.interTextTheme().copyWith(
     displayLarge: GoogleFonts.inter(
       fontWeight: FontWeight.w700,
       fontSize: 32,

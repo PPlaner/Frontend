@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/storage/cookie_jar.dart';
 import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/theme/theme_extensions.dart';
 import 'package:frontend/core/theme/theme_provider.dart';
+import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
+import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
+import 'package:frontend/features/profile/presentation/navigation/profile_routes.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 // ProfileScreen
@@ -16,7 +22,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final bool _hasAccount = false;
 
-  int _currentNavIndex = 2;
   AppLocale _language = LocaleSettings.currentLocale;
 
   // Використовуємо ключ з JSON замість прямого тексту
@@ -52,23 +57,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       body: SafeArea(
         child: _hasAccount
             ? _AccountView(
-          onLanguageTap: _openLanguage,
-          onAppearanceTap: _openAppearance,
-          onTimezoneTap: _openTimezone,
-          onWidgetsTap: _openWidgets,
-        )
+                onLanguageTap: _openLanguage,
+                onAppearanceTap: _openAppearance,
+                onTimezoneTap: _openTimezone,
+                onWidgetsTap: _openWidgets,
+              )
             : _LocalView(
-          onLanguageTap: _openLanguage,
-          onAppearanceTap: _openAppearance,
-          onTimezoneTap: _openTimezone,
-          onWidgetsTap: _openWidgets,
-          onLogout: () {},
-        ),
+                onLanguageTap: _openLanguage,
+                onAppearanceTap: _openAppearance,
+                onTimezoneTap: _openTimezone,
+                onWidgetsTap: _openWidgets,
+                onLogout: () {
+                  ref.read(cookieJarProvider).deleteAll();
+                  ref.read(sessionControllerProvider).setAuthToken(null);
+                },
+              ),
       ),
-      bottomNavigationBar: _BottomNav(
-        currentIndex: _currentNavIndex,
-        onTap: (i) => setState(() => _currentNavIndex = i),
-      ),
+      bottomNavigationBar: const BottomNav(),
     );
   }
 }
@@ -171,7 +176,7 @@ class _LocalView extends StatelessWidget {
         _ProfileHeader(
           name: t.profile.name,
           email: t.profile.email,
-          onTap: () {},
+          onTap: () => const AuthRoute(source: 'inApp').push<void>(context),
         ),
         const SizedBox(height: 12),
         _SettingsCard(
@@ -179,7 +184,7 @@ class _LocalView extends StatelessWidget {
             _SettingsTile(
               icon: Icons.lock_outline,
               title: t.profile.personalization,
-              onTap: () {},
+              onTap: () => const PersonalizationRoute().push<void>(context),
             ),
           ],
         ),
@@ -251,8 +256,8 @@ class _ProfileHeader extends StatelessWidget {
             Container(
               width: 64,
               height: 64,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
+              decoration: BoxDecoration(
+                color: context.colorScheme.primary,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -337,7 +342,7 @@ class _SettingsTile extends StatelessWidget {
                 color: colors.surfaceVariant,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: AppColors.primary, size: 20),
+              child: Icon(icon, color: context.colorScheme.primary, size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -409,51 +414,6 @@ class _TileDivider extends StatelessWidget {
   }
 }
 
-// Bottom Navigation Bar
-
-class _BottomNav extends StatelessWidget {
-  const _BottomNav({required this.currentIndex, required this.onTap});
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final t = context.t;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.bottomNav,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: colors.textPrimary,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.check_box_outlined),
-            label: t.bottomNav.tasks,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_month_outlined),
-            label: t.bottomNav.calendar,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person_outline),
-            label: t.bottomNav.profile,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// BOTTOM SHEETS
 
 extension AppLocaleLabel on AppLocale {
@@ -495,11 +455,15 @@ class _LanguageSheet extends StatelessWidget {
             Text(t.profile.chooseLanguage, style: textTheme.titleLarge),
             const SizedBox(height: 8),
             ...AppLocale.values.map(
-                  (lang) => ListTile(
+              (lang) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(lang.label, style: textTheme.titleMedium),
                 trailing: current == lang
-                    ? const Icon(Icons.check, color: AppColors.primary, size: 20)
+                    ? Icon(
+                        Icons.check,
+                        color: context.colorScheme.primary,
+                        size: 20,
+                      )
                     : null,
                 onTap: () => Navigator.pop(context, lang),
               ),
@@ -535,9 +499,21 @@ class _AppearanceSheet extends ConsumerWidget {
     final t = context.t;
 
     final options = [
-      (mode: ThemeMode.light, label: t.profile.appearanceLight, icon: Icons.light_mode_outlined),
-      (mode: ThemeMode.dark, label: t.profile.appearanceDark, icon: Icons.dark_mode_outlined),
-      (mode: ThemeMode.system, label: t.profile.appearanceSystem, icon: Icons.brightness_auto_outlined),
+      (
+        mode: ThemeMode.light,
+        label: t.profile.appearanceLight,
+        icon: Icons.light_mode_outlined,
+      ),
+      (
+        mode: ThemeMode.dark,
+        label: t.profile.appearanceDark,
+        icon: Icons.dark_mode_outlined,
+      ),
+      (
+        mode: ThemeMode.system,
+        label: t.profile.appearanceSystem,
+        icon: Icons.brightness_auto_outlined,
+      ),
     ];
 
     return SafeArea(
@@ -552,18 +528,22 @@ class _AppearanceSheet extends ConsumerWidget {
             Text(t.profile.chooseAppearance, style: textTheme.titleLarge),
             const SizedBox(height: 8),
             ...options.map(
-                  (opt) => ListTile(
+              (opt) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: Icon(
                   opt.icon,
                   color: currentMode == opt.mode
-                      ? AppColors.primary
+                      ? context.colorScheme.primary
                       : colors.textSecondary,
                   size: 22,
                 ),
                 title: Text(opt.label, style: textTheme.titleMedium),
                 trailing: currentMode == opt.mode
-                    ? const Icon(Icons.check, color: AppColors.primary, size: 20)
+                    ? Icon(
+                        Icons.check,
+                        color: context.colorScheme.primary,
+                        size: 20,
+                      )
                     : null,
                 onTap: () {
                   ref.read(themeModeProvider.notifier).setTheme(opt.mode);
@@ -580,7 +560,12 @@ class _AppearanceSheet extends ConsumerWidget {
 }
 
 const List<String> _timezones = [
-  'ukraine', 'poland', 'germany', 'usaNy', 'usaLa', 'greatBritain',
+  'ukraine',
+  'poland',
+  'germany',
+  'usaNy',
+  'usaLa',
+  'greatBritain',
 ];
 
 Future<String?> showTimezoneSheet(BuildContext context, String current) {
@@ -644,10 +629,14 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
                     color: colors.textSecondary,
                   ),
                   style: textTheme.titleMedium,
-                  items: _timezones.map((tz) => DropdownMenuItem(
-                      value: tz,
-                      child: Text(t['timezones.$tz'].toString())
-                  )).toList(),
+                  items: _timezones
+                      .map(
+                        (tz) => DropdownMenuItem(
+                          value: tz,
+                          child: Text(t['timezones.$tz'].toString()),
+                        ),
+                      )
+                      .toList(),
                   onChanged: (val) {
                     if (val != null) setState(() => _selected = val);
                   },
@@ -658,7 +647,7 @@ class _TimezoneSheetState extends State<_TimezoneSheet> {
             FilledButton(
               onPressed: () => Navigator.pop(context, _selected),
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: context.colorScheme.primary,
                 foregroundColor: colors.surface,
                 minimumSize: const Size(double.infinity, 48),
                 shape: RoundedRectangleBorder(
@@ -720,16 +709,19 @@ class _WidgetsSheetState extends State<_WidgetsSheet> {
             Text(t.profile.addWidget, style: textTheme.titleLarge),
             const SizedBox(height: 8),
             ..._widgets.asMap().entries.map(
-                  (entry) => SwitchListTile(
+              (entry) => SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(t['widgets.${entry.value.title}'].toString(), style: textTheme.titleMedium),
+                title: Text(
+                  t['widgets.${entry.value.title}'].toString(),
+                  style: textTheme.titleMedium,
+                ),
                 value: entry.value.enabled,
 
-                activeThumbColor: AppColors.primary,
+                activeThumbColor: context.colorScheme.primary,
                 activeTrackColor: colors.surface,
                 trackOutlineColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return AppColors.primary;
+                    return context.colorScheme.primary;
                   }
                   return null;
                 }),
@@ -737,8 +729,8 @@ class _WidgetsSheetState extends State<_WidgetsSheet> {
                 onChanged: (val) {
                   setState(() {
                     _widgets[entry.key] = (
-                    title: entry.value.title,
-                    enabled: val,
+                      title: entry.value.title,
+                      enabled: val,
                     );
                   });
                 },
@@ -768,3 +760,4 @@ class _SheetHandle extends StatelessWidget {
     );
   }
 }
+

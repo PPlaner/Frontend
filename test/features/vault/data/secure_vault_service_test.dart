@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/core/crypto/crypto.dart';
 import 'package:frontend/core/domain/result.dart';
 import 'package:frontend/core/session/session_controller.dart';
+import 'package:frontend/core/sync/sync_orchestrator.dart';
 import 'package:frontend/features/vault/data/secure_vault_service.dart';
 import 'package:frontend/features/vault/domain/entities/key_slot.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
@@ -22,6 +23,8 @@ class MockEncryptionService extends Mock implements EncryptionService {}
 
 class MockSessionController extends Mock implements SessionController {}
 
+class MockSyncOrchestrator extends Mock implements SyncOrchestrator {}
+
 class MockVaultRepository extends Mock implements VaultRepository {}
 
 void main() {
@@ -35,6 +38,7 @@ void main() {
   late MockEncryptionService mockEncryption;
   late MockVaultRepository mockRepo;
   late MockSessionController mockSessionController;
+  late MockSyncOrchestrator mockSyncOrchestrator;
   late VaultService service;
 
   setUp(() {
@@ -42,6 +46,7 @@ void main() {
     mockDerivation = MockDerivationService();
     mockEncryption = MockEncryptionService();
     mockSessionController = MockSessionController();
+    mockSyncOrchestrator = MockSyncOrchestrator();
     mockRepo = MockVaultRepository();
 
     service = SecureVaultService(
@@ -49,6 +54,7 @@ void main() {
       derivation: mockDerivation,
       encryption: mockEncryption,
       sessionController: mockSessionController,
+      sync: mockSyncOrchestrator,
       repository: mockRepo,
     );
   });

@@ -70,7 +70,7 @@ class WelcomeScreen extends StatelessWidget {
               OutlinedButton(
                 onPressed: () {
                   if (context.mounted) {
-                    unawaited(const LoginRoute().push<void>(context));
+                    unawaited(const AuthRoute().push<void>(context));
                   }
                 },
                 style: OutlinedButton.styleFrom(

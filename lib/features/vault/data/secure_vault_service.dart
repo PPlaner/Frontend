@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:frontend/core/crypto/crypto.dart';
 import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
 import 'package:frontend/core/session/session_controller.dart';
 import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/sync/sync_orchestrator.dart';
 import 'package:frontend/core/utils/logger.dart';
 import 'package:frontend/features/vault/data/unified_vault_repository.dart';
 import 'package:frontend/features/vault/domain/entities/key_slot.dart';
@@ -20,17 +23,20 @@ class SecureVaultService implements VaultService {
     required DerivationService derivation,
     required EncryptionService encryption,
     required SessionController sessionController,
+    required SyncOrchestrator sync,
     required VaultRepository repository,
   }) : _random = random,
        _derivation = derivation,
        _encryption = encryption,
        _sessionController = sessionController,
+       _sync = sync,
        _repository = repository;
 
   final RandomService _random;
   final DerivationService _derivation;
   final EncryptionService _encryption;
   final SessionController _sessionController;
+  final SyncOrchestrator _sync;
   final VaultRepository _repository;
 
   @override
@@ -96,6 +102,8 @@ class SecureVaultService implements VaultService {
 
       _sessionController.setMasterKey(masterKey);
 
+      unawaited(_sync.performSync());
+
       return const Success(null);
     });
   }
@@ -127,5 +135,6 @@ VaultService vaultService(Ref ref) => SecureVaultService(
   derivation: ref.watch(derivationServiceProvider),
   encryption: ref.watch(encryptionServiceProvider),
   sessionController: ref.watch(sessionControllerProvider),
+  sync: ref.watch(syncOrchestratorProvider.notifier),
   repository: ref.watch(vaultRepositoryProvider),
 );

@@ -21,7 +21,9 @@ void main() {
 
   group('NotesLocalDataSource', () {
     test('create delegates to NotesDao.insertNote', () async {
-      when(() => mockDao.insertNote(any())).thenAnswer((_) async {});
+      when(
+        () => mockDao.insertNote(any()),
+      ).thenAnswer((_) async => NotesFixtures.buildNoteModel());
 
       final companion = NotesFixtures.buildNoteCompanion();
       await dataSource.create(companion);
