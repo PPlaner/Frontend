@@ -15,7 +15,7 @@ class KeySlotsDao extends DatabaseAccessor<AppDatabase>
       into(keySlots).insert(slot, mode: InsertMode.insertOrReplace);
 
   Future<void> saveKeySlots(List<KeySlotsCompanion> slots) => batch((batch) {
-    batch.insertAll(keySlots, slots);
+    batch.insertAll(keySlots, slots, mode: InsertMode.insertOrReplace);
   });
 
   Future<List<KeySlotModel>> getAllKeySlots() => select(keySlots).get();
