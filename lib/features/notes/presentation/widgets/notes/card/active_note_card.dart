@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/entities/note.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/card/note_card.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/card/swipable_card_wrapper.dart';

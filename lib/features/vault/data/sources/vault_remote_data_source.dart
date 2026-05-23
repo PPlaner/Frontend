@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:frontend/core/network/api_endpoints.dart' as endpoints;
-import 'package:frontend/core/network/dio_provider.dart';
+import 'package:frontend/core/infrastructure/api/api_endpoints.dart' as endpoints;
+import 'package:frontend/core/infrastructure/api/dio_provider.dart';
 import 'package:frontend/features/vault/data/dto/key_slot_dto.dart';
 import 'package:frontend/features/vault/data/dto/key_slots_dto.dart';
 import 'package:retrofit/retrofit.dart';

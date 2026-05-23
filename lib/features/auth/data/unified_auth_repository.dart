@@ -1,7 +1,7 @@
 import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/network/token_refresher.dart';
-import 'package:frontend/core/utils/data_source_runner.dart';
+import 'package:frontend/core/infrastructure/api/token_refresher.dart';
+import 'package:frontend/core/infrastructure/data_source_runner.dart';
 import 'package:frontend/features/auth/data/dto/login_request_dto.dart';
 import 'package:frontend/features/auth/data/dto/register_request_dto.dart';
 import 'package:frontend/features/auth/data/dto/request_verification_dto.dart';

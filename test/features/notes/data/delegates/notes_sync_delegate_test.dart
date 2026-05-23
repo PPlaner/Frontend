@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/sync/sync_types.dart';
+import 'package:frontend/core/services/sync/sync_types.dart';
 import 'package:frontend/features/notes/data/delegates/notes_sync_delegate.dart';
 import 'package:frontend/features/notes/data/unified_notes_repository.dart';
 import 'package:mocktail/mocktail.dart';

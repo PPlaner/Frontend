@@ -1,4 +1,4 @@
-import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
 import 'package:frontend/features/vault/data/dto/key_slot_dto.dart';
 import 'package:frontend/features/vault/domain/entities/key_slot.dart';
 

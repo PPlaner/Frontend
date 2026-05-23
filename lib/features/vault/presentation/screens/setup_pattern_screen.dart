@@ -1,12 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/constants/app_sizes.dart' as sizes;
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
-import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
-import 'package:frontend/core/utils/app_assets.dart';
-import 'package:frontend/core/utils/app_snackbar.dart';
+import 'package:frontend/core/presentation/app_assets.dart';
+import 'package:frontend/core/presentation/app_sizes.dart' as sizes;
+import 'package:frontend/core/presentation/extensions/app_snackbar.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/widgets/flow_scaffold.dart';
+import 'package:frontend/core/presentation/widgets/wide_filled_button.dart';
 import 'package:frontend/features/vault/presentation/navigation/vault_setup_routes.dart';
 import 'package:frontend/features/vault/presentation/notifiers/vault_setup_notifier.dart';
 import 'package:frontend/features/vault/presentation/widgets/pattern_lock_view.dart';

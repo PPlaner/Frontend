@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/presentation/theme/app_colors.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 enum TaskPriority { none, low, medium, high }

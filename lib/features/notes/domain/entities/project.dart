@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
 
 part 'project.freezed.dart';
 

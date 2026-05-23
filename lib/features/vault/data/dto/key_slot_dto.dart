@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/core/utils/json_helpers.dart';
+import 'package:frontend/core/infrastructure/serialization/json_helpers.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
 
 part 'key_slot_dto.g.dart';

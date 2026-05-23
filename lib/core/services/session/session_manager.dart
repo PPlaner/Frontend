@@ -1,10 +1,10 @@
 import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/session/auth_session.dart';
-import 'package:frontend/core/session/crypto_session.dart';
-import 'package:frontend/core/session/session_controller.dart';
-import 'package:frontend/core/session/session_exceptions.dart';
-import 'package:frontend/core/session/session_state.dart';
+import 'package:frontend/core/services/session/auth_session.dart';
+import 'package:frontend/core/services/session/crypto_session.dart';
+import 'package:frontend/core/services/session/session_controller.dart';
+import 'package:frontend/core/services/session/session_exceptions.dart';
+import 'package:frontend/core/services/session/session_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'session_manager.g.dart';

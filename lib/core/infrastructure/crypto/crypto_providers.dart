@@ -1,6 +1,6 @@
-import 'package:frontend/core/crypto/derivation.dart';
-import 'package:frontend/core/crypto/encryption.dart';
-import 'package:frontend/core/crypto/random.dart';
+import 'package:frontend/core/infrastructure/crypto/derivation.dart';
+import 'package:frontend/core/infrastructure/crypto/encryption.dart';
+import 'package:frontend/core/infrastructure/crypto/random.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'crypto_providers.g.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/presentation/widgets/base_bottom_sheet_layout.dart';
 import 'package:frontend/i18n/strings.g.dart';

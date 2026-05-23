@@ -1,9 +1,9 @@
 import 'package:drift/drift.dart';
 import 'package:frontend/app/database/database.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/sync/sync_status.dart';
-import 'package:frontend/core/sync/sync_types.dart';
-import 'package:frontend/core/utils/data_source_runner.dart';
+import 'package:frontend/core/infrastructure/data_source_runner.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_types.dart';
 import 'package:frontend/features/notes/data/dto/note_dto.dart';
 import 'package:frontend/features/notes/data/dto/project_dto.dart';
 import 'package:frontend/features/notes/data/mappers/encrypted_note_local_mapper.dart';

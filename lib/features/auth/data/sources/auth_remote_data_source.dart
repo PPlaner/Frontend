@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:frontend/core/network/api_endpoints.dart' as endpoints;
-import 'package:frontend/core/network/dio_provider.dart';
+import 'package:frontend/core/infrastructure/api/api_endpoints.dart' as endpoints;
+import 'package:frontend/core/infrastructure/api/dio_provider.dart';
 import 'package:frontend/features/auth/data/dto/auth_response_dto.dart';
 import 'package:frontend/features/auth/data/dto/login_request_dto.dart';
 import 'package:frontend/features/auth/data/dto/register_request_dto.dart';

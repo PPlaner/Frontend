@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
 import 'package:uuid/v7.dart';
 
 @DataClassName('ProjectModel')

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
-import 'package:frontend/core/ui/widgets/back_app_bar.dart';
+import 'package:frontend/core/presentation/theme/app_colors.dart';
+import 'package:frontend/core/presentation/widgets/back_app_bar.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class AuthMethodSelectionScreen extends StatelessWidget {
@@ -80,7 +80,7 @@ class AuthMethodSelectionScreen extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.arrow_forward_ios,
                                 size: 16,
                                 color: AppColors.primary, // статичний primary

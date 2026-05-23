@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/core/utils/json_helpers.dart';
+import 'package:frontend/core/infrastructure/serialization/json_helpers.dart';
 import 'package:frontend/features/notes/domain/task_priority.dart';
 
 part 'note_payload.freezed.dart';

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:drift/native.dart';
 import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/utils/logger.dart';
+import 'package:frontend/core/infrastructure/logger.dart';
 
 mixin DataSourceRunner {
   Future<Result<T, F>> remoteRunner<T, F>({

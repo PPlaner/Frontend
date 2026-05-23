@@ -9,9 +9,7 @@ part 'database_provider.g.dart';
 AppDatabase appDatabase(Ref ref) {
   final db = AppDatabase();
 
-  ref.onDispose(() {
-    unawaited(db.close());
-  });
+  ref.onDispose(() => unawaited(db.close()));
 
   return db;
 }

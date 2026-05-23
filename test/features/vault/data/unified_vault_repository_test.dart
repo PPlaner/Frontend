@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/app/database/database.dart';
 import 'package:frontend/core/config/user_config.dart';
-import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
 import 'package:frontend/features/vault/data/mappers/key_slot_local_mapper.dart';
 import 'package:frontend/features/vault/data/sources/vault_local_data_source.dart';
 import 'package:frontend/features/vault/data/sources/vault_remote_data_source.dart';

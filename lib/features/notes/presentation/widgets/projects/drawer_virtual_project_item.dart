@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/extensions/bottom_sheet_extension.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/presentation/notifiers/ui_state.dart';
 import 'package:frontend/features/notes/presentation/widgets/projects/create_project_sheet.dart';

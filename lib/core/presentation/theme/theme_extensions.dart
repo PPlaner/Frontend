@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/custom_colors.dart';
+import 'package:frontend/core/presentation/theme/custom_colors.dart';
 
 extension ThemeBuildContextEntension on BuildContext {
   ThemeData get theme => Theme.of(this);

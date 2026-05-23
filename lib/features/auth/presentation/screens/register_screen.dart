@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
-import 'package:frontend/core/utils/app_snackbar.dart';
-import 'package:frontend/core/utils/navigation_helper.dart';
-import 'package:frontend/core/utils/validators.dart';
+import 'package:frontend/core/presentation/extensions/app_snackbar.dart';
+import 'package:frontend/core/presentation/extensions/navigation_helper.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/validators.dart';
+import 'package:frontend/core/presentation/widgets/flow_scaffold.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/auth/presentation/notifiers/auth_notifier.dart';
 import 'package:frontend/features/auth/presentation/widgets/email_form_field.dart';
