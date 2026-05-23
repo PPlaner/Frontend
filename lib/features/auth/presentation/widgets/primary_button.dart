@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/ui/widgets/wide_filled_button.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/widgets/wide_filled_button.dart';
 
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({

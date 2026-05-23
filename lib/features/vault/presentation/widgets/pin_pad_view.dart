@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 import 'package:frontend/features/vault/domain/constants.dart';
 
 class PinPadView extends StatelessWidget {

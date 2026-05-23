@@ -1,12 +1,12 @@
 import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/network/api_endpoints.dart' as endpoints;
-import 'package:frontend/core/network/dio_provider.dart';
-import 'package:frontend/core/sync/sync_state.dart';
-import 'package:frontend/core/sync/sync_storage.dart';
-import 'package:frontend/core/sync/syncable.dart';
-import 'package:frontend/core/utils/data_source_runner.dart';
-import 'package:frontend/core/utils/logger.dart';
+import 'package:frontend/core/infrastructure/api/api_endpoints.dart' as endpoints;
+import 'package:frontend/core/infrastructure/api/dio_provider.dart';
+import 'package:frontend/core/infrastructure/data_source_runner.dart';
+import 'package:frontend/core/infrastructure/logger.dart';
+import 'package:frontend/core/services/sync/sync_state.dart';
+import 'package:frontend/core/services/sync/sync_storage.dart';
+import 'package:frontend/core/services/sync/syncable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'sync_orchestrator.g.dart';

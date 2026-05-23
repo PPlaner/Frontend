@@ -1,7 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/custom_colors.dart';
+import 'package:frontend/core/presentation/theme/custom_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 abstract final class AppTheme {

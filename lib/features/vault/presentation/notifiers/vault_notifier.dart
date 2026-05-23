@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/services/session/session_manager.dart';
 import 'package:frontend/features/vault/data/secure_vault_service.dart';
 import 'package:frontend/features/vault/domain/vault_service.dart';
 import 'package:frontend/features/vault/domain/vault_state.dart';

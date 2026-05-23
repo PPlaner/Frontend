@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/extensions/bottom_sheet_extension.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/active_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/notifiers/providers/completed_notes_provider.dart';
 import 'package:frontend/features/notes/presentation/widgets/notes/card/active_note_card.dart';

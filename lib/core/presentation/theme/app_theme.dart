@@ -1,6 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/app_colors.dart';
+import 'package:frontend/core/presentation/theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
@@ -20,7 +20,6 @@ class AppTheme {
     blendLevel: 7,
     subThemesData: const FlexSubThemesData(
       blendOnLevel: 10,
-      blendOnColors: false,
       useMaterial3Typography: true,
       useM2StyleDividerInM3: true,
       defaultRadius: 20,
@@ -32,7 +31,6 @@ class AppTheme {
       bottomNavigationBarType: BottomNavigationBarType.fixed,
     ),
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    useMaterial3: true,
     swapLegacyOnMaterial3: true,
     fontFamily: GoogleFonts.inter().fontFamily,
     textTheme: _buildTextTheme(
@@ -55,7 +53,6 @@ class AppTheme {
     blendLevel: 13,
     subThemesData: const FlexSubThemesData(
       blendOnLevel: 10,
-      blendOnColors: false,
       useMaterial3Typography: true,
       useM2StyleDividerInM3: true,
       defaultRadius: 20,
@@ -67,7 +64,6 @@ class AppTheme {
       bottomNavigationBarType: BottomNavigationBarType.fixed,
     ),
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    useMaterial3: true,
     swapLegacyOnMaterial3: true,
     fontFamily: GoogleFonts.inter().fontFamily,
     textTheme: _buildTextTheme(

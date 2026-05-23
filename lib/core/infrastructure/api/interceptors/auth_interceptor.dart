@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:frontend/core/network/dio_provider.dart';
-import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/infrastructure/api/dio_provider.dart';
+import 'package:frontend/core/services/session/session_manager.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class AuthInterceptor extends Interceptor {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/ui/widgets/back_app_bar.dart';
-import 'package:frontend/core/ui/widgets/safe_screen_wrapper.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/widgets/back_app_bar.dart';
+import 'package:frontend/core/presentation/widgets/safe_screen_wrapper.dart';
 
 class FlowScaffold extends StatelessWidget {
   const FlowScaffold({

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cryptography/cryptography.dart';
-import 'package:frontend/core/crypto/crypto_exceptions.dart';
-import 'package:frontend/core/utils/logger.dart';
+import 'package:frontend/core/infrastructure/crypto/crypto_exceptions.dart';
+import 'package:frontend/core/infrastructure/logger.dart';
 
 abstract class EncryptionService {
   Future<Uint8List> encrypt(Uint8List data, Uint8List key);

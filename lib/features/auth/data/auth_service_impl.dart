@@ -1,5 +1,5 @@
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/session/session_manager.dart';
+import 'package:frontend/core/services/session/session_manager.dart';
 import 'package:frontend/features/auth/data/unified_auth_repository.dart';
 import 'package:frontend/features/auth/domain/auth_repository.dart';
 import 'package:frontend/features/auth/domain/auth_service.dart';

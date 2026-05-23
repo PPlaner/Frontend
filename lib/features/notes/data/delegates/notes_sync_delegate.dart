@@ -1,6 +1,6 @@
 import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/sync/syncable.dart';
+import 'package:frontend/core/services/sync/syncable.dart';
 import 'package:frontend/features/notes/data/dto/note_dto.dart';
 import 'package:frontend/features/notes/data/notes_sync_engine.dart';
 import 'package:frontend/features/notes/domain/mappers/failures_mapper.dart';

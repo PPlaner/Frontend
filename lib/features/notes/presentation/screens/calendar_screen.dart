@@ -2,10 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/constants/app_sizes.dart' as sizes;
-import 'package:frontend/core/extensions/bottom_sheet_extension.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/core/presentation/app_assets.dart';
+import 'package:frontend/core/presentation/app_sizes.dart' as sizes;
+import 'package:frontend/core/presentation/extensions/bottom_sheet_extension.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 import 'package:frontend/features/notes/domain/calendar_view_mode.dart';
 import 'package:frontend/features/notes/domain/constants.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';

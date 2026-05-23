@@ -1,5 +1,5 @@
-import 'package:frontend/core/sync/sync_orchestrator.dart';
-import 'package:frontend/core/sync/sync_state.dart';
+import 'package:frontend/core/services/sync/sync_orchestrator.dart';
+import 'package:frontend/core/services/sync/sync_state.dart';
 import 'package:frontend/features/notes/data/secure_notes_service.dart';
 import 'package:frontend/features/notes/domain/entities/project.dart';
 import 'package:frontend/features/notes/domain/models/project_creation_payload.dart';

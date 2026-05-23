@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:frontend/core/crypto/crypto.dart';
 import 'package:frontend/core/domain/core_failure.dart';
 import 'package:frontend/core/domain/result.dart';
-import 'package:frontend/core/session/session_controller.dart';
-import 'package:frontend/core/session/session_manager.dart';
-import 'package:frontend/core/sync/sync_orchestrator.dart';
-import 'package:frontend/core/utils/logger.dart';
+import 'package:frontend/core/infrastructure/crypto/crypto.dart';
+import 'package:frontend/core/infrastructure/logger.dart';
+import 'package:frontend/core/services/session/session_controller.dart';
+import 'package:frontend/core/services/session/session_manager.dart';
+import 'package:frontend/core/services/sync/sync_orchestrator.dart';
 import 'package:frontend/features/vault/data/unified_vault_repository.dart';
 import 'package:frontend/features/vault/domain/entities/key_slot.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';

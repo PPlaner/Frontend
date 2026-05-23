@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/constants/app_sizes.dart' as sizes;
-import 'package:frontend/core/utils/app_assets.dart';
+import 'package:frontend/core/presentation/app_assets.dart';
+import 'package:frontend/core/presentation/app_sizes.dart' as sizes;
 
 class EmptyStateView extends StatelessWidget {
   const EmptyStateView({required this.title, super.key});

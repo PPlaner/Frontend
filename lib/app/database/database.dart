@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
 import 'package:frontend/features/notes/data/daos/notes_dao.dart';
 import 'package:frontend/features/notes/data/daos/projects_dao.dart';
 import 'package:frontend/features/notes/data/tables/note_conflicts.dart';
@@ -43,6 +43,7 @@ class AppDatabase extends _$AppDatabase {
       for (final table in allTables) {
         await delete(table).go();
       }
+
       await customStatement('PRAGMA foreign_keys = ON');
     });
   }

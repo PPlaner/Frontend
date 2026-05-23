@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:frontend/core/config/app_config_provider.dart';
-import 'package:frontend/core/constants/app_timeouts.dart' as timeouts;
-import 'package:frontend/core/network/interceptors/auth_interceptor.dart';
-import 'package:frontend/core/network/token_refresher.dart';
-import 'package:frontend/core/storage/cookie_jar.dart';
+import 'package:frontend/core/config/app_timeouts.dart' as timeouts;
+import 'package:frontend/core/infrastructure/api/interceptors/auth_interceptor.dart';
+import 'package:frontend/core/infrastructure/api/token_refresher.dart';
+import 'package:frontend/core/infrastructure/storage/cookie_jar.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dio_provider.g.dart';

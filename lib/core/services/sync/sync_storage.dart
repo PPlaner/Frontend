@@ -1,4 +1,4 @@
-import 'package:frontend/core/storage/shared_prefs.dart';
+import 'package:frontend/core/infrastructure/storage/shared_prefs.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

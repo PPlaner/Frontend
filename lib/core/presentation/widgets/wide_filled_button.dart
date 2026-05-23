@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/constants/app_sizes.dart' as sizes;
-import 'package:frontend/core/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/app_sizes.dart' as sizes;
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
 
 class WideFilledButton extends StatelessWidget {
   const WideFilledButton({

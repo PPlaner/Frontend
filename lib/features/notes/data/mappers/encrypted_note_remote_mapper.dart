@@ -1,4 +1,4 @@
-import 'package:frontend/core/sync/sync_status.dart';
+import 'package:frontend/core/services/sync/sync_status.dart';
 import 'package:frontend/features/notes/data/dto/note_dto.dart';
 import 'package:frontend/features/notes/domain/entities/encrypted_note.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:frontend/core/session/session_manager.dart';
-import 'package:frontend/core/storage/cookie_jar.dart';
-import 'package:frontend/core/theme/app_colors.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/theme/theme_provider.dart';
+import 'package:frontend/core/infrastructure/storage/cookie_jar.dart';
+import 'package:frontend/core/presentation/theme/app_colors.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/theme/theme_provider.dart';
+import 'package:frontend/core/services/session/session_manager.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/notes/presentation/widgets/bottom_nav.dart';
 import 'package:frontend/features/profile/presentation/navigation/profile_routes.dart';
@@ -105,7 +105,9 @@ class _AccountView extends StatelessWidget {
           email: t.profile.email,
           onTap: () {},
         ),
+
         const SizedBox(height: 12),
+
         _SettingsCard(
           children: [
             _SettingsTile(
@@ -116,7 +118,9 @@ class _AccountView extends StatelessWidget {
             ),
           ],
         ),
+
         const SizedBox(height: 12),
+
         _SettingsCard(
           children: [
             _SettingsTile(
@@ -124,19 +128,25 @@ class _AccountView extends StatelessWidget {
               title: t.profile.language,
               onTap: onLanguageTap,
             ),
+
             _TileDivider(),
+
             _SettingsTile(
               icon: Icons.dark_mode_outlined,
               title: t.profile.appearance,
               onTap: onAppearanceTap,
             ),
+
             _TileDivider(),
+
             _SettingsTile(
               icon: Icons.access_time_outlined,
               title: t.profile.dateTime,
               onTap: onTimezoneTap,
             ),
+
             _TileDivider(),
+
             _SettingsTile(
               icon: Icons.widgets_outlined,
               title: t.profile.widgets,
@@ -178,7 +188,9 @@ class _LocalView extends StatelessWidget {
           email: t.profile.email,
           onTap: () => const AuthRoute(source: 'inApp').push<void>(context),
         ),
+
         const SizedBox(height: 12),
+
         _SettingsCard(
           children: [
             _SettingsTile(
@@ -188,7 +200,9 @@ class _LocalView extends StatelessWidget {
             ),
           ],
         ),
+
         const SizedBox(height: 12),
+
         _SettingsCard(
           children: [
             _SettingsTile(
@@ -196,19 +210,25 @@ class _LocalView extends StatelessWidget {
               title: t.profile.language,
               onTap: onLanguageTap,
             ),
+
             _TileDivider(),
+
             _SettingsTile(
               icon: Icons.dark_mode_outlined,
               title: t.profile.appearance,
               onTap: onAppearanceTap,
             ),
+
             _TileDivider(),
+
             _SettingsTile(
               icon: Icons.access_time_outlined,
               title: t.profile.dateTime,
               onTap: onTimezoneTap,
             ),
+
             _TileDivider(),
+
             _SettingsTile(
               icon: Icons.widgets_outlined,
               title: t.profile.widgets,
@@ -423,6 +443,10 @@ extension AppLocaleLabel on AppLocale {
   };
 }
 
+// Future<void> showLanguageSheet1(BuildContext context) {
+//   await context.showAppBottomSheet(child: _LanguageSheet(current: current));
+// }
+
 Future<AppLocale?> showLanguageSheet(BuildContext context, AppLocale current) {
   return showModalBottomSheet<AppLocale>(
     context: context,
@@ -524,8 +548,11 @@ class _AppearanceSheet extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _SheetHandle(),
+
             const SizedBox(height: 20),
+
             Text(t.profile.chooseAppearance, style: textTheme.titleLarge),
+
             const SizedBox(height: 8),
             ...options.map(
               (opt) => ListTile(
@@ -760,4 +787,3 @@ class _SheetHandle extends StatelessWidget {
     );
   }
 }
-

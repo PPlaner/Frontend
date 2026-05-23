@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/core/crypto/random.dart';
+import 'package:frontend/core/infrastructure/crypto/random.dart';
 
 void main() {
   final randomService = SecureRandomService();

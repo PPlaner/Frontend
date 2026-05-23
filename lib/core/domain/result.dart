@@ -1,33 +1,33 @@
-sealed class Result<S, E> {
+sealed class Result<T, E> {
   const Result();
 
-  W fold<W>(W Function(S success) onSuccess, W Function(E error) onFailure) {
+  W fold<W>(W Function(T success) onSuccess, W Function(E error) onFailure) {
     return switch (this) {
       Success(value: final s) => onSuccess(s),
       Failure(error: final e) => onFailure(e),
     };
   }
 
-  Result<W, E> map<W>(W Function(S success) transform) {
+  Result<W, E> map<W>(W Function(T success) transform) {
     return switch (this) {
       Success(value: final s) => Success(transform(s)),
       Failure(error: final e) => Failure(e),
     };
   }
 
-  S get unwrap => switch (this) {
+  T get unwrap => switch (this) {
     Success(value: final s) => s,
     Failure() => throw StateError('Attempted to unwrap a Failure.'),
   };
 }
 
-final class Success<S, E> extends Result<S, E> {
+final class Success<T, E> extends Result<T, E> {
   const Success(this.value);
 
-  final S value;
+  final T value;
 }
 
-final class Failure<S, E> extends Result<S, E> {
+final class Failure<T, E> extends Result<T, E> {
   const Failure(this.error);
 
   final E error;

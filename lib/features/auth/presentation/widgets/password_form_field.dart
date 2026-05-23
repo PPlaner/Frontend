@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/utils/validators.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/validators.dart';
 import 'package:frontend/i18n/strings.g.dart';
 
 class PasswordFormField extends StatefulWidget {

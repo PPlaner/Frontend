@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/core/config/user_config.dart';
-import 'package:frontend/core/theme/theme_extensions.dart';
-import 'package:frontend/core/ui/widgets/flow_scaffold.dart';
-import 'package:frontend/core/utils/app_snackbar.dart';
+import 'package:frontend/core/presentation/extensions/app_snackbar.dart';
+import 'package:frontend/core/presentation/theme/theme_extensions.dart';
+import 'package:frontend/core/presentation/widgets/flow_scaffold.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_navigator.dart';
 import 'package:frontend/features/auth/presentation/navigation/auth_routes.dart';
 import 'package:frontend/features/auth/presentation/notifiers/auth_notifier.dart';
@@ -48,7 +48,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     if (success) {
       context.showSnackBarSuccess(context.t.auth.loginSuccess);
-      await ref.read(userPreferencesProvider).setAuthenticatedBefore(true);
+      await ref
+          .read(userPreferencesProvider)
+          .setAuthenticatedBefore(authenticated: true);
 
       if (widget.source == 'inApp') {
         ref.read(authNavigatorProvider).onAuthCompleted();

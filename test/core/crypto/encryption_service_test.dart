@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:frontend/core/crypto/crypto.dart';
+import 'package:frontend/core/infrastructure/crypto/crypto.dart';
 
 void main() {
   final encryptionService = AesGcmService();

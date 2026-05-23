@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:frontend/core/sync/sync_orchestrator.dart';
+import 'package:frontend/core/services/sync/sync_orchestrator.dart';
 import 'package:frontend/features/vault/data/secure_vault_service.dart';
 import 'package:frontend/features/vault/domain/entities/key_type.dart';
 import 'package:frontend/features/vault/domain/failures/vault_failure.dart';
